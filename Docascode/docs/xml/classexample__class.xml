@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.13.1" xml:lang="en-US">
+  <compounddef id="classexample__class" kind="class" language="C++" prot="public">
+    <compoundname>example_class</compoundname>
+    <includes refid="example__class_8h" local="no">example_class.h</includes>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classexample__class_1a2360d905fcb7c56dd87fa6f507880daf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int example_class::marry</definition>
+        <argsstring>(int a, int b)</argsstring>
+        <name>marry</name>
+        <qualifiedname>example_class::marry</qualifiedname>
+        <param>
+          <type>int</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+<para>This func will do this. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>a</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>First number. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>b</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Second number. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Two numbers will marry each other. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/Users/thanh/Documents/FPT/2_Module2_MCU/Media_player/include/example_class.h" line="22" column="9"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>This is an example class. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>This class will shows you how it should be done. </para>
+    </detaileddescription>
+    <location file="C:/Users/thanh/Documents/FPT/2_Module2_MCU/Media_player/include/example_class.h" line="10" column="1" bodyfile="C:/Users/thanh/Documents/FPT/2_Module2_MCU/Media_player/include/example_class.h" bodystart="10" bodyend="25"/>
+    <listofallmembers>
+      <member refid="classexample__class_1a2360d905fcb7c56dd87fa6f507880daf" prot="public" virt="non-virtual"><scope>example_class</scope><name>marry</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

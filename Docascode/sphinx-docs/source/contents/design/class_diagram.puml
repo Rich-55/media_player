@@ -1,0 +1,109 @@
+@startuml Class diagram
+
+class App {
+  - currentDirectory : String
+  - playlists : List<Playlist>
+  - player : Player
+  - metadataManager : MetadataManager
+  - boardController : BoardS32K144
+  + viewAllMediaFiles() : void
+  + listAllPlaylists() : void
+  + listPlaylistContents(playlistName : String) : void
+  + addMediaFileToPlaylist(file : MediaFile, playlistName : String) : void
+  + removeMediaFileFromPlaylist(file : MediaFile, playlistName : String) : void
+  + playMedia(mediaFile : MediaFile) : void
+  + adjustVolume(volume : int) : void
+  + processKeyboardInput(key : char) : void
+}
+
+abstract class MediaFile {
+  - fileName : String
+  - pathName : String
+  - size : double
+  - duration : String
+  - fileType : String
+  + virtual inputMediaFile() : void
+  + virtual detailMediaFile() : void
+  + virtual MediaFile();
+}
+
+class MediaFileVideo {
+  - resolution : String
+  - frameRate : float
+  - codec : String
+  - bitrate : int
+  + inputMediaFile() override : void
+  + detailMediaFile() override : void
+}
+
+class MediaFileAudio {
+  - trackName : String
+  - album : String
+  - artist : String
+  - publisher : String
+  - genre : String
+  - bitrate : int
+  - sampleRate : int
+  + inputMediaFile() override : void
+  + detailMediaFile() override : void
+}
+
+class MetadataManager {
+  - listMediaFiles : vector<shared_ptr<MediaFile>>
+  + addMediaFileFromUSB(file : MediaFile) : void
+  + addMediaFileFromPC(file : MediaFile) : void
+  + displayListMediaFiles() : void
+}
+
+class Playlist {
+  - name : String
+  - listMediaFiles : vector<shared_ptr<MediaFile>>
+  + addMediaFile(file : MediaFile) : void
+  + removeMediaFile(file : MediaFile) : void
+  + listContents() : void
+}
+
+class Player {
+  - currentTrack : MediaFile
+  - volume : int
+  + play(file : MediaFile) : void
+  + pause() : void
+  + stop() : void
+  + next() : void
+  + previous() : void
+  + adjustVolume(volume : int) : void
+}
+
+class BoardS32K144 {
+  - adcVolumeControl : ADC
+  - buttonControls : enum {Next, Previous, Play, Stop}
+  + sendSignalToApp(signal : String) : void
+  + updateDisplay(mediaFile : MediaFile) : void
+}
+
+class KeyboardController {
+  + processKeyPress(key : char) : void
+  + mapKeyToAction(key : char) : String
+}
+
+class Menu {
+  + displayMenu() : void
+  + processOption(option : int) : void
+}
+
+App "1" --> "*" Playlist
+App "1" --> "1" Player
+App "1" --> "1" MetadataManager
+App "1" --> "1" BoardS32K144
+App "1" --> "1" KeyboardController
+App "1" --> "1" Menu
+
+Playlist o--> MediaFile
+MetadataManager o--> MediaFile
+
+Player "1" --> "1" MediaFile
+
+MediaFile <|-- MediaFileVideo : is-a
+MediaFile <|-- MediaFileAudio : is-a
+
+@enduml

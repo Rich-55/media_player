@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygenindex xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="index.xsd" version="1.13.1" xml:lang="en-US">
+  <compound refid="classexample__class" kind="class"><name>example_class</name>
+    <member refid="classexample__class_1a2360d905fcb7c56dd87fa6f507880daf" kind="function"><name>marry</name></member>
+  </compound>
+  <compound refid="example__class_8h" kind="file"><name>example_class.h</name>
+  </compound>
+  <compound refid="dir_d44c64559bbebec7f509842c48db8b23" kind="dir"><name>C:/Users/thanh/Documents/FPT/2_Module2_MCU/Media_player/include</name>
+  </compound>
+</doxygenindex>

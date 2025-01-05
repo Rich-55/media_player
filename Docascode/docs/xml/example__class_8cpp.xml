@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.13.1" xml:lang="en-US">
+  <compounddef id="example__class_8cpp" kind="file" language="C++">
+    <compoundname>example_class.cpp</compoundname>
+    <includes refid="example__class_8h" local="yes">../include/example_class.h</includes>
+    <incdepgraph>
+      <node id="2">
+        <label>../include/example_class.h</label>
+        <link refid="example__class_8h"/>
+      </node>
+      <node id="1">
+        <label>C:/Users/thanh/Documents/FPT/2_Module2_MCU/Media_player/src/example_class.cpp</label>
+        <link refid="example__class_8cpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+    </incdepgraph>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#include<sp/>&quot;<ref refid="example__class_8h" kindref="compound">../include/example_class.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="C:/Users/thanh/Documents/FPT/2_Module2_MCU/Media_player/src/example_class.cpp"/>
+  </compounddef>
+</doxygen>
