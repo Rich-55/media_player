@@ -1,0 +1,9 @@
+# Ignore build directories
+build/
+Docascode/docs/
+sphinx-docs/build/
+sphinx-docs/source/_build/
+
+# Ignore compiled files
+*.exe
+*.bin
