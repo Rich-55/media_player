@@ -1,6 +1,5 @@
 # Ignore build directories
 build/
-Docascode/docs/
 
 # Ignore compiled files
 *.exe
