@@ -1,9 +1,0 @@
-System architecture
-=====================
-
-.. toctree::
-   :maxdepth: 2
-
-Still good here
-
-.. plantuml:: class_diagram.plantuml
