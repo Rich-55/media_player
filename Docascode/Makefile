@@ -4,7 +4,7 @@ DOXYFILE = Doxyfile
 DOXYGEN_OUTPUT = docs/xml
 SPHINX_BUILD = sphinx-build
 SPHINX_SOURCE = sphinx-docs/source
-SPHINX_BUILD_DIR = ../docs
+SPHINX_BUILD_DIR = docs/docs
 
 # Default target
 all: sphinx

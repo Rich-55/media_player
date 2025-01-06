@@ -1,6 +1,6 @@
 Media Player's Docascode
 ========================================
-This page contains documents for the mock project of MCU module.
+This page contains documents for MCU module's mock project.
 
 .. toctree::
    :maxdepth: 2

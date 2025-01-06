@@ -1,9 +1,12 @@
-System architecture
+System Architecture
 =====================
 
 .. toctree::
    :maxdepth: 2
-   :caption: Class Diagram
 
-.. plantuml:: class_diagram.puml
+Class Diagram
+----------------------------------
+.. plantuml:: class_diagram.plantuml
 
+Sequence Diagram
+----------------------------------
