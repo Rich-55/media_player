@@ -85,7 +85,7 @@
 <section id="class-diagram">
 <h2>Class Diagram<a class="headerlink" href="#class-diagram" title="Permalink to this heading"></a></h2>
 <p class="plantuml">
-<img src="../../_images/plantuml-e32830e7e4be7f72a8b229f00309749935e7838d.png" alt="&#64;startuml Media Player Class Diagram
+<img src="../../_images/plantuml-c8cda552deb0463d6b2e75910ff07f1862ffc78a.png" alt="&#64;startuml Media Player Class Diagram
 
 left to right direction
 skinparam outputFormat svg
@@ -97,8 +97,6 @@ skinparam class {
     ArrowColor black
     BorderColor black
 }
-
-
 
 package View {
     class CLIManager {
@@ -376,7 +374,9 @@ enum ButtonType {
     PLAY_PAUSE
     NEXT
     PREVIOUS
-    STOP
+    PAUSE
+    VOLUME_UP
+    VOLUME_DOWN
 }
 
 ' Inheritance relationships
@@ -395,6 +395,7 @@ ModelManager &quot;1&quot; o-- &quot;1&quot; CurrentPlay : has &gt;
 ' Association relationships
 
 MediaFile --&gt; &quot;1&quot; MediaType : has type &gt;
+PlayerController --&gt; &quot;1&quot; ButtonType
 
 ControllerManager &quot;1&quot; o-- &quot;1&quot; ModelManager : has &gt;
 ControllerManager &quot;1&quot; o-- &quot;1&quot; CLIManager : has &gt;
@@ -403,6 +404,89 @@ ControllerManager &quot;1&quot; o-- &quot;1&quot; CLIManager : has &gt;
 </section>
 <section id="sequence-diagram">
 <h2>Sequence Diagram<a class="headerlink" href="#sequence-diagram" title="Permalink to this heading"></a></h2>
+<p class="plantuml">
+<img src="../../_images/plantuml-36a7680760dee8fad93ac15594f94685a70622aa.png" alt="&#64;startuml Sequence Diagram
+
+actor User as U
+
+' ------------------------- Play Media File -------------------------
+U -&gt; CLIManager : Select &quot;Play Media File&quot;
+CLIManager -&gt; ControllerManager : handleUserInput(&quot;Play Media File&quot;)
+ControllerManager -&gt; PlayerController : play(file)
+PlayerController -&gt; ModelManager : getCurrentPlay()
+ModelManager -&gt; CurrentPlay : getCurrentFile()
+CurrentPlay --&gt; PlayerController : return currentFile
+PlayerController -&gt; BaseCurrentPlayView : updateCurrentPlayView()
+PlayerController -&gt; CurrentPlay : play(file)
+CurrentPlay --&gt; BaseCurrentPlayView : update play status
+BaseCurrentPlayView -&gt; CLIManager : Display current play details
+
+' ------------------------- View All Media Files -------------------------
+U -&gt; CLIManager : Select &quot;View All Media Files&quot;
+CLIManager -&gt; ControllerManager : handleUserInput(&quot;View All Media Files&quot;)
+ControllerManager -&gt; MediaFileController : displayAllMediaFiles()
+MediaFileController -&gt; ModelManager : getMetadataManager()
+ModelManager -&gt; MetadataManager : fetchAllMediaFiles(page=1, limit=25)
+MetadataManager --&gt; MediaFileController : Return list of media files
+MediaFileController -&gt; CLIManager : Display media file list
+
+' ------------------------- List All Playlists -------------------------
+U -&gt; CLIManager : Select &quot;List All Playlists&quot;
+CLIManager -&gt; ControllerManager : handleUserInput(&quot;List All Playlists&quot;)
+ControllerManager -&gt; MediaPlaylistController : sendPlaylistToView()
+MediaPlaylistController -&gt; ModelManager : getPlaylistManager()
+ModelManager -&gt; PlaylistManager : fetchAllPlaylists()
+PlaylistManager --&gt; MediaPlaylistController : Return list of playlists
+MediaPlaylistController -&gt; CLIManager : Display playlists
+
+' ------------------------- Create Playlist -------------------------
+U -&gt; CLIManager : Select &quot;Create Playlist&quot;
+CLIManager -&gt; ControllerManager : handleUserInput(&quot;Create Playlist&quot;)
+ControllerManager -&gt; MediaPlaylistController : createPlaylist(name)
+MediaPlaylistController -&gt; ModelManager : getPlaylistManager()
+ModelManager -&gt; PlaylistManager : createPlaylist(name)
+PlaylistManager --&gt; MediaPlaylistController : Return new playlist ID
+MediaPlaylistController -&gt; CLIManager : Notify &quot;Playlist Created&quot;
+
+' ------------------------- Add Song to Playlist -------------------------
+U -&gt; CLIManager : Select &quot;Add Song to Playlist&quot;
+CLIManager -&gt; ControllerManager : handleUserInput(&quot;Add Song&quot;)
+ControllerManager -&gt; MediaPlaylistController : addSongToPlaylist(song, playlist)
+MediaPlaylistController -&gt; ModelManager : getPlaylistManager()
+ModelManager -&gt; PlaylistManager : addSong(playlist, song)
+PlaylistManager --&gt; MediaPlaylistController : Return updated playlist
+MediaPlaylistController -&gt; CLIManager : Notify &quot;Song Added&quot;
+
+' ------------------------- View Metadata of File -------------------------
+U -&gt; CLIManager : Select &quot;View Metadata of File&quot;
+CLIManager -&gt; ControllerManager : handleUserInput(&quot;View Metadata&quot;)
+ControllerManager -&gt; MediaFileController : showMetadataFile(file)
+MediaFileController -&gt; ModelManager : getMetadataManager()
+ModelManager -&gt; MetadataManager : fetchMetadata(file)
+MetadataManager --&gt; MediaFileController : Return metadata
+MediaFileController -&gt; CLIManager : Display metadata
+
+' ------------------------- Edit Metadata of File -------------------------
+U -&gt; CLIManager : Select &quot;Edit Metadata&quot;
+CLIManager -&gt; ControllerManager : handleUserInput(&quot;Edit Metadata&quot;)
+ControllerManager -&gt; MediaFileController : editMetadata(file, key, value)
+MediaFileController -&gt; ModelManager : getMetadataManager()
+ModelManager -&gt; MetadataManager : updateMetadata(file, key, value)
+MetadataManager --&gt; MediaFileController : Confirm update
+MediaFileController -&gt; CLIManager : Notify &quot;Metadata Updated&quot;
+
+' ------------------------- Delete Playlist -------------------------
+U -&gt; CLIManager : Select &quot;Delete Playlist&quot;
+CLIManager -&gt; ControllerManager : handleUserInput(&quot;Delete Playlist&quot;)
+ControllerManager -&gt; MediaPlaylistController : deletePlaylist(playlist_id)
+MediaPlaylistController -&gt; ModelManager : getPlaylistManager()
+ModelManager -&gt; PlaylistManager : deletePlaylist(playlist_id)
+PlaylistManager --&gt; MediaPlaylistController : Confirm deletion
+MediaPlaylistController -&gt; CLIManager : Notify &quot;Playlist Deleted&quot;
+
+&#64;enduml
+"/>
+</p>
 </section>
 </section>
 
