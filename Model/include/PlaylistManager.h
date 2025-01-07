@@ -1,4 +1,0 @@
-#ifndef PLAYLIST_MANAGER
-#define PLAYLIST_MANAGER
-
-#endif

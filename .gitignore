@@ -1,6 +1,3 @@
-# Ignore build directories
 build/
-
-# Ignore compiled files
-*.exe
-*.bin
+*.o
+MediaPlayer

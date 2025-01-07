@@ -1,4 +1,0 @@
-#ifndef PLAYLIST_HANDLER_VIEW
-#define PLAYLIST_HANDLER_VIEW
-
-#endif

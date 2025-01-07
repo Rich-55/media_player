@@ -1,4 +1,0 @@
-#ifndef S32K144_INTERFACE_LCD
-#define S32K144_INTERFACE_LCD
-
-#endif

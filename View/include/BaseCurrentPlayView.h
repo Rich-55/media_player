@@ -1,4 +1,0 @@
-#ifndef BASE_CURRENT_PLAY_VIEW
-#define BASE_CURRENT_PLAY_VIEW
-
-#endif
