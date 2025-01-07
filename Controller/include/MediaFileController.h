@@ -1,0 +1,4 @@
+#ifndef MEDIA_FILE_CONTROLLER
+#define MEDIA_FILE_CONTROLLER
+
+#endif
