@@ -1,6 +1,9 @@
 @startuml Media Player Class Diagram
 
-' Style configurations
+left to right direction
+skinparam outputFormat svg
+scale 1.2
+
 skinparam classAttributeIconSize 0
 skinparam class {
     BackgroundColor white
@@ -11,137 +14,197 @@ skinparam class {
 
 
 package View {
-    ' class CLI {
-    '     - currentPage: int
-    '     - itemsPerPage: int
-    '     + showMainMenu()
-    '     + showMediaList(files: vector<shared_ptr<MediaFile>>)
-    '     + showPlaylistMenu()
-    '     + showMetadataMenu(file: shared_ptr<MediaFile>)
-    '     + showPlayerControls()
-    '     + showVolume(level: int)
-    ' }
-
-    class CLIManager{
-        - currentPlayView: CurrentPlayView
-        - menuView: MenuView
+    class CLIManager {
+        - views : vector<ViewBase*>
+        - currentView : ViewBase*
+        - baseCurrentPlayView : BaseCurrentPlayView
+        + switchView(view : ViewBase*) : void
+        + addView(view : ViewBase*) : void
+        + removeView(view : ViewBase*) : void
     }
 
-    class CurrentPlayView{
-        - volumeCurrentView: VolumeCurrentView
-        - metadataCurrentView: MetadataCurrentView
-        - menuControlPlayView: MenuControlPlayView
+    abstract class ViewBase {
+        + handleInput() : void
+        + hide() : void
+        + virtual showMenu() : void
+        + virtual ~ViewBase()
     }
 
-    class VolumeCurrentView{
-        + showVolume()
+    class ScanView {
+        + showMenu() override : void
+        + showScanUSB() : void
+        + showScanDirectory() : void
     }
 
-    class MetadataCurrentView{
-        + showFileName()
-        + showPathName()
-        + showSize()
-        + showDuration()
-        + showFileType()
-        - metadataCurrentAudioView: MetadataCurrentAudioView
-        - metadataCurrentVideoView: MetadataCurrentVideoView
+    class MediaFileView {
+        + showMenu() override : void
+        + showMetadataFile(file : MediaFile)
+        + showAllMediaFile(metadataManager : MetadataManager)
     }
 
-    class MetadataCurrentAudioView{
-        + showTrackName()
-        + showAlbum()
-        + showArtist()
-        + showPublisher()
-        + showGenre()
-        + showBitrate()
-        + showSampleRate()
+    class MediaFileHandlerView {
+        + showMenu() override : void
+        + showAddMediaFile() : void
+        + showEditMediaFile() : void
+        + showRemoveMediaFile() : void
     }
 
-    class MetadataCurrentVideoView{
-        + showResolution()
-        + showFrameRate()
-        + showCodec()
-        + showBitrate()
+    class PlaylistView {
+        + showMenu() override : void
+        + showAllPlaylist(playlistManager : PlaylistManager)
+        + showPlaylistContent(playlist : Playlist)
     }
 
-    class MenuControlPlayView{
-        + playButton()
-        + pauseButton()
-        + nextButton()
-        + previousButton()
-        + increaseVolumeButton()
-        + decreaseVolumeButton()
+    class PlaylistHandlerView {
+        + showMenu() override : void
+        + showCreatePlaylist() : void
+        + showEditPlaylist() : void
+        + showDeletePlaylist() : void
     }
 
-    class MenuView{
-        + showAllMediaFile()
-        + showAllPlaylist()
-        + showPlaylistContent()
-        + menuFileHandlingView : MenuFileHandlingView 
-        + menuPlaylistHandlingView : MenuPlaylistHandlingView
+    class BaseCurrentPlayView {
+        + virtual showCurrentPlay() : void
     }
 
-    class MenuFileHandlingView{
-        + showAddFile()
-        + showRemoveFile()
-        + showEditFile()
+    class VolumeView {
+        + showCurrentPlay() override: void
+        + showVolume(level : int) : void
     }
 
-    class MenuPlaylistHandlingView{
-        + showCreatePlaylist()
-        + showEditPlaylist()
-        + showDeletePlaylist()
+    class MetadataView {
+        + showCurrentPlay() override: void
+        + showMetadata(file : MediaFile) : void
+    }
+
+    class MenuControlPlayView {
+        + showCurrentPlay() override: void
+        + displayControls() : void
+        + onPlayButton() : void
+        + onPauseButton() : void
+        + onNextButton() : void
+        + onPreviousButton() : void
+        + onVolumeChange(level : int) : void
+    }
+
+    class BoardManager {
+        - lcd : S32K144InterfaceLCD
+    }
+
+    class S32K144InterfaceLCD {
+        + showCurrentPlayLCD(currentPlay : CurrentPlay) : void
     }
 }
 
-CLIManager --> CurrentPlayView
-CurrentPlayView --> VolumeCurrentView
-CurrentPlayView --> MetadataCurrentView
-MetadataCurrentView --> MetadataCurrentAudioView
-MetadataCurrentView --> MetadataCurrentVideoView
-CurrentPlayView --> MenuControlPlayView
-CLIManager --> MenuView
-MenuView --> MenuFileHandlingView
-MenuView --> MenuPlaylistHandlingView
+CLIManager o--> ViewBase : has >
+CLIManager o--> BaseCurrentPlayView : has >
+ViewBase <|-- ScanView
+ViewBase <|-- MediaFileView
+ViewBase <|-- MediaFileHandlerView
+ViewBase <|-- PlaylistView
+ViewBase <|-- PlaylistHandlerView
+BaseCurrentPlayView <|-- VolumeView
+BaseCurrentPlayView <|-- MetadataView
+BaseCurrentPlayView <|-- MenuControlPlayView
+BoardManager --> S32K144InterfaceLCD
 
 
 package Controller {
-    class MediaController {
-        - mediaScanner: MediaScanner*
-        - player: MediaPlayer*
-        - playlistManager: PlaylistManager*
-        - deviceManager: DeviceManager*
-        + scanDirectory(path: string)
-        + playMedia(file: MediaFile*)
-        + pauseMedia()
-        + stopMedia()
-        + nextTrack()
-        + previousTrack()
+    class ControllerManager {
+        - mediaScannerController: MediaScannerController
+        - playerController: PlayerController
+        - mediaPlaylistController: MediaPlaylistController
+        - mediaFileController: MediaFileController
+        - deviceController: DeviceController
+        - modelManager: ModelManager
+        - cliManager: CLIManager
+        + handleUserInput(input: string) : void
+        + dispatchToController(input: string) : void
+    }
+
+    
+    class MediaScannerController {
+        - metadataManager: MetadataManager
+        + scanDirectory(path: string) : void
+        + scanUSB(path: string) : void
+        + sendScanResultToView(view: MediaFileView) : void
+    }
+
+    
+    class PlayerController {
+        - currentPlay : CurrentPlay
+        - baseCurrentPlayView : BaseCurrentPlayView
+        + getCurrentFile() : shared_ptr<MediaFile>
+        + play(file: shared_ptr<MediaFile>) : void
+        + pause() : void
+        + next() : void
+        + previous() : void
+        + adjustVolume(level: int) : void
+        + updateCurrentPlayView() : void
+    }
+
+    class MediaPlaylistController {
+        - playlistManager: PlaylistManager
+        + createPlaylist(name: string) : void
+        + editPlaylist(id: int, name: string) : void
+        + deletePlaylist(id: int) : void
+        + sendPlaylistToView(view: PlaylistView) : void
+        + sendPlaylistContentToView(playlist: Playlist, view: PlaylistView) : void
+    }
+
+
+    class MediaFileController {
+        - metadataManager: MetadataManager
+        + addMediaFileFromUSB(file : shared_ptr<MediaFile>)
+        + addMediaFileFromPC(file : shared_ptr<MediaFile>)
+        + editMediaFile(file : shared_ptr<MediaFile>)
+        + removeMediaFile(file : shared_ptr<MediaFile>)
+        + displayAllMediaFiles()
+        + sendMediaFileToView(view: MediaFileView) : void
+    }
+
+    class DeviceController {
+        - currentPlay : CurrentPlay
+        - boardManager : BoardManager
         + setVolume(level: int)
+        + updateDisplay(info: string)
+        + handleButtonPress(button: ButtonType)
     }
-    
-    class MediaScanner {
-        - supportedFormats: vector<string>
-        + scanDirectory(path: string): vector<shared_ptr<MediaFile>>
-        + scanUSB(): vector<shared_ptr<MediaFile>>
-        - mountUSB()
-        - unmountUSB()
+
+
+}
+
+ControllerManager "1" o-- "1" MediaScannerController : has >
+ControllerManager "1" o-- "1" PlayerController : has >
+ControllerManager "1" o-- "1" MediaPlaylistController : has >
+ControllerManager "1" o-- "1" MediaFileController : has >
+ControllerManager "1" o-- "1" DeviceController : has >
+
+
+package Model {
+
+    class ModelManager{
+        - metadataManager: MetadataManager
+        - playlistManager: PlaylistManager
+        - currentPlay: CurrentPlay
+        + getMetadataManager()
+        + getPlaylistManager()
+        + getCurrentPlay()
     }
-    
-    class MediaPlayer {
-        - currentFile: MediaFile*
+
+    class CurrentPlay{
+        - currentPlay: queue<shared_ptr<MediaFile>>
+        - volume: int
         - isPlaying: bool
         - currentPosition: int
-        + play(file: MediaFile*)
-        + pause()
-        + stop()
-        + seek(position: int)
-        + getCurrentPosition(): int
-        - initSDL()
-        - cleanupSDL()
+        + getCurrentFile(): shared_ptr<MediaFile>
+        + play(file: shared_ptr<MediaFile>)
+        + pause(file: shared_ptr<MediaFile>)
+        + stop(file: shared_ptr<MediaFile>)
+        + nextTrack(file: shared_ptr<MediaFile>)
+        + previousTrack(file: shared_ptr<MediaFile>)
+        + setVolume(level: int)
     }
-}
-package Model {
+
     abstract class MediaFile {
         - fileName : String
         - pathName : String
@@ -195,6 +258,7 @@ package Model {
         + getName(): string
         + setName(name: string)
     }
+
     class MetadataManager {
         - listMediaFiles : vector<shared_ptr<MediaFile>>
         + addMediaFileFromUSB(file : shared_ptr<MediaFile>) : void
@@ -213,27 +277,8 @@ package Model {
         + getAllPlaylists(): playlists
     }
     
-    class DeviceManager {
-        - volume: int
-        - s32k144Connection: S32K144Interface*
-        + setVolume(level: int)
-        + getVolume(): int
-        + updateDisplay(info: string)
-        + handleButtonPress(button: ButtonType)
-    }
 }
 
-
-package Hardware {
-    class S32K144Interface {
-        - serialConnection: SerialPort*
-        + connect()
-        + disconnect()
-        + readADC(): int
-        + readButtons(): ButtonState
-        + updateDisplay(text: string)
-    }
-}
 
 enum MediaType {
     AUDIO
@@ -255,28 +300,15 @@ MediaFile <|-- VideoFile : extends
 PlaylistManager "1" o-- "0..*" Playlist : manages >
 Playlist "1" o-- "0..*" MediaFile : contains >
 MetadataManager "1" o-- "0..*" MediaFile : manages >
-' Aggregation relationships (weak ownership)
-MediaController o-- MediaScanner : uses >
-MediaController o-- MediaPlayer : uses >
-MediaController o-- PlaylistManager : uses >
-MediaController o-- DeviceManager : uses >
+
+ModelManager "1" o-- "1" MetadataManager : has >
+ModelManager "1" o-- "1" PlaylistManager : has >
+ModelManager "1" o-- "1" CurrentPlay : has >
 
 ' Association relationships
-CLI "1" --> "1" MediaController : controls >
-DeviceManager "1" --> "1" S32K144Interface : interfaces with >
+
 MediaFile --> "1" MediaType : has type >
-DeviceManager --> ButtonType : handles >
 
-
-
-note "CLI depends on MediaController\nfor all operations" as N1
-CLI .. N1
-N1 .. MediaController
-
-note "MediaController is the central\ncoordinator between all components" as N2
-MediaController .. N2
-
-note "DeviceManager handles all\nhardware interactions" as N3
-DeviceManager .. N3
-
+ControllerManager "1" o-- "1" ModelManager : has >
+ControllerManager "1" o-- "1" CLIManager : has >
 @enduml
