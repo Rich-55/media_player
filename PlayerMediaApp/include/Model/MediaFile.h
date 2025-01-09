@@ -20,14 +20,10 @@ private:
     std::string duration;
     std::string fileType;
 protected:
-    //Setter
-    void setName(std::string);
-    void setPath(std::string);
-    void setSize(double);
-    void setDuration(std::string);
-    void setFileType(std::string);
+    void setType(std::string);
 public:
     // Constructor
+    MediaFile();
     MediaFile(const std::string& , const std::string& , double , const std::string& , const std::string& );
 
 
@@ -43,6 +39,7 @@ public:
     virtual std::string getType() = 0;
 
     // Virtual methods
+    virtual void inputMediaFile(std::string);
     virtual void detailMediaFile() const;
     virtual void editMediaFile();
    // void editMetadata(TagLib::MPEG::File &file, const std::string &key, const std::string &newValue);

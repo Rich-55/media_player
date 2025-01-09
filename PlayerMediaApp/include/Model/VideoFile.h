@@ -22,6 +22,7 @@ private:
     std::string resolution;
     
 public:
+    VideoFile();
     VideoFile(const std::string& , const std::string& , double , const std::string& , const std::string& ,
               const std::string& , int , const std::string&);
 
@@ -29,6 +30,7 @@ public:
     int getBitrate() const;
     std::string getResolution() const;
 
+    void inputMediaFile(std::string) override;
     void detailMediaFile() const override;
     void editMediaFile() override;
     std::string getType() override;
