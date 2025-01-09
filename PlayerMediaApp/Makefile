@@ -21,12 +21,12 @@ all: $(TARGET)
 
 # Build target
 $(TARGET): $(OBJ)
-	$(CC) -o $@ main.cpp $^ $(CFLAGS)
+	$(CC) -o $@ main.cpp $^ $(CFLAGS) $(LIBS)
 
 # Build object files
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
 	@mkdir -p $(dir $@)
-	$(CC) -c $< -o $@ $(CFLAGS)
+	$(CC) -c $< -o $@ $(CFLAGS) $(LIBS)
 
 # Clean build files
 clean:
