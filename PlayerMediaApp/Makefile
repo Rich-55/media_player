@@ -2,7 +2,8 @@
 CC = g++
 CFLAGS = -Iinclude -std=c++17 -Wall -Wextra -Werror
 #taglib
-LIBS = -ltag
+LIBS = -L/path/to/taglib -ltag
+
 
 # Directories
 SRC_DIR = src
