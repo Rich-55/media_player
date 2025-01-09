@@ -1,9 +1,7 @@
 # Compiler and flags
 CC = g++
 CFLAGS = -Iinclude -std=c++17 -Wall -Wextra -Werror
-#taglib
-LIBS = -L/path/to/taglib -ltag
-
+LIBS = -ltag -lstdc++ -lavformat -lavcodec -lavutil
 
 # Directories
 SRC_DIR = src
@@ -22,7 +20,7 @@ all: $(TARGET)
 
 # Build target
 $(TARGET): $(OBJ)
-	$(CC) -o $@ main.cpp $^ $(CFLAGS)
+	$(CC) -o $@ main.cpp $^ $(CFLAGS) $(LIBS)
 
 # Build object files
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp

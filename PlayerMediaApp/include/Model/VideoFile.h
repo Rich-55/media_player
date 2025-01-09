@@ -2,12 +2,16 @@
 #define VIDEOFILE_H
 
 #include <iostream>
+#include <string>
+#include <sys/stat.h>
 #include <taglib/fileref.h>
 #include <taglib/tag.h>
 #include <taglib/mpegfile.h>
 #include <taglib/id3v2tag.h>
 #include <taglib/textidentificationframe.h>
 #include <taglib/tbytevector.h>
+#include <taglib/mp4file.h>
+#include <taglib/mp4tag.h>
 
 #include "MediaFile.h"
 
@@ -16,10 +20,10 @@ private:
     std::string codec;
     int bitrate;
     std::string resolution;
-
+    
 public:
-    VideoFile(std::string, std::string, double, std::string, std::string,
-              std::string , int, std::string);
+    VideoFile(const std::string& , const std::string& , double , const std::string& , const std::string& ,
+              const std::string& , int , const std::string&);
 
     std::string getCodec() const;
     int getBitrate() const;
@@ -27,7 +31,7 @@ public:
 
     void detailMediaFile() const override;
     void editMediaFile() override;
-    std::string getType() const override;
+    std::string getType() override;
 };
 
 #endif

@@ -13,29 +13,39 @@
 #include <string>
 
 class MediaFile {
-protected:
+private:
     std::string fileName;
     std::string pathName;
     double size;
     std::string duration;
     std::string fileType;
-
+protected:
+    //Setter
+    void setName(std::string);
+    void setPath(std::string);
+    void setSize(double);
+    void setDuration(std::string);
+    void setFileType(std::string);
 public:
     // Constructor
-    MediaFile(std::string fileName, std::string pathName, double size, std::string duration, std::string fileType);
+    MediaFile(const std::string& , const std::string& , double , const std::string& , const std::string& );
+
+
     // Virtual Destructor
     virtual ~MediaFile();
 
     // Getters
     std::string getName() const;
     std::string getPath() const;
-    int getDuration() const;
-    virtual std::string getType() const;
+    double getSize() const;
+    std::string getDuration() const;
+
+    virtual std::string getType() = 0;
 
     // Virtual methods
     virtual void detailMediaFile() const;
     virtual void editMediaFile();
-    void editMetadata(TagLib::MPEG::File &file, const std::string &key, const std::string &newValue);
+   // void editMetadata(TagLib::MPEG::File &file, const std::string &key, const std::string &newValue);
 
 };
 #endif
