@@ -1,5 +1,6 @@
 #include "../../include/View/MediaFileView.h"
 
+// MediaFileView class implementation (View)
 void MediaFileView::displayFileDetails(const MediaFile& media) {
     media.detailMediaFile();
 }

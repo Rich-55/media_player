@@ -4,16 +4,20 @@
 #include "../Model/MediaFile.h"
 #include "../Model/VideoFile.h"
 #include "../View/MediaFileView.h"
+#include "../Model/MetadataManager.h"
 
+// MediaFileController (Controller)
 class MediaFileController {
 private:
-    MediaFile* media; // tao 1 con tro ten media kieu MediaFile
-    MediaFileView& view; // 
+    MetadataManager& model;
+    MediaFileView& view;
 
 public:
-    MediaFileController(MediaFile* m, MediaFileView& vView);
+    MediaFileController(MetadataManager& m, MediaFileView& v);
     void updateView();
-    void setData(int data);
+    void addMediaFile(std::shared_ptr<MediaFile> file);
+    void removeMediaFile(std::shared_ptr<MediaFile> file);
+    void editMediaFile(std::shared_ptr<MediaFile> file);
 };
 
 #endif 

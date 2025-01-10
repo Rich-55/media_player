@@ -2,13 +2,24 @@
 #include "../../include/Model/MediaFile.h"   // Đảm bảo đường dẫn đúng
 #include "../../include/View/MediaFileView.h"
 
-MediaFileController::MediaFileController(MediaFile* m, MediaFileView& vView)
-    : media(m), view(vView) {}
+// MediaFileController class implementation (Controller)
+MediaFileController::MediaFileController(MetadataManager& m, MediaFileView& v)
+    : model(m), view(v) {}
 
 void MediaFileController::updateView() {
-    view.displayFileDetails(*media);
+    model.displayAllMediaFiles();
 }
 
-//void MediaFileController::setData(int data) {
-    // Logic for setting data for media or video
+void MediaFileController::addMediaFile(std::shared_ptr<MediaFile> file) {
+    model.addMediaFile(file);
+}
+
+void MediaFileController::removeMediaFile(std::shared_ptr<MediaFile> file) {
+    model.removeMediaFile(file);
+}
+
+void MediaFileController::editMediaFile(std::shared_ptr<MediaFile> file) {
+    model.editMediaFile(file);
+}
+
 
