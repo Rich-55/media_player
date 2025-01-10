@@ -26,9 +26,9 @@ public:
     VideoFile(const std::string& , const std::string& , double , const std::string& , const std::string& ,
               const std::string& , int , const std::string&);
 
-    std::string getCodec() const;
-    int getBitrate() const;
-    std::string getResolution() const;
+    std::string getCodec() override;
+    int getBitrate() override;
+    std::string getResolution() override;
 
     void inputMediaFile(std::string) override;
     void detailMediaFile() const override;

@@ -37,6 +37,9 @@ public:
     std::string getDuration() const;
 
     virtual std::string getType() = 0;
+    virtual std::string getCodec() = 0;
+    virtual int getBitrate() = 0;
+    virtual std::string getResolution() = 0;
 
     // Virtual methods
     virtual void inputMediaFile(std::string);

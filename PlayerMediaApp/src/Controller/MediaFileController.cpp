@@ -1,12 +1,25 @@
 #include "../../include/Controller/MediaFileController.h"
-#include "../../include/Model/MediaFile.h"   // Đảm bảo đường dẫn đúng
-#include "../../include/View/MediaFileView.h"
 
-MediaFileController::MediaFileController(MediaFile* m, MediaFileView& vView)
-    : media(m), view(vView) {}
+MediaFileController::MediaFileController(MetadataManager m, std::shared_ptr<ViewBase> v) : mediaManager(m), mediaView(v){}
 
-void MediaFileController::updateView() {
-    view.displayFileDetails(*media);
+
+void MediaFileController::addData(std::vector<std::string> listPathName){
+    for(std::string v : listPathName){
+
+        std::string check = "";
+        size_t pos = v.rfind('.');
+        if (pos != std::string::npos) {
+            check = v.substr(pos); 
+        }
+        if(check == "mp4"){
+            this->mediaManager.addMediaFile(v, "Video");
+        }
+    }
+}
+
+void MediaFileController::showMediaFile(){
+    std::shared_ptr<ViewBase> view = std::make_shared<MetadataView>();
+    view->showMenu();
 }
 
 //void MediaFileController::setData(int data) {

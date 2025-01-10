@@ -6,11 +6,9 @@ VideoFile::VideoFile(const std::string& fileName, const std::string& pathName, d
     const std::string& codec, int bitrate, const std::string& resolution)
         : MediaFile(fileName, pathName, size, duration, fileType), codec(codec), bitrate(bitrate), resolution(resolution) {}   
 
-// Getters
-std::string VideoFile::getCodec() const { return codec; }
-int VideoFile::getBitrate() const { return bitrate; }
-std::string VideoFile::getResolution() const { return resolution; }
-
+std::string VideoFile::getCodec() { return this->codec;}
+int VideoFile::getBitrate() { return this->bitrate;}
+std::string VideoFile::getResolution() { return this->resolution;}
 
 void VideoFile::inputMediaFile(std::string pathName){
     MediaFile::inputMediaFile(pathName);
@@ -25,6 +23,7 @@ void VideoFile::inputMediaFile(std::string pathName){
     setType("Video File");
    
 }
+
 // Overridden methods
 void VideoFile::detailMediaFile() const {
     MediaFile::detailMediaFile();

@@ -1,19 +1,22 @@
 #ifndef MEDIA_FILE_CONTROLLER_H
 #define MEDIA_FILE_CONTROLLER_H
 
-#include "../Model/MediaFile.h"
-#include "../Model/VideoFile.h"
-#include "../View/MediaFileView.h"
+#include "../Model/MetadataManager.h"
+#include "../View/ViewBase.h"
+#include "../View/MetadataView.h"
 
+#include <memory>
 class MediaFileController {
 private:
-    MediaFile* media; // tao 1 con tro ten media kieu MediaFile
-    MediaFileView& view; // 
+    MetadataManager mediaManager;
+    std::shared_ptr<ViewBase> mediaView; 
 
 public:
-    MediaFileController(MediaFile* m, MediaFileView& vView);
-    void updateView();
-    void setData(int data);
+    MediaFileController(MetadataManager, std::shared_ptr<ViewBase>);
+
+    void addData(std::vector<std::string>);
+
+    void showMediaFile();
 };
 
 #endif 
