@@ -7,8 +7,10 @@ void MetadataManager::addMediaFile( std::string pathName, std::string type)
         std::shared_ptr<MediaFile> mediaFile =  std::make_shared<VideoFile>();
         mediaFile->inputMediaFile(pathName);
         listMediaFiles.push_back(mediaFile);
-    }else{
-
+    }else {
+        std::shared_ptr<MediaFile> mediaFile =  std::make_shared<AudioFile>();
+        mediaFile->inputMediaFile(pathName);
+        listMediaFiles.push_back(mediaFile);
     }
 }
 
@@ -26,6 +28,18 @@ std::vector<std::shared_ptr<MediaFile>> MetadataManager::getAllMediaFile()
 {
     return this->listMediaFiles;
 }
+
+std::vector<std::shared_ptr<MediaFile>> MetadataManager::getAllAudioFiles()
+{
+    std::vector<std::shared_ptr<MediaFile>> audioFiles;
+    for(auto file : listMediaFiles){
+        if(file->getType() == "Audio"){
+            audioFiles.push_back(file);
+        }
+    }
+    return audioFiles;
+}
+
 // void MetadataManager::addMediaFileFromUSB(std::shared_ptr<MediaFile> file) {
 //     listMediaFiles.push_back(file);
 //     std::cout << "Added media file from USB: " << file->getName() << std::endl;

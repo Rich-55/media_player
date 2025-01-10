@@ -4,13 +4,16 @@
 #include "../Model/ModelManager.h"
 #include "../View/CLIManager.h"
 #include "../View/ScanView.h"
+#include "../View/MediaFileManagerView.h"
 #include "../Controller/MediaFileController.h"
 #include "../Controller/MediaScannerController.h"
+
 
 class ControllerManager{
     private:
         ModelManager model;
         CLIManager view;
+        
     public:
         ControllerManager(ModelManager, CLIManager);
         

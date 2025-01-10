@@ -30,7 +30,7 @@ void MediaScannerController::scanView()
             manager.addMediaFile(listPathNames[i], "Audio");  
         }
 
-        std::cout << "File name " << i + 1 << "is added" << fileName << std::endl;   
+        std::cout << "File name " << i + 1 << " is added " << fileName << std::endl;   
            
     }
    

@@ -18,7 +18,7 @@ class ScanView : public ViewBase{
 
         void scanUSBDevices(std::vector<std::string>&) override;
 
-        std::vector<std::string> scanData();
+        // std::vector<std::string> scanData();
 
         void showMenu() override;
 };

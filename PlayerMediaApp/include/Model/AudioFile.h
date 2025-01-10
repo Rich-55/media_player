@@ -17,12 +17,12 @@ class AudioFile : public MediaFile {
         AudioFile(const std::string& , const std::string& , double , const std::string& , const std::string&,
                 const std::string&, const std::string&, const std::string&, const std::string&, int, int);
 
-        std::string getTrackname() const;
-        std::string getAlbum() const;
-        std::string getArtist() const;
-        std::string getGenre() const;
-        int getBitrate() const;
-        int getSampleRate() const;
+        std::string getTrackname() const override;
+        std::string getAlbum() const override;
+        std::string getArtist() const override;
+        std::string getGenre() const override;
+        int getBitrate() override;
+        int getSampleRate() const override;
 
         std::string getType() override;
         

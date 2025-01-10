@@ -36,16 +36,25 @@ public:
     double getSize() const;
     std::string getDuration() const;
 
-    virtual std::string getType() = 0;
-    virtual std::string getCodec() = 0;
-    virtual int getBitrate() = 0;
-    virtual std::string getResolution() = 0;
+    virtual std::string getType();
+    virtual std::string getCodec();
+    virtual int getBitrate();
+    virtual std::string getResolution();
 
     // Virtual methods
     virtual void inputMediaFile(std::string);
     virtual void detailMediaFile() const;
     virtual void editMediaFile();
    // void editMetadata(TagLib::MPEG::File &file, const std::string &key, const std::string &newValue);
+
+
+    // Getter for Audio
+
+    virtual std::string getTrackname() const;
+    virtual std::string getAlbum() const;
+    virtual std::string getArtist() const;
+    virtual std::string getGenre() const;
+    virtual int getSampleRate() const;
 
 };
 #endif

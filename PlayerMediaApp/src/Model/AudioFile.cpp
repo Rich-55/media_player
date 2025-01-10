@@ -10,7 +10,7 @@ std::string AudioFile::getTrackname() const { return trackName; }
 std::string AudioFile::getAlbum() const { return album; }
 std::string AudioFile::getArtist() const { return artist; }
 std::string AudioFile::getGenre() const { return genre; }
-int AudioFile::getBitrate() const { return bitrate; }
+int AudioFile::getBitrate() { return bitrate; }
 int AudioFile::getSampleRate() const { return sampleRate; }
 
 std::string AudioFile::getType() { return "Audio File"; }
@@ -20,8 +20,9 @@ void AudioFile::inputMediaFile(std::string pathName){
 
     TagLib::FileRef file(pathName.c_str());
 
-    if (!file.isNull() && file.tag()) {
-        std::cerr << "Error opening file or accessing tags: " << pathName << std::endl;  
+    if (file.isNull() || !file.tag()) {
+        std::cerr << "Error opening file or accessing tags: " << pathName << std::endl;
+        return;
     }
 
     TagLib::Tag *tag = file.tag();
@@ -58,7 +59,6 @@ void AudioFile::setArtist(const std::string& newArtist) {
 
 void AudioFile::detailMediaFile() const {
     // MediaFile::detailMediaFile();
-
     std::cout << "----- Audio File Details -----" << std::endl;
     std::cout << "File Name:   " << this->getName() << std::endl;
     std::cout << "File Path:   " << this->getPath() << std::endl;

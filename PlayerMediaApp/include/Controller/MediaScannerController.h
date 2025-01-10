@@ -10,6 +10,7 @@ class MediaScannerController{
         std::shared_ptr<ViewBase> scan;
         std::vector<std::string> listPathNames;
         MetadataManager manager;
+        
     public:
         MediaScannerController(std::shared_ptr<ViewBase>, MetadataManager);
 
