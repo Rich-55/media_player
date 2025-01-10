@@ -1,7 +1,7 @@
 # Compiler and flags
 CC = g++
 CFLAGS = -Iinclude -std=c++17 -Wall -Wextra -Werror
-LIBS = -ltag -lstdc++
+LIBS = -ltag -lstdc++ -lncurses
 
 # Directories
 SRC_DIR = src

@@ -2,17 +2,21 @@
 
 ControllerManager::ControllerManager(ModelManager m ,CLIManager v) : model(m), view(v){}
 
-void ControllerManager::ScanData()
-{   
-    std::shared_ptr<ViewBase> scan = std::make_shared<ScanView>();
+void ControllerManager::ScanData() {
+    std::shared_ptr<ViewBase> scanView = view.getView("ScanView");
 
-    view.switchView(scan);
+    if (!scanView) {
+        std::cerr << "Error: ScanView not found!\n";
+        return;
+    }
+    view.switchView("ScanView");
 
-    MediaScannerController scanController(scan, model.getMetadataManager());
+    MediaScannerController scan(model.getMetadataManager(), scanView);
 
-    scanController.scanView();
+    scan.scan();
 }
 
 void ControllerManager::viewAllDataAdded(){
-    
+     
 }
+

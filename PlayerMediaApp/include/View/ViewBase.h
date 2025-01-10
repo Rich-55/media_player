@@ -3,13 +3,14 @@
 #include <vector>
 #include <iostream>
 #include <string>
+#include <functional>
+#include <unordered_map>
 class ViewBase{
     private:
-        
     public:
         ViewBase();
         
-        virtual void showMenu();
+        virtual void showMenu() = 0;
 
         virtual void scanHomeDirectory(std::vector<std::string>&); 
 

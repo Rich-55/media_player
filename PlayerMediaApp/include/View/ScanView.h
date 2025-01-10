@@ -13,13 +13,6 @@ class ScanView : public ViewBase{
 
     public:
         ScanView();
-
-        void scanHomeDirectory(std::vector<std::string>&) override; 
-
-        void scanUSBDevices(std::vector<std::string>&) override;
-
-        std::vector<std::string> scanData();
-
         void showMenu() override;
 };
 #endif

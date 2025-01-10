@@ -9,15 +9,24 @@
 #include "../View/ScanView.h"
 class CLIManager{
     private:
-        std::vector<std::shared_ptr<ViewBase>> listView;
+        std::unordered_map<std::string, std::shared_ptr<ViewBase>> views; 
         std::shared_ptr<ViewBase> currentView;
     public: 
-
+        template <typename T>
+        std::shared_ptr<T> getViewAs(const std::string &name) {
+            auto view = getView(name);
+            return std::dynamic_pointer_cast<T>(view);
+        }
+    
         CLIManager();
 
-        void switchView(std::shared_ptr<ViewBase>);
+        std::shared_ptr<ViewBase> getView(std::string);
 
-        void addView(std::shared_ptr<ViewBase>);
+        void switchView(std::string);
+
+        void addView(const std::string &name, std::shared_ptr<ViewBase> view);
+
+
 
 };
 

@@ -7,13 +7,17 @@
 #include <memory>
 class MediaScannerController{
     private:
-        std::shared_ptr<ViewBase> scan;
-        std::vector<std::string> listPathNames;
-        MetadataManager manager;
+        MetadataManager metadataManager;
+        std::shared_ptr<ViewBase> scanView;
+        std::vector<std::string> listPaths;
+        
     public:
-        MediaScannerController(std::shared_ptr<ViewBase>, MetadataManager);
+        MediaScannerController(MetadataManager, std::shared_ptr<ViewBase>);
 
-        void scanView();
+        void scanUSBDevices(std::vector<std::string>&);
+        void scanHomeDirectory(std::vector<std::string>&);
+
+        void scan();
 
 };
 
