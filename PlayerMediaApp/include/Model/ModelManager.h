@@ -10,6 +10,8 @@ class ModelManager{
         ModelManager();
 
         void addMetaData(std::vector<std::string>);
+
+        MetadataManager getMetadataManager();
 };
 
 

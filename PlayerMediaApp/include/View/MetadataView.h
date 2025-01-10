@@ -12,7 +12,8 @@ class MetadataView : public ViewBase{
 
         void showMetadata(std::shared_ptr<MediaFile>);
 
-        void showAllMetadata(MetadataManager);
+        void showMenu() override;
+
 };
 
 #endif

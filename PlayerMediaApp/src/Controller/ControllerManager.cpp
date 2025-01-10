@@ -8,13 +8,11 @@ void ControllerManager::ScanData()
 
     view.switchView(scan);
 
-    MediaScannerController scanController(scan);
-    this->listPathNames = scanController.scanView();
-    for(size_t i = 0; i < listPathNames.size(); i++){
-        std::cout << "path Name " << i + 1 << " : " << listPathNames[i] << std::endl;
-    }
+    MediaScannerController scanController(scan, model.getMetadataManager());
+
+    scanController.scanView();
 }
 
-void ControllerManager::addData(){
-
+void ControllerManager::viewAllDataAdded(){
+    
 }

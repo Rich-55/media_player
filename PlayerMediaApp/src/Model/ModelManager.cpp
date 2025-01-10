@@ -6,3 +6,6 @@ ModelManager::ModelManager(){}
 
 // }
 
+MetadataManager ModelManager::getMetadataManager(){
+    return this->metadataManager;
+}

@@ -1,5 +1,5 @@
 #include "../../include/Model/MediaFile.h"
-#include <iostream>
+
 MediaFile::MediaFile(){}
 MediaFile::MediaFile(const std::string& fileName, const std::string& pathName, double size, const std::string& duration, const std::string& fileType)
     : fileName(fileName), pathName(pathName), size(size), duration(duration), fileType(fileType) {}
@@ -45,3 +45,5 @@ void MediaFile::editMediaFile() {
 // void MediaFile::editMetadata(TagLib::MPEG::File &file, const std::string &key, const std::string &newValue) {
 
 // }
+
+// void MediaFile::editMetadata(TagLib::MPEG::File &file, const std::string &key, const std::string &newValue) {}

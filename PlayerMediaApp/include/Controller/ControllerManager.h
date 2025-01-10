@@ -11,13 +11,12 @@ class ControllerManager{
     private:
         ModelManager model;
         CLIManager view;
-        std::vector<std::string> listPathNames;
     public:
         ControllerManager(ModelManager, CLIManager);
         
         void ScanData();
 
-        void addData();
+        void viewAllDataAdded();
 
 };
 

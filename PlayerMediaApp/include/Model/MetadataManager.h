@@ -8,7 +8,7 @@
 #include "../Model/VideoFile.h"
 class MetadataManager{
     private:
-        std::vector<std::shared_ptr<MediaFile>> listMedias;
+        std::vector<std::shared_ptr<MediaFile>> listMediaFiles;
     public:
         MetadataManager();
 
@@ -23,3 +23,5 @@ class MetadataManager{
 };
 
 #endif
+
+

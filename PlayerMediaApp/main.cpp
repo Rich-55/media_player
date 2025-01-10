@@ -10,5 +10,7 @@ int main() {
 
     controller.ScanData();
 
+    controller.viewAllDataAdded();
+
     return 0;
 }
