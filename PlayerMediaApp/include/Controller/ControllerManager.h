@@ -13,7 +13,7 @@ class ControllerManager{
     private:
         ModelManager model;
         CLIManager view;
-        
+        std::unique_ptr<MediaScannerController> scannerController;
     public:
         ControllerManager(ModelManager, CLIManager);
         

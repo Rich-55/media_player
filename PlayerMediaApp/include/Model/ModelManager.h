@@ -9,9 +9,12 @@ class ModelManager{
     public:
         ModelManager();
 
-        void addMetaData(std::vector<std::string>);
+        //void addMetaData(std::vector<std::string>);
 
-        MetadataManager getMetadataManager();
+        MetadataManager &getMetadataManager();
+
+        void showdata();
+
 };
 
 

@@ -1,6 +1,6 @@
 #include "../../include/Controller/MediaScannerController.h"
 
-MediaScannerController::MediaScannerController(MetadataManager metadataManager, std::shared_ptr<ViewBase> scanView): metadataManager(metadataManager), scanView(scanView){}
+MediaScannerController::MediaScannerController(MetadataManager& metadataManager, std::shared_ptr<ViewBase> scanView): metadataManager(metadataManager), scanView(scanView){}
 
 bool has_extension(const std::string &filename, const std::string &extension) {
     if (filename.size() >= extension.size()) {
@@ -81,7 +81,6 @@ void MediaScannerController::scanHomeDirectory(std::vector<std::string>& listPat
         return;
     }
 
-    // Hiển thị danh sách các thư mục trong Home và yêu cầu người dùng chọn
     std::cout << "Folders in Home:\n";
     for (size_t i = 0; i < folders.size(); ++i) {
         std::cout << i + 1 << ". " << folders[i] << '\n';
@@ -104,7 +103,6 @@ void MediaScannerController::scanUSBDevices(std::vector<std::string>& listPathNa
     std::string usb_base_path = "/media/" + std::string(std::getenv("USER"));
     std::cout << "Scanning USB devices at: " << usb_base_path << std::endl;
 
-    // Lấy danh sách các thiết bị USB
     std::vector<std::string> usb_devices = list_folders(usb_base_path);
 
     if (usb_devices.empty()) {
@@ -123,7 +121,6 @@ void MediaScannerController::scanUSBDevices(std::vector<std::string>& listPathNa
         std::cout << i + 1 << ". " << usb_name << '\n';
     }
 
-    // Yêu cầu người dùng chọn USB để quét
     int choice = 0;
     std::cout << "Enter the number of the USB you want to scan: ";
     std::cin >> choice;
@@ -136,7 +133,6 @@ void MediaScannerController::scanUSBDevices(std::vector<std::string>& listPathNa
     std::string selected_usb = usb_devices[choice - 1];
     std::vector<std::string> folders = list_folders(selected_usb);
 
-    // Quét các thư mục và tập tin trong USB đã chọn
     for (const auto& folder : folders) {
         std::vector<std::string> media_files = list_media_files(folder);
         listPathNames.insert(listPathNames.end(), media_files.begin(), media_files.end());

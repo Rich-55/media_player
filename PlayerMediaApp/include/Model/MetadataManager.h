@@ -15,6 +15,8 @@ class MetadataManager{
 
         void addMediaFile(std::string, std::string);
 
+        void getData();
+
         void editMediaFile(std::shared_ptr<MediaFile>);
 
         void deleteMediaFile(std::shared_ptr<MediaFile>);

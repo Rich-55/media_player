@@ -4,6 +4,7 @@ MetadataManager::MetadataManager(){}
 void MetadataManager::addMediaFile( std::string pathName, std::string type)
 {   
     if(type == "Video"){
+        std::cout << "adding data" << std::endl;
         std::shared_ptr<MediaFile> mediaFile =  std::make_shared<VideoFile>();
         mediaFile->inputMediaFile(pathName);
         listMediaFiles.push_back(mediaFile);
@@ -12,6 +13,12 @@ void MetadataManager::addMediaFile( std::string pathName, std::string type)
         mediaFile->inputMediaFile(pathName);
         listMediaFiles.push_back(mediaFile);
     }
+}
+
+void MetadataManager::getData(){
+    std::shared_ptr<MediaFile> file = listMediaFiles[0];
+    std::cout << file->getName();
+    
 }
 
 // void MetadataManager::editMediaFile(std::shared_ptr<MediaFile> mediaFile)

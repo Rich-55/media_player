@@ -1,30 +1,32 @@
 #include "../../include/Controller/ControllerManager.h"
 
-ControllerManager::ControllerManager(ModelManager m ,CLIManager v) : model(m), view(v){}
+ControllerManager::ControllerManager(ModelManager m, CLIManager v) : model(m), view(v),  scannerController(nullptr){}
 
 void ControllerManager::ScanData() {
     std::shared_ptr<ViewBase> scanView = view.getView("ScanView");
 
-    if (!scanView) {
-        std::cerr << "Error: ScanView not found!\n";
-        return;
-    }
     view.switchView("ScanView");
 
-    MediaScannerController scan(model.getMetadataManager(), scanView);
+    if (!scannerController) {
+        scannerController = std::make_unique<MediaScannerController>(model.getMetadataManager(), scanView);
+    }
 
-    scan.scan();
+    scannerController->scan();
+
 }
 
-void ControllerManager::viewAllDataAdded()
-{
-    std::shared_ptr<ViewBase> viewMediaFileManager = std::make_shared<MediaFileManagerView>();
+void ControllerManager::viewAllDataAdded() {
+    std::shared_ptr<ViewBase> mediaFileManagerView = view.getView("MediaFileManagerView");
+    
+    if (!mediaFileManagerView) {
+        std::cerr << "Error: MediaFileManagerView not found or failed to initialize.\n";
+        return;
+    }
 
-    view.switchView(viewMediaFileManager);
+    view.switchView("MediaFileManagerView");
 
-
-    MediaFileController fileController(model.getMetadataManager(), viewMediaFileManager);
-
+    MediaFileController fileController(model.getMetadataManager(), mediaFileManagerView);
+    
     fileController.showMediaFile();
-
 }
+

@@ -6,6 +6,10 @@ ModelManager::ModelManager(){}
 
 // }
 
-MetadataManager ModelManager::getMetadataManager(){
+MetadataManager &ModelManager::getMetadataManager(){
     return this->metadataManager;
+}
+
+void ModelManager::showdata(){
+    metadataManager.getData();
 }

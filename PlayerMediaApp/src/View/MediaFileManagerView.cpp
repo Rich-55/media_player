@@ -1,6 +1,8 @@
 #include "../../include/View/MediaFileManagerView.h"
 
-MediaFileManagerView::MediaFileManagerView(){}
+MediaFileManagerView::MediaFileManagerView(){
+    std::cout <<"added" << std::endl;
+}
 
 void MediaFileManagerView::showMenu() {
     std::cout << "========== Media File Menu ==========" << std::endl;
@@ -13,6 +15,10 @@ void MediaFileManagerView::showMenu() {
 }
 
 void MediaFileManagerView::displayAllMediaFile(MetadataManager metadataManager){
+     if (metadataManager.getAllMediaFile().empty()) {
+        std::cerr << "No media files to display.\n";
+        return;
+    }
     for (auto file : metadataManager.getAllMediaFile()) {
         std::cout << "----- Media Files -----" << std::endl;
         std::cout << "File Name:   " << file->getName() << std::endl;
