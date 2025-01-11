@@ -16,7 +16,15 @@ void ControllerManager::ScanData() {
     scan.scan();
 }
 
-void ControllerManager::viewAllDataAdded(){
-     
-}
+void ControllerManager::viewAllDataAdded()
+{
+    std::shared_ptr<ViewBase> viewMediaFileManager = std::make_shared<MediaFileManagerView>();
 
+    view.switchView(viewMediaFileManager);
+
+
+    MediaFileController fileController(model.getMetadataManager(), viewMediaFileManager);
+
+    fileController.showMediaFile();
+
+}

@@ -2,7 +2,6 @@
 
 MediaFileController::MediaFileController(MetadataManager m, std::shared_ptr<ViewBase> v) : mediaManager(m), mediaView(v){}
 
-
 void MediaFileController::addData(std::vector<std::string> listPathName){
     for(std::string v : listPathName){
 
@@ -13,13 +12,18 @@ void MediaFileController::addData(std::vector<std::string> listPathName){
         }
         if(check == "mp4"){
             this->mediaManager.addMediaFile(v, "Video");
+        } else {
+            this->mediaManager.addMediaFile(v, "Audio");  
         }
+        
     }
 }
 
 void MediaFileController::showMediaFile(){
-    std::shared_ptr<ViewBase> view = std::make_shared<MetadataView>();
-    view->showMenu();
+    
+    mediaView->displayAllMediaFile(mediaManager);
+    
+
 }
 
 //void MediaFileController::setData(int data) {

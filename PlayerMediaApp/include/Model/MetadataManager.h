@@ -6,6 +6,7 @@
 #include <string>
 #include "../Model/MediaFile.h"
 #include "../Model/VideoFile.h"
+#include "../Model/AudioFile.h"
 class MetadataManager{
     private:
         std::vector<std::shared_ptr<MediaFile>> listMediaFiles;
@@ -19,6 +20,8 @@ class MetadataManager{
         void deleteMediaFile(std::shared_ptr<MediaFile>);
 
         std::vector<std::shared_ptr<MediaFile>> getAllMediaFile();
+
+        std::vector<std::shared_ptr<MediaFile>> getAllAudioFiles();
     
 };
 

@@ -2,9 +2,9 @@
 #define METADATA_VIEW_H
 #include "../Model/MetadataManager.h"
 #include "../Model/MediaFile.h"
-#include "../View/ViewBase.h"
+#include "../View/BaseCurrentPlayView.h"
 
-class MetadataView : public ViewBase{
+class MetadataView : public BaseCurrentPlayView{
     private:
 
     public:

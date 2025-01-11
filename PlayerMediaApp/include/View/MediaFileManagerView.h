@@ -14,12 +14,18 @@ private:
 public:
 
     MediaFileManagerView();
+
+    // void displayAllMediaFile(MetadataManager) ;
+
+    // void displayAllMediaFileOfAudio(MetadataManager);
+
+    // void displayAllMediaFileOfVideo(MetadataManager);
     
-    void displayAllMediaFile(MetadataManager);
+    void displayAllMediaFile(MetadataManager) override;
 
-    void displayAllMediaFileOfAudio(MetadataManager);
+    void displayAllMediaFileOfAudio(MetadataManager) override;
 
-    void displayAllMediaFileOfVideo(MetadataManager);
+    void displayAllMediaFileOfVideo(MetadataManager) override;
 
     void showMenu() override;
 
