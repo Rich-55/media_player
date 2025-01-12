@@ -15,6 +15,7 @@ void MediaFile::setType(std::string type){
     this->fileType = type;
 }
 
+
 void MediaFile::inputMediaFile(std::string pathName){
     TagLib::FileRef file(pathName.c_str());
     TagLib::AudioProperties *audioProps = file.audioProperties();
@@ -41,6 +42,42 @@ void MediaFile::detailMediaFile() const {
 void MediaFile::editMediaFile() {
     std::cout << "Editing media file: " << fileName << std::endl;
 }
+
+std::string MediaFile::getType() {
+    return "";
+}
+
+std::string MediaFile::getCodec() {
+    return "";
+}
+
+int MediaFile::getBitrate() {
+    return 0;
+}
+
+std::string MediaFile::getResolution() {
+    return "";
+}
+
+std::string MediaFile::getTitle() const {
+    return "";
+}
+
+std::string MediaFile::getAlbum() const {
+    return "";
+}
+
+std::string MediaFile::getArtist() const {
+    return "";
+}
+
+int MediaFile::getYear() const {
+    return 0;
+}
+
+
+ // Tạo đối tượng TagLib::MPEG::File từ đường dẫn tệp
+
 // Phương thức chỉnh sửa metadata
 // void MediaFile::editMetadata(TagLib::MPEG::File &file, const std::string &key, const std::string &newValue) {
 

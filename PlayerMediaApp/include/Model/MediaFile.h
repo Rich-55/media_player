@@ -19,13 +19,14 @@ private:
     double size;
     std::string duration;
     std::string fileType;
+
 protected:
     void setType(std::string);
+
 public:
     // Constructor
     MediaFile();
-    MediaFile(const std::string& , const std::string& , double , const std::string& , const std::string& );
-
+    MediaFile(const std::string& , const std::string& , double , const std::string&, const std::string&);
 
     // Virtual Destructor
     virtual ~MediaFile();
@@ -36,13 +37,27 @@ public:
     double getSize() const;
     std::string getDuration() const;
 
-    virtual std::string getType() = 0;
+    // Virtual method to get type
+    virtual std::string getType();
+    virtual std::string getCodec ();
+    virtual int getBitrate ();
+    virtual std::string getResolution ();
 
-    // Virtual methods
+    // Getters for metadata
+    virtual std::string getTitle() const;
+    virtual std::string getArtist() const;
+    virtual std::string getAlbum() const;
+    virtual int getYear() const;
+
+    // Virtual methods for file operations
     virtual void inputMediaFile(std::string);
     virtual void detailMediaFile() const;
     virtual void editMediaFile();
+
+    virtual void addNewKey(const std::string& key, const std::string& value) = 0;
+    virtual void editKey(const std::string& key, const std::string& newValue) = 0;
+    virtual void deleteKey(const std::string& key) = 0;
+};
    // void editMetadata(TagLib::MPEG::File &file, const std::string &key, const std::string &newValue);
 
-};
 #endif

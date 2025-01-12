@@ -5,6 +5,7 @@
 #include <memory>
 #include <string>
 #include "MediaFile.h"
+#include "../Model/VideoFile.h"
 
 // MetadataManager (Model)
 class MetadataManager {
@@ -13,12 +14,17 @@ private:
 
 public:
     MetadataManager(); // Khai báo hàm khởi tạo mặc định
-    ~MetadataManager(); // (Tùy chọn) khai báo hàm hủy
+      ~MetadataManager(); // Khai báo destructor
 
-    void addMediaFile(std::shared_ptr<MediaFile> file);
-    void removeMediaFile(std::shared_ptr<MediaFile> file);
-    void editMediaFile(std::shared_ptr<MediaFile> file);
-    void displayAllMediaFiles() const;
+    std::vector<std::shared_ptr<MediaFile>> getAllMediaFile();
+    std::vector<std::shared_ptr<MediaFile>> getAllVideoFiles();
+
+    void getData();
+    void addMediaFile(std::string, std::string);
+    void removeMediaFile(std::shared_ptr<MediaFile>);
+    void editMediaFile(std::shared_ptr<MediaFile>);
+    
+    
 };
 
 #endif // METADATA_MANAGER_H

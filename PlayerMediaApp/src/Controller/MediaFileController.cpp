@@ -1,25 +1,30 @@
 #include "../../include/Controller/MediaFileController.h"
-#include "../../include/Model/MediaFile.h"   // Đảm bảo đường dẫn đúng
-#include "../../include/View/MediaFileView.h"
 
-// MediaFileController class implementation (Controller)
-MediaFileController::MediaFileController(MetadataManager& m, MediaFileView& v)
-    : model(m), view(v) {}
+MediaFileController::MediaFileController(MetadataManager m, std::shared_ptr<ViewBase> v) : mediaManager(m), mediaView(v){}
 
-void MediaFileController::updateView() {
-    model.displayAllMediaFiles();
+void MediaFileController::addData(std::vector<std::string> listPathName){
+    for(std::string v : listPathName){
+
+        std::string check = "";
+        size_t pos = v.rfind('.');
+        if (pos != std::string::npos) {
+            check = v.substr(pos); 
+        }
+        if(check == "mp4"){
+            this->mediaManager.addMediaFile(v, "Video");
+        } else {
+            this->mediaManager.addMediaFile(v, "Audio");  
+        }
+        
+    }
 }
 
-void MediaFileController::addMediaFile(std::shared_ptr<MediaFile> file) {
-    model.addMediaFile(file);
+void MediaFileController::showMediaFile(){
+    
+    mediaView->displayAllMediaFile(mediaManager);
+    
+
 }
 
-void MediaFileController::removeMediaFile(std::shared_ptr<MediaFile> file) {
-    model.removeMediaFile(file);
-}
-
-void MediaFileController::editMediaFile(std::shared_ptr<MediaFile> file) {
-    model.editMediaFile(file);
-}
-
-
+//void MediaFileController::setData(int data) {
+    // Logic for setting data for media or video
