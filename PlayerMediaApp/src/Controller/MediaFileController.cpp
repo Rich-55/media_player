@@ -1,29 +1,46 @@
 #include "../../include/Controller/MediaFileController.h"
 
-MediaFileController::MediaFileController(MetadataManager m, std::shared_ptr<ViewBase> v) : mediaManager(m), mediaView(v){}
+MediaFileController::MediaFileController(MetadataManager& m, std::shared_ptr<ViewBase> v) : mediaManager(m), mediaView(v){}
 
-void MediaFileController::addData(std::vector<std::string> listPathName){
-    for(std::string v : listPathName){
+void MediaFileController::addData(const std::unordered_set<std::string> &listPathName) {
+    int index = 1;
+    for (const auto &path : listPathName) {
+        size_t lastSlashPos = path.find_last_of("/");
+        std::string fileName = (lastSlashPos != std::string::npos) ? path.substr(lastSlashPos + 1) : path;
 
-        std::string check = "";
-        size_t pos = v.rfind('.');
-        if (pos != std::string::npos) {
-            check = v.substr(pos); 
-        }
-        if(check == "mp4"){
-            this->mediaManager.addMediaFile(v, "Video");
+        size_t lastDotPos = path.find_last_of(".");
+        std::string extension = (lastDotPos != std::string::npos) ? path.substr(lastDotPos + 1) : "";
+
+        if (extension == "mp4") {
+            mediaManager.addMediaFile(path, "Video");
+        } else if (extension == "mp3") {
+            mediaManager.addMediaFile(path, "Audio");
         } else {
-            this->mediaManager.addMediaFile(v, "Audio");  
+            std::cerr << "Unsupported file type: " << fileName << '\n';
+            continue;
         }
-        
+
+        std::cout << "File " << index++ << " is added: " << fileName << std::endl;
     }
 }
 
-void MediaFileController::showMediaFile(){
+
+void MediaFileController::showAllMediaFile(){
     
     mediaView->displayAllMediaFile(mediaManager);
     
+}
 
+void MediaFileController::showAllMediaFileOfVideo(){
+    
+    mediaView->displayAllMediaFileOfVideo(mediaManager);
+    
+}
+
+void MediaFileController::showAllMediaFileOfAudio(){
+    
+    mediaView->displayAllMediaFileOfAudio(mediaManager);
+    
 }
 
 //void MediaFileController::setData(int data) {

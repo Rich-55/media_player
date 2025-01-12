@@ -14,12 +14,13 @@ class ControllerManager{
         ModelManager model;
         CLIManager view;
         std::unique_ptr<MediaScannerController> scannerController;
+        std::unique_ptr<MediaFileController> mediaFileController;
     public:
         ControllerManager(ModelManager, CLIManager);
         
         void ScanData();
 
-        void viewAllDataAdded();
+        void metadataFileHandler();
 
 };
 

@@ -2,6 +2,10 @@
 
 MediaScannerController::MediaScannerController(MetadataManager& metadataManager, std::shared_ptr<ViewBase> scanView): metadataManager(metadataManager), scanView(scanView){}
 
+std::unordered_set<std::string> MediaScannerController::getListPaths(){
+    return listPaths;
+}
+
 bool has_extension(const std::string &filename, const std::string &extension) {
     if (filename.size() >= extension.size()) {
         return (filename.compare(filename.size() - extension.size(), extension.size(), extension) == 0);
@@ -66,7 +70,7 @@ std::vector<std::string> scan_all_folders(const std::string &path) {
     return all_media_files;
 }
 
-void MediaScannerController::scanHomeDirectory(std::vector<std::string>& listPathNames) {
+void MediaScannerController::scanHomeDirectory() {
     const char *home = std::getenv("HOME");
     if (!home) {
         std::cerr << "Unable to determine HOME directory.\n";
@@ -74,8 +78,8 @@ void MediaScannerController::scanHomeDirectory(std::vector<std::string>& listPat
     }
 
     std::string home_path = std::string(home);
-
     std::vector<std::string> folders = list_folders(home_path);
+
     if (folders.empty()) {
         std::cerr << "No folders found in Home directory.\n";
         return;
@@ -96,10 +100,27 @@ void MediaScannerController::scanHomeDirectory(std::vector<std::string>& listPat
     }
 
     std::string selected_folder = folders[choice - 1];
-    listPathNames = list_media_files(selected_folder); 
+    std::vector<std::string> media_files = list_media_files(selected_folder);
+
+    // Chỉ thêm các tệp mới vào `listPaths`
+    for (const auto &file : media_files) {
+        if (listPaths.find(file) == listPaths.end()) {
+            listPaths.insert(file);
+            std::cout << "Adding file: " << file << '\n';
+        }
+    }
+
+    if (listPaths.empty()) {
+        std::cerr << "No media files found in the selected folder.\n";
+    } else {
+        std::cout << "Media files found: \n";
+        for (const auto &path : listPaths) {
+            std::cout << "- " << path << '\n';
+        }
+    }
 }
 
-void MediaScannerController::scanUSBDevices(std::vector<std::string>& listPathNames) {
+void MediaScannerController::scanUSBDevices() {
     std::string usb_base_path = "/media/" + std::string(std::getenv("USER"));
     std::cout << "Scanning USB devices at: " << usb_base_path << std::endl;
 
@@ -110,7 +131,6 @@ void MediaScannerController::scanUSBDevices(std::vector<std::string>& listPathNa
         return;
     }
 
-    // Hiển thị tên các USB
     std::cout << "USB Devices:\n";
     for (size_t i = 0; i < usb_devices.size(); ++i) {
         size_t lastSlashPos = usb_devices[i].find_last_of("/");
@@ -133,43 +153,22 @@ void MediaScannerController::scanUSBDevices(std::vector<std::string>& listPathNa
     std::string selected_usb = usb_devices[choice - 1];
     std::vector<std::string> folders = list_folders(selected_usb);
 
-    for (const auto& folder : folders) {
-        std::vector<std::string> media_files = list_media_files(folder);
-        listPathNames.insert(listPathNames.end(), media_files.begin(), media_files.end());
-    }
-}
-
-
-void MediaScannerController::scan()
-{
-    int choice = 0;
-    std::cin >> choice;
-
-    if (choice == 1) {
-        scanHomeDirectory(this->listPaths);
-    } else if (choice == 2) {
-        scanUSBDevices(this->listPaths);
-    } else {
-        std::cerr << "Invalid menu choice.\n";
-    }
-    
-    for(size_t i = 0; i < listPaths.size(); ++i){
-        std::string path = listPaths[i];
-         size_t lastSlashPos = path.find_last_of("/");
-
-        std::string fileName = (lastSlashPos != std::string::npos) ? path.substr(lastSlashPos + 1) : path;
-
-        size_t lastDotPos = path.find_last_of(".");
-        std::string extension = (lastDotPos != std::string::npos) ? path.substr(lastDotPos + 1) : "";
-
-        if(extension == "mp4"){
-            metadataManager.addMediaFile(listPaths[i], "Video");  
-        }else{
-            metadataManager.addMediaFile(listPaths[i], "Audio");  
+    for (const auto &folder : folders) {
+        std::vector<std::string> files_in_folder = list_media_files(folder);
+        for (const auto &file : files_in_folder) {
+            if (listPaths.find(file) == listPaths.end()) {
+                listPaths.insert(file);
+                std::cout << "Adding file: " << file << '\n';
+            }
         }
-
-        std::cout << "File name " << i + 1 << " is added " << fileName << std::endl;   
-           
     }
-   
+
+    if (listPaths.empty()) {
+        std::cerr << "No media files found on the selected USB device.\n";
+    } else {
+        std::cout << "Media files found: \n";
+        for (const auto &path : listPaths) {
+            std::cout << "- " << path << '\n';
+        }
+    }
 }

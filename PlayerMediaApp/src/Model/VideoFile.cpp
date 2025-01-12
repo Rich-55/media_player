@@ -20,7 +20,7 @@ void VideoFile::inputMediaFile(std::string pathName){
     this->codec = "h264";
     this->bitrate = audioProps->bitrate();
     this->resolution = "1280x720";
-    setType("Video File");
+    setType("Video");
    
 }
 
@@ -38,5 +38,5 @@ void VideoFile::editMediaFile() {
 }
 
 std::string VideoFile::getType() {
-    return "Video File";
+    return "Video";
 }

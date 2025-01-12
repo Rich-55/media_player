@@ -3,8 +3,19 @@ MetadataManager::MetadataManager(){}
 
 void MetadataManager::addMediaFile( std::string pathName, std::string type)
 {   
-    if(type == "Video"){
-        std::cout << "adding data" << std::endl;
+    if(listPaths.empty()){
+        listPaths.insert(pathName);
+    }else{
+        if(listPaths.find(pathName) == listPaths.end()){
+            listPaths.insert(pathName);
+        }else{
+            std::cerr << "File already exists!";
+            return;
+        }
+    }
+
+
+    if(type == "Video"){        
         std::shared_ptr<MediaFile> mediaFile =  std::make_shared<VideoFile>();
         mediaFile->inputMediaFile(pathName);
         listMediaFiles.push_back(mediaFile);

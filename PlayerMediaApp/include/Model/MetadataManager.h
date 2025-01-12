@@ -4,12 +4,14 @@
 #include <iostream>
 #include <memory>
 #include <string>
+#include <unordered_set>
 #include "../Model/MediaFile.h"
 #include "../Model/VideoFile.h"
 #include "../Model/AudioFile.h"
 class MetadataManager{
     private:
         std::vector<std::shared_ptr<MediaFile>> listMediaFiles;
+        std::unordered_set<std::string> listPaths;
     public:
         MetadataManager();
 

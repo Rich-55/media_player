@@ -5,19 +5,22 @@
 #include "../Model/MetadataManager.h"
 #include "../View/ViewBase.h"
 #include <memory>
+#include <unordered_set>
 class MediaScannerController{
     private:
         MetadataManager& metadataManager;
         std::shared_ptr<ViewBase> scanView;
-        std::vector<std::string> listPaths;
+        std::unordered_set<std::string> listPaths;
         
     public:
         MediaScannerController(MetadataManager&, std::shared_ptr<ViewBase>);
 
-        void scanUSBDevices(std::vector<std::string>&);
-        void scanHomeDirectory(std::vector<std::string>&);
+        std::unordered_set<std::string> getListPaths();
 
-        void scan();
+        void scanUSBDevices();
+        void scanHomeDirectory();
+
+
 
 };
 

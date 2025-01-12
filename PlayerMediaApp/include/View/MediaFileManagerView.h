@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <vector>
+#include <iomanip>
 #include "../View/ViewBase.h"
 #include "../Model/MediaFile.h"
 #include "../Model/AudioFile.h"
@@ -14,12 +15,6 @@ private:
 public:
 
     MediaFileManagerView();
-
-    // void displayAllMediaFile(MetadataManager) ;
-
-    // void displayAllMediaFileOfAudio(MetadataManager);
-
-    // void displayAllMediaFileOfVideo(MetadataManager);
     
     void displayAllMediaFile(MetadataManager) override;
 
