@@ -4,6 +4,9 @@
 #include "../Model/MetadataManager.h"
 #include "../View/ViewBase.h"
 #include "../View/MetadataView.h"
+#include "../Model/MetadataManager.h"
+#include "../View/ViewBase.h"
+#include "../View/MetadataView.h"
 
 #include <memory>
 class MediaFileController {
