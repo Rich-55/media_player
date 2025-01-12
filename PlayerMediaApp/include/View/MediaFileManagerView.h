@@ -17,9 +17,7 @@ public:
     MediaFileManagerView();
     
     void displayAllMediaFile(MetadataManager) override;
-
     void displayAllMediaFileOfAudio(MetadataManager) override;
-
     void displayAllMediaFileOfVideo(MetadataManager) override;
 
     void showMenu() override;

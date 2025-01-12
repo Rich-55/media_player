@@ -4,9 +4,10 @@ MediaFileManagerView::MediaFileManagerView(){}
 
 void MediaFileManagerView::showMenu() {
     std::cout << "========== Media File Menu ==========" << std::endl;
-    std::cout << "1. View All Media File" << std::endl;
-    std::cout << "2. View All Audio Media File" << std::endl;
-    std::cout << "3. View All Video Media File" << std::endl;
+    std::cout << "1. Delete File" << std::endl;
+    std::cout << "2. View All Media File" << std::endl;
+    std::cout << "3. View All Audio Media File" << std::endl;
+    std::cout << "4. View All Video Media File" << std::endl;
     std::cout << "0. Back to main menu" << std::endl;
     std::cout << "--------------------------------------------------" << std::endl;
     std::cout << "Enter your choice: ";
@@ -23,6 +24,7 @@ void MediaFileManagerView::displayAllMediaFile(MetadataManager metadataManager){
         std::cout << "File Path:   " << file->getPath() << std::endl;
         std::cout << "File Type:   " << file->getType() << std::endl;
         std::cout << "File Size:   " << file->getSize() << " bytes" << std::endl;
+        std::cout << "File Duration:   " << file->getDuration() << std::endl;
         std::cout << "------------------------------" << std::endl;
     }
 }

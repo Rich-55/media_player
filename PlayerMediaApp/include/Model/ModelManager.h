@@ -9,14 +9,11 @@ class ModelManager{
         MetadataManager metadataManager;
     public:
         ModelManager();
-
-        //void addMetaData(std::vector<std::string>);
-
+    
         MetadataManager &getMetadataManager();
 
         std::shared_ptr<MediaFile> getMediaFile(std::string);
 
-        void showdata();
 
 };
 

@@ -4,9 +4,9 @@ MediaFileHandlerView::MediaFileHandlerView(){}
 
 void MediaFileHandlerView::showMenu() {
     std::cout << "========== Media File Menu ==========" << std::endl;
-    std::cout << "1. Edit MediaFile" << std::endl;
-    std::cout << "2. Add new key" << std::endl;
-    std::cout << "3. Delete key" << std::endl;
+    std::cout << "1. Add metadata" << std::endl;
+    std::cout << "2. Edit metadata" << std::endl;
+    std::cout << "3. Delete metadata" << std::endl;
     std::cout << "0. Back to main menu" << std::endl;
     std::cout << "--------------------------------------------------" << std::endl;
     std::cout << "Enter your choice: ";
@@ -31,7 +31,7 @@ void MediaFileHandlerView::displayDetailMediaFile(std::shared_ptr<MediaFile> med
     std::cout << std::string(50, '-') << std::endl;
 }
 
-void MediaFileHandlerView::displayMenuEditMediaFile(std::shared_ptr<MediaFile> mediaFile)
+void MediaFileHandlerView::displayMenuEditMetadata(std::shared_ptr<MediaFile> mediaFile)
 {
     if(mediaFile->getType() == "Audio"){
         std::cout << "Editing media file: " << mediaFile->getName() << ": " << std::endl;
@@ -47,7 +47,7 @@ void MediaFileHandlerView::displayMenuEditMediaFile(std::shared_ptr<MediaFile> m
 
 }
 
-void MediaFileHandlerView::displayMenuAddNewKey(std::shared_ptr<MediaFile> mediaFile){
+void MediaFileHandlerView::displayMenuAddMetadata(std::shared_ptr<MediaFile> mediaFile){
     std::cout << "Add new key media file: " << mediaFile->getName() << ": " << std::endl;
     //list key can be added in taglib 
     std::cout << "List key can be added in taglib: " << std::endl;;
@@ -63,7 +63,7 @@ void MediaFileHandlerView::displayMenuAddNewKey(std::shared_ptr<MediaFile> media
     
 }
 
-void MediaFileHandlerView::displayMenuDeleteKey(std::shared_ptr<MediaFile> mediaFile){
+void MediaFileHandlerView::displayMenuDeleteMetadata(std::shared_ptr<MediaFile> mediaFile){
     std::cout << "Delete key media file: " << mediaFile->getName() << std::endl;
     std::cout << "List key can be delete in taglib: " << std::endl;;
     std::cout << "title" << std::endl;

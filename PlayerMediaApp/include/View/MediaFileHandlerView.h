@@ -10,12 +10,9 @@ class MediaFileHandlerView : public ViewBase {
         void showMenu() override;
 
         void displayDetailMediaFile(std::shared_ptr<MediaFile> ) override;
-
-        void displayMenuEditMediaFile(std::shared_ptr<MediaFile> ) override;
-
-        void displayMenuAddNewKey(std::shared_ptr<MediaFile> ) override;
-
-        void displayMenuDeleteKey(std::shared_ptr<MediaFile> ) override;
+        void displayMenuAddMetadata(std::shared_ptr<MediaFile> ) override;
+        void displayMenuEditMetadata(std::shared_ptr<MediaFile> ) override;
+        void displayMenuDeleteMetadata(std::shared_ptr<MediaFile> ) override;
 
 
 };

@@ -3,7 +3,6 @@
 MediaFileManagerController::MediaFileManagerController(MetadataManager& m, std::shared_ptr<ViewBase> v) : mediaManager(m), mediaFileManagerView(v){}
 
 void MediaFileManagerController::addData(const std::unordered_set<std::string> &listPathName) {
-    int index = 1;
     for (const auto &path : listPathName) {
         size_t lastSlashPos = path.find_last_of("/");
         std::string fileName = (lastSlashPos != std::string::npos) ? path.substr(lastSlashPos + 1) : path;
@@ -19,11 +18,12 @@ void MediaFileManagerController::addData(const std::unordered_set<std::string> &
             std::cerr << "Unsupported file type: " << fileName << '\n';
             continue;
         }
-
-        std::cout << "File " << index++ << " is added: " << fileName << std::endl;
     }
 }
 
+void MediaFileManagerController::deleteData(std::string fileName) {
+    mediaManager.deleteMediaFile(fileName);
+}
 
 void MediaFileManagerController::showAllMediaFile(){
     
@@ -42,7 +42,4 @@ void MediaFileManagerController::showAllMediaFileOfAudio(){
     mediaFileManagerView->displayAllMediaFileOfAudio(mediaManager);
     
 }
-
-//void MediaFileController::setData(int data) {
-    // Logic for setting data for media or video
 

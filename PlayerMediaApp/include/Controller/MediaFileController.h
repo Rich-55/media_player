@@ -18,11 +18,11 @@ public:
 
     void getDetailMediaFile();
 
-    void editMediaFile();
+    void addMetadata();
 
-    void addNewKey();
+    void editMetadata();
 
-    void deleteKey();
+    void deleteMetadata();
 
 
 

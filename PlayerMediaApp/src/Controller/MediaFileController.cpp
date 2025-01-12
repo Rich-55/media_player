@@ -6,35 +6,15 @@ void MediaFileController::getDetailMediaFile(){
     mediaFileHandlerView->displayDetailMediaFile(mediaFile);
 }
 
-void MediaFileController::editMediaFile(){
-    mediaFileHandlerView->displayMenuEditMediaFile(mediaFile);
-    std::cout << "Enter the key you want to edit (or enter 0 to back to Menu): ";
+void MediaFileController::addMetadata(){
+    mediaFileHandlerView->displayMenuAddMetadata(mediaFile);
+    std::cout << "Enter the key you want to add (or enter 0 to back to Menu): ";
     std::string key;
     std::cin >> key;
 
     if(key == "0"){
         return;
     }
-    std::cout << "Current value: " << mediaFile->getMetadata(key) << std::endl;
-
-    std::cout << "Enter new value: ";
-    std::string newValue;
-    std::cin.ignore(); 
-    std::getline(std::cin, newValue);
-
-    if (mediaFile->getAllMetadata().find(key) != mediaFile->getAllMetadata().end()) {
-        mediaFile->editKey(key, newValue);
-        std::cout << "Metadata updated successfully.\n";
-    } else {
-        std::cerr << "Error: Invalid key!\n";
-    }
-}
-
-void MediaFileController::addNewKey(){
-    mediaFileHandlerView->displayMenuAddNewKey(mediaFile);
-    std::cout << "Enter the key you want to add: ";
-    std::string key;
-    std::cin >> key;
 
     std::cout << "Enter the value: ";
     std::string value;
@@ -44,15 +24,36 @@ void MediaFileController::addNewKey(){
     mediaFile->addNewKey(key, value);
 }
 
-void MediaFileController::deleteKey(){
-    mediaFileHandlerView->displayMenuDeleteKey(mediaFile);
+void MediaFileController::editMetadata(){
+    mediaFileHandlerView->displayMenuEditMetadata(mediaFile);
+    std::cout << "Enter the key you want to edit (or enter 0 to back to Menu): ";
     std::string key;
     std::cin >> key;
 
-    if (mediaFile->getAllMetadata().find(key) != mediaFile->getAllMetadata().end()) {
-        mediaFile->deleteKey(key);
-        std::cout << "Key deleted successfully.\n";
-    } else {
-        std::cerr << "Error: Invalid key!\n";
+    if(key == "0"){
+        return;
     }
+
+    if(mediaFile->getMetadata(key) == ""){
+        std::cerr << "Error: Key not found!\n";
+        return;
+    }
+
+    std::cout << "Current value: " << mediaFile->getMetadata(key) << std::endl;
+
+    std::cout << "Enter new value: ";
+    std::string newValue;
+    std::cin.ignore(); 
+    std::getline(std::cin, newValue);
+
+    mediaFile->editKey(key, newValue);
+}
+
+void MediaFileController::deleteMetadata(){
+    mediaFileHandlerView->displayMenuDeleteMetadata(mediaFile);
+    std::string key;
+    std::cin >> key;
+
+    mediaFile->deleteKey(key);
+  
 }

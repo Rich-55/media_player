@@ -9,6 +9,7 @@
 #include <taglib/textidentificationframe.h>
 #include <taglib/tbytevector.h>
 #include <taglib/id3v2frame.h>
+#include <taglib/mp4file.h>
 
 #include <iostream>
 #include <string>
@@ -18,7 +19,7 @@ class MediaFile {
 private:
     std::string fileName;
     std::string pathName;
-    double size;
+    unsigned long size;
     std::string duration;
     std::string fileType;
 protected:
@@ -26,7 +27,7 @@ protected:
 public:
     // Constructor
     MediaFile();
-    MediaFile(const std::string& , const std::string& , double , const std::string& , const std::string& );
+    MediaFile(const std::string& , const std::string& , unsigned long, const std::string& , const std::string& );
 
 
     // Virtual Destructor
@@ -35,7 +36,7 @@ public:
     // Getters
     std::string getName() const;
     std::string getPath() const;
-    double getSize() const;
+    unsigned long getSize() const;
     std::string getDuration() const;
 
     virtual std::string getType();

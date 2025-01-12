@@ -13,7 +13,7 @@ const std::unordered_set<std::string> AudioFile::allowedKeys = {
 
 AudioFile::AudioFile() {};
 
-AudioFile::AudioFile(const std::string& fileName, const std::string& pathName, double size, const std::string& duration, const std::string& fileType)
+AudioFile::AudioFile(const std::string& fileName, const std::string& pathName, unsigned long size, const std::string& duration, const std::string& fileType)
     : MediaFile(fileName, pathName, size, duration, fileType) {}
 
 // Lấy giá trị metadata theo key
@@ -61,6 +61,11 @@ void AudioFile::addNewKey(const std::string& key, const std::string& value) {
         return;
     }
 
+    if (metadataAudio.find(key) != metadataAudio.end()) {
+        std::cerr << "Error: Metadata key [" << key << "] already exists.\n";
+        return;
+    }
+
     TagLib::FileRef fileRef(this->getPath().c_str());
     if (!fileRef.isNull() && fileRef.tag()) {
         TagLib::Tag* tag = fileRef.tag();
@@ -93,7 +98,6 @@ void AudioFile::addNewKey(const std::string& key, const std::string& value) {
             }
         }
 
-        // Lưu file và cập nhật metadata
         if (fileRef.save()) {
             metadataAudio[key] = value;
             std::cout << "Added new metadata [" << key << "] with value: " << value << "\n";
@@ -105,13 +109,7 @@ void AudioFile::addNewKey(const std::string& key, const std::string& value) {
     }
 }
 
-
 void AudioFile::editKey(const std::string& key, const std::string& value) {
-
-    if (allowedKeys.find(key) == allowedKeys.end()) {
-        std::cerr << "Error: Unsupported metadata key: " << key << "\n";
-        return;
-    }
 
     TagLib::FileRef fileRef(this->getPath().c_str());
     if (!fileRef.isNull() && fileRef.tag()) {
@@ -156,10 +154,14 @@ void AudioFile::editKey(const std::string& key, const std::string& value) {
     }
 }
 
-
 void AudioFile::deleteKey(const std::string& key) {
     if (allowedKeys.find(key) == allowedKeys.end()) {
         std::cerr << "Error: Unsupported metadata key: " << key << "\n";
+        return;
+    }
+
+    if (metadataAudio.find(key) != metadataAudio.end()) {
+        std::cerr << "Error: Metadata key [" << key << "] already exists.\n";
         return;
     }
 

@@ -23,10 +23,11 @@ class ControllerManager{
         
         void ScanData();
 
-        void metadataManager();
+        void mediaFileManager();
 
         void metadataFileHandler();
 
+        void playlistManager();
 
 };
 

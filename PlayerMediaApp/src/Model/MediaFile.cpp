@@ -1,14 +1,14 @@
 #include "../../include/Model/MediaFile.h"
 
 MediaFile::MediaFile(){}
-MediaFile::MediaFile(const std::string& fileName, const std::string& pathName, double size, const std::string& duration, const std::string& fileType)
+MediaFile::MediaFile(const std::string& fileName, const std::string& pathName, unsigned long size, const std::string& duration, const std::string& fileType)
     : fileName(fileName), pathName(pathName), size(size), duration(duration), fileType(fileType) {}
 
 MediaFile::~MediaFile() {}
 
 std::string MediaFile::getName() const { return this->fileName;}
 std::string MediaFile::getPath() const { return this->pathName;}
-double MediaFile::getSize() const { return this->size;}
+unsigned long MediaFile::getSize() const { return this->size;}
 std::string MediaFile::getDuration() const { return this->duration;}
 
 void MediaFile::setType(std::string type) { this->fileType = type;}
@@ -23,7 +23,10 @@ void MediaFile::inputMediaFile(std::string pathName){
     size_t lastDot = pathName.find_last_of('.');   
     this->fileName =  pathName.substr(lastSlash + 1, lastDot - lastSlash - 1);
     this->pathName = pathName;
-    this->size = audioProps->length();
+
+    TagLib::MP4::File fileTemp(pathName.c_str());
+    this->size = fileTemp.length();
+    
     
     this->duration = std::to_string(audioProps->length() / 60) + "m " +
                        std::to_string(audioProps->length() % 60) + "s";

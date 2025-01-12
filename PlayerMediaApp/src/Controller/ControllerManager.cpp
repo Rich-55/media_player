@@ -47,7 +47,7 @@ void ControllerManager::ScanData()
 
 }
 
-void ControllerManager::metadataManager() 
+void ControllerManager::mediaFileManager() 
 {
     std::shared_ptr<ViewBase> mediaFileManagerView = view.getView("MediaFileManagerView");
     
@@ -65,12 +65,20 @@ void ControllerManager::metadataManager()
         switch (choice)
         {
         case 1:
+            {
+            std::cout << "Enter the name of the file you want to delete: ";
+            std::string fileName;
+            std::cin >> fileName;
+            mediaFileManagerController->deleteData(fileName);
+            break;
+            }
+        case 2:
             mediaFileManagerController->showAllMediaFile();
             break;
-        case 2:
+        case 3:
             mediaFileManagerController->showAllMediaFileOfAudio();
             break;
-        case 3:
+        case 4:
             mediaFileManagerController->showAllMediaFileOfVideo();
             break;    
         case 0:
@@ -95,6 +103,10 @@ void ControllerManager::metadataFileHandler()
     std::cin >> fileName;
 
     if(!mediaFileHandlerController){
+        if(model.getMediaFile(fileName) == nullptr){
+            std::cerr << "File not found!";
+            return;
+        }
         mediaFileHandlerController = std::make_unique<MediaFileController>(model.getMediaFile(fileName), mediaFileHandlerView);
     }
     int choice;
@@ -105,13 +117,13 @@ void ControllerManager::metadataFileHandler()
         switch (choice)
         {
         case 1:
-            mediaFileHandlerController->editMediaFile();
+            mediaFileHandlerController->addMetadata();
             break;
         case 2:
-            mediaFileHandlerController->addNewKey();
+            mediaFileHandlerController->editMetadata();
             break;
         case 3:
-            mediaFileHandlerController->deleteKey();
+            mediaFileHandlerController->deleteMetadata();
             break;    
         case 0:
             return;
@@ -119,5 +131,9 @@ void ControllerManager::metadataFileHandler()
             break;
         }
     }
+
+}
+
+void ControllerManager::playlistManager(){
 
 }

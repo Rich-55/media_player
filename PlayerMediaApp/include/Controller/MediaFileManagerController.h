@@ -17,6 +17,8 @@ public:
 
     void addData(const std::unordered_set<std::string>&);
 
+    void deleteData(std::string);
+
     void showAllMediaFile();
 
     void showAllMediaFileOfVideo();

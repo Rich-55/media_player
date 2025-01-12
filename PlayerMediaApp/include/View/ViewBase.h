@@ -20,9 +20,9 @@ class ViewBase{
         virtual void displayAllMediaFileOfVideo(MetadataManager);
 
         virtual void displayDetailMediaFile(std::shared_ptr<MediaFile> );
-        virtual void displayMenuEditMediaFile(std::shared_ptr<MediaFile> );
-        virtual void displayMenuAddNewKey(std::shared_ptr<MediaFile> );
-        virtual void displayMenuDeleteKey(std::shared_ptr<MediaFile> );
+        virtual void displayMenuAddMetadata(std::shared_ptr<MediaFile> );
+        virtual void displayMenuEditMetadata(std::shared_ptr<MediaFile> );
+        virtual void displayMenuDeleteMetadata(std::shared_ptr<MediaFile> );
 
         virtual ~ViewBase();
 

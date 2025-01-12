@@ -13,7 +13,7 @@ const std::unordered_set<std::string> VideoFile::allowedKeys = {
 
 VideoFile::VideoFile() {}
 
-VideoFile::VideoFile(const std::string& fileName, const std::string& pathName, double size, const std::string& duration, const std::string& fileType)
+VideoFile::VideoFile(const std::string& fileName, const std::string& pathName, unsigned long size, const std::string& duration, const std::string& fileType)
     : MediaFile(fileName, pathName, size, duration, fileType) {}
 
 std::string VideoFile::getMetadata(const std::string& key) const {
@@ -112,11 +112,6 @@ void VideoFile::addNewKey(const std::string& key, const std::string& value) {
 
 void VideoFile::editKey(const std::string& key, const std::string& value) {
 
-    if (allowedKeys.find(key) == allowedKeys.end()) {
-        std::cerr << "Error: Unsupported metadata key: " << key << "\n";
-        return;
-    }
-
     TagLib::FileRef fileRef(this->getPath().c_str());
     if (!fileRef.isNull() && fileRef.tag()) {
         TagLib::Tag* tag = fileRef.tag();
@@ -169,6 +164,11 @@ void VideoFile::deleteKey(const std::string& key) {
         return;
     }
 
+    if (metadataVideo.find(key) != metadataVideo.end()) {
+        std::cerr << "Error: Metadata key [" << key << "] already exists.\n";
+        return;
+    }
+
     TagLib::FileRef fileRef(this->getPath().c_str());
     if (!fileRef.isNull() && fileRef.tag()) {
         TagLib::Tag* tag = fileRef.tag();
@@ -205,9 +205,6 @@ void VideoFile::deleteKey(const std::string& key) {
         std::cerr << "Error: Unable to modify tag for the file.\n";
     }
 }
-
-
-
 
 std::string VideoFile::getType() {
     return "Video";
