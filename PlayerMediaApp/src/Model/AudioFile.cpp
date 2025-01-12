@@ -13,7 +13,7 @@ std::string AudioFile::getGenre() const { return genre; }
 int AudioFile::getBitrate() { return bitrate; }
 int AudioFile::getSampleRate() const { return sampleRate; }
 
-std::string AudioFile::getType() { return "Audio File"; }
+std::string AudioFile::getType() { return "Audio"; }
 
 void AudioFile::inputMediaFile(std::string pathName){
     MediaFile::inputMediaFile(pathName);
@@ -37,7 +37,7 @@ void AudioFile::inputMediaFile(std::string pathName){
         this->sampleRate = audioProperties->sampleRate();
     }
 
-    setType("Audio File");
+    setType("Audio");
    
 }
 

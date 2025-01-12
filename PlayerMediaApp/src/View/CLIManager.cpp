@@ -1,4 +1,5 @@
 #include "../../include/View/CLIManager.h"
+
 CLIManager::CLIManager(){}
 
 std::shared_ptr<ViewBase> CLIManager::getView(std::string name)  {
@@ -24,4 +25,3 @@ void CLIManager::switchView(std::string name) {
 }
 
 CLIManager::~CLIManager(){}
-

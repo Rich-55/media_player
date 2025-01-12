@@ -12,7 +12,6 @@ void ControllerManager::ScanData() {
     }
 
     scannerController->scan();
-
 }
 
 void ControllerManager::viewAllDataAdded() {
@@ -24,9 +23,25 @@ void ControllerManager::viewAllDataAdded() {
     }
 
     view.switchView("MediaFileManagerView");
+    
 
     MediaFileController fileController(model.getMetadataManager(), mediaFileManagerView);
-    
-    fileController.showMediaFile();
+
+    int choice;
+    std::cin >> choice;
+
+    if (choice == 1) {
+        fileController.showAllMediaFile();
+    } else if (choice == 2) {
+        fileController.showAllAudioFile();
+    } else if (choice == 3) {
+        return;
+    } else if (choice == 4) {
+        std::cout << "Exiting...\n";
+        return;
+    } else {
+        std::cout << "Invalid option. Try again.\n";
+    }
+
 }
 

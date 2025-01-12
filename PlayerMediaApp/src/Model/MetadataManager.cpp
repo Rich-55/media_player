@@ -4,11 +4,11 @@ MetadataManager::MetadataManager(){}
 void MetadataManager::addMediaFile( std::string pathName, std::string type)
 {   
     if(type == "Video"){
-        std::cout << "adding data" << std::endl;
         std::shared_ptr<MediaFile> mediaFile =  std::make_shared<VideoFile>();
         mediaFile->inputMediaFile(pathName);
         listMediaFiles.push_back(mediaFile);
     }else {
+        // std::cout << "adding audio" << std::endl;
         std::shared_ptr<MediaFile> mediaFile =  std::make_shared<AudioFile>();
         mediaFile->inputMediaFile(pathName);
         listMediaFiles.push_back(mediaFile);
@@ -18,9 +18,23 @@ void MetadataManager::addMediaFile( std::string pathName, std::string type)
 void MetadataManager::getData(){
     std::shared_ptr<MediaFile> file = listMediaFiles[0];
     std::cout << file->getName();
-    
 }
 
+
+std::vector<std::shared_ptr<MediaFile>> MetadataManager::getAllMediaFile()
+{
+    return this->listMediaFiles;
+}
+
+std::vector<std::shared_ptr<MediaFile>> MetadataManager::getAllAudioFiles() {
+    std::vector<std::shared_ptr<MediaFile>> listAudioFiles;
+    for (const auto& file : listMediaFiles) {
+        if (file->getType() == "Audio") {
+            listAudioFiles.push_back(file);
+        }
+    }
+    return listAudioFiles;
+}
 // void MetadataManager::editMediaFile(std::shared_ptr<MediaFile> mediaFile)
 // {
     
@@ -30,22 +44,6 @@ void MetadataManager::getData(){
 // {
 
 // }
-
-std::vector<std::shared_ptr<MediaFile>> MetadataManager::getAllMediaFile()
-{
-    return this->listMediaFiles;
-}
-
-std::vector<std::shared_ptr<MediaFile>> MetadataManager::getAllAudioFiles()
-{
-    std::vector<std::shared_ptr<MediaFile>> audioFiles;
-    for(auto file : listMediaFiles){
-        if(file->getType() == "Audio"){
-            audioFiles.push_back(file);
-        }
-    }
-    return audioFiles;
-}
 
 // void MetadataManager::addMediaFileFromUSB(std::shared_ptr<MediaFile> file) {
 //     listMediaFiles.push_back(file);

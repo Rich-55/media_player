@@ -1,21 +1,21 @@
 #include "../../include/View/MediaFileManagerView.h"
 
 MediaFileManagerView::MediaFileManagerView(){
-    std::cout <<"added" << std::endl;
+    // std::cout <<"added" << std::endl;
 }
 
 void MediaFileManagerView::showMenu() {
     std::cout << "========== Media File Menu ==========" << std::endl;
-    std::cout << "1. View All Media File" << std::endl;
-    std::cout << "2. View All Video Media File" << std::endl;
-    std::cout << "3. View All Video Media File" << std::endl;
+    std::cout << "1. View All Media Files" << std::endl;
+    std::cout << "2. View All Audio Files" << std::endl;
+    std::cout << "3. View All Video Files" << std::endl;
     std::cout << "0. Exit" << std::endl;
     std::cout << "--------------------------------------------------" << std::endl;
     std::cout << "Enter your choice: ";
 }
 
 void MediaFileManagerView::displayAllMediaFile(MetadataManager metadataManager){
-     if (metadataManager.getAllMediaFile().empty()) {
+    if (metadataManager.getAllMediaFile().empty()) {
         std::cerr << "No media files to display.\n";
         return;
     }
@@ -30,8 +30,12 @@ void MediaFileManagerView::displayAllMediaFile(MetadataManager metadataManager){
 }
 
 void MediaFileManagerView::displayAllMediaFileOfAudio(MetadataManager metadataManager){
+    if (metadataManager.getAllAudioFiles().empty()) {
+        std::cerr << "No audio file to display.\n";
+        return;
+    }
     for (auto file : metadataManager.getAllAudioFiles()) {
-        std::cout << "----- Audio Files Details -----" << std::endl;
+        std::cout << "----- Audio File Details -----" << std::endl;
         std::cout << "File Name:   " << file->getName() << std::endl;
         std::cout << "File Path:   " << file->getPath() << std::endl;
         std::cout << "File Type:   " << "Audio File" << std::endl;

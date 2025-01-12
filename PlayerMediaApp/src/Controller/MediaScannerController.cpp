@@ -163,13 +163,12 @@ void MediaScannerController::scan()
         std::string extension = (lastDotPos != std::string::npos) ? path.substr(lastDotPos + 1) : "";
 
         if(extension == "mp4"){
-            metadataManager.addMediaFile(listPaths[i], "Video");  
+            metadataManager.addMediaFile(listPaths[i], "Video");
         }else{
-            metadataManager.addMediaFile(listPaths[i], "Audio");  
+            metadataManager.addMediaFile(listPaths[i], "Audio");
         }
 
-        std::cout << "File name " << i + 1 << " is added " << fileName << std::endl;   
-           
+        std::cout << "File name " << i + 1 << " is added " << fileName << std::endl;      
     }
    
 }

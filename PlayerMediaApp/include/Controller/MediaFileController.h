@@ -16,7 +16,9 @@ public:
 
     void addData(std::vector<std::string>);
 
-    void showMediaFile();
+    void showAllMediaFile();
+
+    void showAllAudioFile();
 
 };
 
