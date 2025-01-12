@@ -58,6 +58,17 @@ std::vector<std::shared_ptr<MediaFile>> MetadataManager::getAllAudioFiles()
     return audioFiles;
 }
 
+std::vector<std::shared_ptr<MediaFile>> MetadataManager::getAllVideoFiles()
+{
+    std::vector<std::shared_ptr<MediaFile>> videoFiles;
+    for(auto file : listMediaFiles){
+        if(file->getType() == "Video"){
+            videoFiles.push_back(file);
+        }
+    }
+    return videoFiles;
+}
+
 // void MetadataManager::addMediaFileFromUSB(std::shared_ptr<MediaFile> file) {
 //     listMediaFiles.push_back(file);
 //     std::cout << "Added media file from USB: " << file->getName() << std::endl;

@@ -1,48 +1,58 @@
 #include "../../include/Controller/MediaFileController.h"
 
-MediaFileController::MediaFileController(MetadataManager& m, std::shared_ptr<ViewBase> v) : mediaManager(m), mediaView(v){}
+MediaFileController::MediaFileController(std::shared_ptr<MediaFile>  m, std::shared_ptr<ViewBase> v) : mediaFile(m), mediaFileHandlerView(v){}
 
-void MediaFileController::addData(const std::unordered_set<std::string> &listPathName) {
-    int index = 1;
-    for (const auto &path : listPathName) {
-        size_t lastSlashPos = path.find_last_of("/");
-        std::string fileName = (lastSlashPos != std::string::npos) ? path.substr(lastSlashPos + 1) : path;
+void MediaFileController::getDetailMediaFile(){
+    mediaFileHandlerView->displayDetailMediaFile(mediaFile);
+}
 
-        size_t lastDotPos = path.find_last_of(".");
-        std::string extension = (lastDotPos != std::string::npos) ? path.substr(lastDotPos + 1) : "";
+void MediaFileController::editMediaFile(){
+    mediaFileHandlerView->displayMenuEditMediaFile(mediaFile);
+    std::cout << "Enter the key you want to edit (or enter 0 to back to Menu): ";
+    std::string key;
+    std::cin >> key;
 
-        if (extension == "mp4") {
-            mediaManager.addMediaFile(path, "Video");
-        } else if (extension == "mp3") {
-            mediaManager.addMediaFile(path, "Audio");
-        } else {
-            std::cerr << "Unsupported file type: " << fileName << '\n';
-            continue;
-        }
+    if(key == "0"){
+        return;
+    }
+    std::cout << "Current value: " << mediaFile->getMetadata(key) << std::endl;
 
-        std::cout << "File " << index++ << " is added: " << fileName << std::endl;
+    std::cout << "Enter new value: ";
+    std::string newValue;
+    std::cin.ignore(); 
+    std::getline(std::cin, newValue);
+
+    if (mediaFile->getAllMetadata().find(key) != mediaFile->getAllMetadata().end()) {
+        mediaFile->editKey(key, newValue);
+        std::cout << "Metadata updated successfully.\n";
+    } else {
+        std::cerr << "Error: Invalid key!\n";
     }
 }
 
+void MediaFileController::addNewKey(){
+    mediaFileHandlerView->displayMenuAddNewKey(mediaFile);
+    std::cout << "Enter the key you want to add: ";
+    std::string key;
+    std::cin >> key;
 
-void MediaFileController::showAllMediaFile(){
-    
-    mediaView->displayAllMediaFile(mediaManager);
-    
+    std::cout << "Enter the value: ";
+    std::string value;
+    std::cin.ignore(); 
+    std::getline(std::cin, value);
+
+    mediaFile->addNewKey(key, value);
 }
 
-void MediaFileController::showAllMediaFileOfVideo(){
-    
-    mediaView->displayAllMediaFileOfVideo(mediaManager);
-    
+void MediaFileController::deleteKey(){
+    mediaFileHandlerView->displayMenuDeleteKey(mediaFile);
+    std::string key;
+    std::cin >> key;
+
+    if (mediaFile->getAllMetadata().find(key) != mediaFile->getAllMetadata().end()) {
+        mediaFile->deleteKey(key);
+        std::cout << "Key deleted successfully.\n";
+    } else {
+        std::cerr << "Error: Invalid key!\n";
+    }
 }
-
-void MediaFileController::showAllMediaFileOfAudio(){
-    
-    mediaView->displayAllMediaFileOfAudio(mediaManager);
-    
-}
-
-//void MediaFileController::setData(int data) {
-    // Logic for setting data for media or video
-

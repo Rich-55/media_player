@@ -8,9 +8,11 @@
 #include <taglib/id3v2tag.h>
 #include <taglib/textidentificationframe.h>
 #include <taglib/tbytevector.h>
+#include <taglib/id3v2frame.h>
 
 #include <iostream>
 #include <string>
+#include <unordered_map>
 
 class MediaFile {
 private:
@@ -37,24 +39,17 @@ public:
     std::string getDuration() const;
 
     virtual std::string getType();
-    virtual std::string getCodec();
-    virtual int getBitrate();
-    virtual std::string getResolution();
 
     // Virtual methods
     virtual void inputMediaFile(std::string);
-    virtual void detailMediaFile() const;
-    virtual void editMediaFile();
-   // void editMetadata(TagLib::MPEG::File &file, const std::string &key, const std::string &newValue);
+    
+    virtual void addNewKey(const std::string& key, const std::string& value);
+    virtual void editKey(const std::string& key, const std::string& value);
+    virtual void deleteKey(const std::string& key);
 
-
-    // Getter for Audio
-
-    virtual std::string getTrackname() const;
-    virtual std::string getAlbum() const;
-    virtual std::string getArtist() const;
-    virtual std::string getGenre() const;
-    virtual int getSampleRate() const;
+    virtual std::string getMetadata(const std::string& key) const;
+    virtual std::unordered_map<std::string, std::string> getAllMetadata() const;
+    
 
 };
 #endif

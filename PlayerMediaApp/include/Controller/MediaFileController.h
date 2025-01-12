@@ -7,21 +7,26 @@
 
 #include <memory>
 #include <unordered_set>
+
 class MediaFileController {
 private:
-    MetadataManager& mediaManager;
-    std::shared_ptr<ViewBase> mediaView; 
+    std::shared_ptr<MediaFile> mediaFile;
+    std::shared_ptr<ViewBase> mediaFileHandlerView; 
 
 public:
-    MediaFileController(MetadataManager&, std::shared_ptr<ViewBase>);
+    MediaFileController(std::shared_ptr<MediaFile> , std::shared_ptr<ViewBase>);
 
-    void addData(const std::unordered_set<std::string>&);
+    void getDetailMediaFile();
 
-    void showAllMediaFile();
+    void editMediaFile();
 
-    void showAllMediaFileOfVideo();
+    void addNewKey();
 
-    void showAllMediaFileOfAudio();
+    void deleteKey();
+
+
+
+
 
 };
 

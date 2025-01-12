@@ -3,37 +3,30 @@
 
 #include <iostream>
 #include <string>
-#include <sys/stat.h>
-#include <taglib/fileref.h>
-#include <taglib/tag.h>
-#include <taglib/mpegfile.h>
-#include <taglib/id3v2tag.h>
-#include <taglib/textidentificationframe.h>
-#include <taglib/tbytevector.h>
-#include <taglib/mp4file.h>
-#include <taglib/mp4tag.h>
-
+#include <unordered_map>
+#include <unordered_set>
 #include "MediaFile.h"
 
 class VideoFile : public MediaFile {
 private:
-    std::string codec;
-    int bitrate;
-    std::string resolution;
-    
+    std::unordered_map<std::string, std::string> metadataVideo;
+    const static std::unordered_set<std::string> allowedKeys;
+    const static std::unordered_map<std::string, std::string> keyToID3Frame;
 public:
     VideoFile();
-    VideoFile(const std::string& , const std::string& , double , const std::string& , const std::string& ,
-              const std::string& , int , const std::string&);
+    VideoFile(const std::string&, const std::string&, double, const std::string&, const std::string&);
 
-    std::string getCodec() override;
-    int getBitrate() override;
-    std::string getResolution() override;
+    // Metadata operations
+    std::string getMetadata(const std::string& key) const override;
+    std::unordered_map<std::string, std::string> getAllMetadata() const override;
 
-    void inputMediaFile(std::string) override;
-    void detailMediaFile() const override;
-    void editMediaFile() override;
+    // Overridden methods
     std::string getType() override;
+    void inputMediaFile(std::string) override;
+
+    void addNewKey(const std::string& key, const std::string& value) override;
+    void editKey(const std::string& key, const std::string& value) override;
+    void deleteKey(const std::string& key) override;
 };
 
 #endif

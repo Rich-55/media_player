@@ -2,40 +2,30 @@
 #define AUDIO_FILE_H
 
 #include "MediaFile.h"
+#include <unordered_map>
+#include <unordered_set>    
 
 class AudioFile : public MediaFile {
     private:
-        std::string trackName;
-        std::string album;
-        std::string artist;
-        std::string genre;
-        int bitrate;
-        int sampleRate;
-
+        std::unordered_map<std::string, std::string> metadataAudio; 
+        const static std::unordered_set<std::string> allowedKeys ;
+        const static std::unordered_map<std::string, std::string> keyToID3Frame;
     public:
         AudioFile();
-        AudioFile(const std::string& , const std::string& , double , const std::string& , const std::string&,
-                const std::string&, const std::string&, const std::string&, const std::string&, int, int);
+        AudioFile(const std::string& , const std::string& , double , const std::string& , const std::string&);
 
-        std::string getTrackname() const override;
-        std::string getAlbum() const override;
-        std::string getArtist() const override;
-        std::string getGenre() const override;
-        int getBitrate() override;
-        int getSampleRate() const override;
+        // Get metadata
+        std::string getMetadata(const std::string& key) const;
+        std::unordered_map<std::string, std::string> getAllMetadata() const;
+
+        // Input file and initialize metadata
+        void inputMediaFile(std::string pathName) override;
 
         std::string getType() override;
-        
-        void setTrackName(const std::string& newTrackName);
-        void setAlbum(const std::string& newAlbum);
-        void setGenre(const std::string& newGenre);
-        void setArtist(const std::string& newArtist);
 
-        void inputMediaFile(std::string) override;
-        void detailMediaFile() const override;
-        void editMediaFile() override;
-
-        // static void addMetadataKey(TagLib::MPEG::File &file, const std::string &key, const std::string &value);
+        void addNewKey(const std::string& key, const std::string& value) override;
+        void editKey(const std::string& key, const std::string& value) override;
+        void deleteKey(const std::string& key) override;
 };
 
 #endif

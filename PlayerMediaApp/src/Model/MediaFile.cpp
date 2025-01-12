@@ -11,9 +11,7 @@ std::string MediaFile::getPath() const { return this->pathName;}
 double MediaFile::getSize() const { return this->size;}
 std::string MediaFile::getDuration() const { return this->duration;}
 
-void MediaFile::setType(std::string type){
-    this->fileType = type;
-}
+void MediaFile::setType(std::string type) { this->fileType = type;}
 
 void MediaFile::inputMediaFile(std::string pathName){
     TagLib::FileRef file(pathName.c_str());
@@ -31,57 +29,16 @@ void MediaFile::inputMediaFile(std::string pathName){
                        std::to_string(audioProps->length() % 60) + "s";
 }
 
-void MediaFile::detailMediaFile() const {
-    std::cout << "File Name: " << fileName << "\nPath: " << pathName
-              << "\nSize: " << size << " MB\nDuration: " << duration
-              << "\nFile Type: " << fileType << std::endl;
-}
+void MediaFile::addNewKey(const std::string&, const std::string&){}
 
-void MediaFile::editMediaFile() {
-    std::cout << "Editing media file: " << fileName << std::endl;
-}
+void MediaFile::editKey(const std::string&, const std::string&) {}
 
-std::string MediaFile::getType() {
-    return "";
-}
+void MediaFile::deleteKey(const std::string& ) {}
 
-std::string MediaFile::getCodec() {
-    return "";
-}
+std::string MediaFile::getType() { return "";}
 
-int MediaFile::getBitrate() {
-    return 0;
-}
+std::string MediaFile::getMetadata(const std::string&) const { return "";}
 
-std::string MediaFile::getResolution() {
-    return "";
-}
-
-std::string MediaFile::getTrackname() const {
-    return "";
-}
-
-std::string MediaFile::getAlbum() const {
-    return "";
-}
-
-std::string MediaFile::getArtist() const {
-    return "";
-}
-
-std::string MediaFile::getGenre() const {
-    return "";
-}
-
-int MediaFile::getSampleRate() const {
-    return 0;
-}
+std::unordered_map<std::string, std::string> MediaFile::getAllMetadata() const { return {};}
 
 
-
-// Phương thức chỉnh sửa metadata
-// void MediaFile::editMetadata(TagLib::MPEG::File &file, const std::string &key, const std::string &newValue) {
-
-// }
-
-// void MediaFile::editMetadata(TagLib::MPEG::File &file, const std::string &key, const std::string &newValue) {}

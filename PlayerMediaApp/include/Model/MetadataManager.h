@@ -26,6 +26,8 @@ class MetadataManager{
         std::vector<std::shared_ptr<MediaFile>> getAllMediaFile();
 
         std::vector<std::shared_ptr<MediaFile>> getAllAudioFiles();
+
+        std::vector<std::shared_ptr<MediaFile>> getAllVideoFiles();
     
 };
 

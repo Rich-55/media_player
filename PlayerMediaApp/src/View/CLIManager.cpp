@@ -6,6 +6,8 @@ std::shared_ptr<ViewBase> CLIManager::getView(std::string name)  {
     if (it == views.end()) {
         if (name == "ScanView") {
             views[name] = std::make_shared<ScanView>();
+        }else if (name == "MediaFileHandlerView") {
+            views[name] = std::make_shared<MediaFileHandlerView>();
         } else if (name == "MediaFileManagerView") {
             views[name] = std::make_shared<MediaFileManagerView>();
         }

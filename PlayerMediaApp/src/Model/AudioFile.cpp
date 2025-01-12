@@ -1,21 +1,44 @@
 #include "../../include/Model/AudioFile.h"
 
+const std::unordered_set<std::string> AudioFile::allowedKeys = {
+        "title",    // Title
+        "artist",   // Artist
+        "album",    // Album
+        "genre",    // Genre
+        "comment",  // Comment
+        "year",     // Year
+        "track"     // Track
+};
+
+const std::unordered_map<std::string, std::string> AudioFile::keyToID3Frame = {
+    {"title", "TIT2"},       // Title
+    {"artist", "TPE1"},      // Artist
+    {"album", "TALB"},       // Album
+    {"genre", "TCON"},       // Genre
+    {"year", "TYER"},        // Year
+    {"track", "TRCK"}        // Track number
+};
+
+
 AudioFile::AudioFile() {};
-AudioFile::AudioFile(const std::string& fileName, const std::string& pathName, double size, const std::string& duration, const std::string& fileType,
-                    const std::string& trackName, const std::string& album, const std::string& artist, const std::string& genre, int bitrate, int sampleRate)
-                    : MediaFile(fileName, pathName, size, duration, fileType), trackName(trackName), album(album), artist(artist), genre(genre), bitrate(bitrate), sampleRate(sampleRate) {}
+
+AudioFile::AudioFile(const std::string& fileName, const std::string& pathName, double size, const std::string& duration, const std::string& fileType)
+    : MediaFile(fileName, pathName, size, duration, fileType) {}
+
+// Lấy giá trị metadata theo key
+std::string AudioFile::getMetadata(const std::string& key) const {
+    if (metadataAudio.find(key) != metadataAudio.end()) {
+        return metadataAudio.at(key);
+    }
+    return "";
+}
+
+std::unordered_map<std::string, std::string> AudioFile::getAllMetadata() const {
+    return metadataAudio;
+}
 
 
-std::string AudioFile::getTrackname() const { return trackName; }
-std::string AudioFile::getAlbum() const { return album; }
-std::string AudioFile::getArtist() const { return artist; }
-std::string AudioFile::getGenre() const { return genre; }
-int AudioFile::getBitrate() { return bitrate; }
-int AudioFile::getSampleRate() const { return sampleRate; }
-
-std::string AudioFile::getType() { return "Audio"; }
-
-void AudioFile::inputMediaFile(std::string pathName){
+void AudioFile::inputMediaFile(std::string pathName) {
     MediaFile::inputMediaFile(pathName);
 
     TagLib::FileRef file(pathName.c_str());
@@ -25,84 +48,165 @@ void AudioFile::inputMediaFile(std::string pathName){
         return;
     }
 
-    TagLib::Tag *tag = file.tag();
-    this->trackName = tag->title().to8Bit(true);
-    this->album = tag->album().to8Bit(true);
-    this->artist = tag->artist().to8Bit(true);
-    this->genre = tag->genre().to8Bit(true);
+    TagLib::Tag* tag = file.tag();
+    metadataAudio["trackName"] = tag->title().to8Bit(true);
+    metadataAudio["album"] = tag->album().to8Bit(true);
+    metadataAudio["artist"] = tag->artist().to8Bit(true);
+    metadataAudio["genre"] = tag->genre().to8Bit(true);
 
-    TagLib::AudioProperties *audioProperties = file.audioProperties();
+    TagLib::AudioProperties* audioProperties = file.audioProperties();
     if (audioProperties) {
-        this->bitrate = audioProperties->bitrate();
-        this->sampleRate = audioProperties->sampleRate();
+        metadataAudio["bitrate"] = std::to_string(audioProperties->bitrate());
+        metadataAudio["sampleRate"] = std::to_string(audioProperties->sampleRate());
     }
 
     setType("Audio");
-   
 }
 
-void AudioFile::setTrackName(const std::string& newTrackName) {
-    trackName = newTrackName;
-}
+void AudioFile::addNewKey(const std::string& key, const std::string& value) {
 
-void AudioFile::setAlbum(const std::string& newAlbum) {
-    album = newAlbum;
-}
+    if (allowedKeys.find(key) == allowedKeys.end()) {
+        std::cerr << "Error: Unsupported metadata key: " << key << "\n";
+        return;
+    }
 
-void AudioFile::setGenre(const std::string& newGenre) {
-    genre = newGenre;
-}
-
-void AudioFile::setArtist(const std::string& newArtist) {
-    artist = newArtist;
-}
-
-void AudioFile::detailMediaFile() const {
-    // MediaFile::detailMediaFile();
-    std::cout << "----- Audio File Details -----" << std::endl;
-    std::cout << "File Name:   " << this->getName() << std::endl;
-    std::cout << "File Path:   " << this->getPath() << std::endl;
-    std::cout << "File Type:   " << "Audio File" << std::endl;
-    std::cout << "File Size:   " << this->getSize() << std::endl;
-    std::cout << "Track Name:  " << this->trackName << std::endl;
-    std::cout << "Artist:      " << this->artist << std::endl;
-    std::cout << "Album:       " << this->album << std::endl;
-    std::cout << "Genre:       " << this->genre << std::endl;
-    std::cout << "Duration:    " << this->getDuration() << " seconds" << std::endl;
-    std::cout << "Bitrate:     " << this->bitrate << " kbps" << std::endl;
-    std::cout << "Sample Rate: " << this->sampleRate << " Hz" << std::endl;
-    std::cout << "------------------------------" << std::endl;
-}
-
-
-void AudioFile::editMediaFile() {
-    TagLib::FileRef fileRef(this->getPath().c_str()); // Create FileRef locally
-
+    TagLib::FileRef fileRef(this->getPath().c_str());
     if (!fileRef.isNull() && fileRef.tag()) {
-        TagLib::Tag *tag = fileRef.tag();
-        std::cout << "Editing metadata for: " << fileRef.file()->name() << std::endl;
+        TagLib::Tag* tag = fileRef.tag();
 
-        // Set metadata properties directly using TagLib::Tag methods:
-        if (!trackName.empty()) {
-            tag->setTitle(TagLib::String(trackName, TagLib::String::UTF8)); // Set Title
-        }
-        if (!artist.empty()) {
-            tag->setArtist(TagLib::String(artist, TagLib::String::UTF8)); // Set Artist
-        }
-        if (!album.empty()) {
-            tag->setAlbum(TagLib::String(album, TagLib::String::UTF8)); // Set Album
-        }
-        if (!genre.empty()) {
-            tag->setGenre(TagLib::String(genre, TagLib::String::UTF8)); // Set Genre
+        if (key == "title") {
+            tag->setTitle(TagLib::String(value, TagLib::String::UTF8));
+        } else if (key == "artist") {
+            tag->setArtist(TagLib::String(value, TagLib::String::UTF8));
+        } else if (key == "album") {
+            tag->setAlbum(TagLib::String(value, TagLib::String::UTF8));
+        } else if (key == "genre") {
+            tag->setGenre(TagLib::String(value, TagLib::String::UTF8));
+        } else if (key == "comment") {
+            tag->setComment(TagLib::String(value, TagLib::String::UTF8));
+        } else if (key == "year") {
+            try {
+                int year = std::stoi(value);
+                tag->setYear(year);
+            } catch (const std::invalid_argument& e) {
+                std::cerr << "Error: Year must be a valid number.\n";
+                return;
+            }
+        } else if (key == "track") {
+            try {
+                int track = std::stoi(value);
+                tag->setTrack(track);
+            } catch (const std::invalid_argument& e) {
+                std::cerr << "Error: Track must be a valid number.\n";
+                return;
+            }
         }
 
-        // Save the changes
-        if (!fileRef.save()) {
-            std::cerr << "Error: Failed to save changes to the file." << std::endl;
+        // Lưu file và cập nhật metadata
+        if (fileRef.save()) {
+            metadataAudio[key] = value;
+            std::cout << "Added new metadata [" << key << "] with value: " << value << "\n";
         } else {
-            std::cout << "Changes saved successfully." << std::endl;
+            std::cerr << "Error: Failed to save changes to the file.\n";
         }
     } else {
-        std::cerr << "Error: Could not retrieve tag information or file is invalid." << std::endl;
+        std::cerr << "Error: Could not retrieve tag information or file is invalid.\n";
     }
+}
+
+
+void AudioFile::editKey(const std::string& key, const std::string& value) {
+
+    if (allowedKeys.find(key) == allowedKeys.end()) {
+        std::cerr << "Error: Unsupported metadata key: " << key << "\n";
+        return;
+    }
+
+    TagLib::FileRef fileRef(this->getPath().c_str());
+    if (!fileRef.isNull() && fileRef.tag()) {
+        TagLib::Tag* tag = fileRef.tag();
+
+        if (key == "title") {
+            tag->setTitle(TagLib::String(value, TagLib::String::UTF8));
+        } else if (key == "artist") {
+            tag->setArtist(TagLib::String(value, TagLib::String::UTF8));
+        } else if (key == "album") {
+            tag->setAlbum(TagLib::String(value, TagLib::String::UTF8));
+        } else if (key == "genre") {
+            tag->setGenre(TagLib::String(value, TagLib::String::UTF8));
+        } else if (key == "comment") {
+            tag->setComment(TagLib::String(value, TagLib::String::UTF8));
+        } else if (key == "year") {
+            try {
+                int year = std::stoi(value);
+                tag->setYear(year);
+            } catch (const std::invalid_argument& e) {
+                std::cerr << "Error: Year must be a valid number.\n";
+                return;
+            }
+        } else if (key == "track") {
+            try {
+                int track = std::stoi(value);
+                tag->setTrack(track);
+            } catch (const std::invalid_argument& e) {
+                std::cerr << "Error: Track must be a valid number.\n";
+                return;
+            }
+        }
+
+        if (fileRef.save()) {
+            metadataAudio[key] = value;
+            std::cout << "Updated metadata [" << key << "] to: " << value << "\n";
+        } else {
+            std::cerr << "Error: Failed to save changes to the file.\n";
+        }
+    } else {
+        std::cerr << "Error: Could not retrieve tag information or file is invalid.\n";
+    }
+}
+
+
+void AudioFile::deleteKey(const std::string& key) {
+
+
+    auto it = keyToID3Frame.find(key);
+    if (it == keyToID3Frame.end()) {
+        std::cerr << "Error: Unsupported metadata key [" << key << "]\n";
+        return;
+    }
+
+    TagLib::ByteVector frameKey(it->second.c_str());
+
+    TagLib::MPEG::File file(this->getPath().c_str());
+    if (!file.isValid() || !file.ID3v2Tag()) {
+        std::cerr << "Error: File is invalid or does not contain an ID3v2 tag.\n";
+        return;
+    }
+
+    TagLib::ID3v2::Tag* id3v2Tag = file.ID3v2Tag();
+
+    TagLib::ID3v2::FrameList frames = id3v2Tag->frameList(frameKey);
+    if (!frames.isEmpty()) {
+        id3v2Tag->removeFrames(frameKey);
+        std::cout << "Deleted metadata [" << key << "] from ID3v2 tag.\n";
+    } else {
+        std::cerr << "Error: Metadata key [" << key << "] does not exist in ID3v2 tag.\n";
+    }
+
+    if (metadataAudio.erase(key)) {
+        std::cout << "Deleted metadata [" << key << "] from map.\n";
+    } else {
+        std::cerr << "Error: Metadata key [" << key << "] does not exist in map.\n";
+    }
+
+    if (!file.save()) {
+        std::cerr << "Error: Failed to save changes to the file.\n";
+    } else {
+        std::cout << "Changes saved successfully.\n";
+    }
+}
+
+
+std::string AudioFile::getType() {
+    return "Audio";
 }

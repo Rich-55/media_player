@@ -6,30 +6,35 @@
 int main() {
     ModelManager model;
     CLIManager view;
-    ControllerManager controller(model,view);
-    //init data
+    ControllerManager controller(model, view);
+
+    // Init data
     controller.ScanData();
 
     int choice;
-    while(1){
+    while (true) {
         std::cout << "============Main Menu==========" << std::endl;
         std::cout << "1. Metadata Manager" << std::endl;
-        std::cout << "2. " << std::endl;
+        std::cout << "2. Metadata File Edit" << std::endl;
+        
         std::cout << "0. Exit" << std::endl;
 
         std::cin >> choice;
 
-        switch (choice)
-        {
-        case 1:
-            controller.metadataFileHandler();
-            break;
-        case 0:
-            return 0;
-        default:
-            break;
+        switch (choice) {
+            case 1:
+                controller.metadataManager();
+                break;
+            case 2:
+                controller.metadataFileHandler();
+                break;
+            case 0:
+                return 0;
+            default:
+                std::cerr << "Invalid choice. Please try again.\n";
+                break;
         }
     }
-    
+
     return 0;
 }

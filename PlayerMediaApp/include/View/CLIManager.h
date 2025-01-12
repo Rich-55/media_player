@@ -8,6 +8,7 @@
 #include "../View/MetadataView.h"
 #include "../View/ScanView.h"
 #include "../View/MediaFileManagerView.h"
+#include "../View/MediaFileHandlerView.h"
 class CLIManager{
     private:
         std::unordered_map<std::string, std::shared_ptr<ViewBase>> views; 

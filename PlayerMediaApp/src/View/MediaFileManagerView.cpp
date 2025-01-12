@@ -27,48 +27,49 @@ void MediaFileManagerView::displayAllMediaFile(MetadataManager metadataManager){
     }
 }
 
-void MediaFileManagerView::displayAllMediaFileOfAudio(MetadataManager metadataManager){
-    if (metadataManager.getAllAudioFiles().empty()) {
-        std::cerr << "No media files to display.\n";
+void MediaFileManagerView::displayAllMediaFileOfAudio(MetadataManager metadataManager) {
+    auto audioFiles = metadataManager.getAllAudioFiles();
+    if (audioFiles.empty()) {
+        std::cerr << "No audio files to display.\n";
         return;
     }
-    std::cout << "----- All Audio Files -----" << std::endl;
 
-    for (auto file : metadataManager.getAllAudioFiles()) {
+    std::cout << "----- All Audio Files -----" << std::endl;
+    for (const auto& file : audioFiles) {
         std::cout << "File Name:   " << file->getName() << std::endl;
         std::cout << "File Path:   " << file->getPath() << std::endl;
-        std::cout << "File Type:   " << "Audio File" << std::endl;
-        std::cout << "File Size:   " << file->getSize() << std::endl;
-        std::cout << "Track Name:  " << file->getTrackname() << std::endl;
-        std::cout << "Artist:      " << file->getArtist() << std::endl;
-        std::cout << "Album:       " << file->getAlbum() << std::endl;
-        std::cout << "Genre:       " << file->getGenre() << std::endl;
-        std::cout << "Duration:    " << file->getDuration() << " seconds" << std::endl;
-        std::cout << "Bitrate:     " << file->getBitrate() << " kbps" << std::endl;
-        std::cout << "Sample Rate: " << file->getSampleRate() << " Hz" << std::endl;
+        std::cout << "File Type:   " << file->getType() << std::endl;
+        std::cout << "File Size:   " << file->getSize() << " bytes" << std::endl;
+
+        std::cout << "Audio Metadata:" << std::endl;
+        for (const auto& [key, value] : file->getAllMetadata()) {
+            std::cout << "  " << key << ": " << value << std::endl;
+        }
+
         std::cout << std::string(50, '-') << std::endl;
     }
 }
 
-void MediaFileManagerView::displayAllMediaFileOfVideo(MetadataManager metadataManager){
-    if (metadataManager.getAllAudioFiles().empty()) {
-        std::cerr << "No media files to display.\n";
+void MediaFileManagerView::displayAllMediaFileOfVideo(MetadataManager metadataManager) {
+    auto videoFiles = metadataManager.getAllVideoFiles();
+    if (videoFiles.empty()) {
+        std::cerr << "No video files to display.\n";
         return;
     }
+
     std::cout << "----- All Video Files -----" << std::endl;
-    for(auto file : metadataManager.getAllMediaFile()){
-        if(file->getType() == "Video"){
-            std::cout << "File Name:   " << file->getName() << std::endl;
-            std::cout << "File Path:   " << file->getPath() << std::endl;
-            std::cout << "File Type:   " << "Video File" << std::endl;
-            std::cout << "File Size:   " << file->getSize() << std::endl;
-            std::cout << "Duration:    " << file->getDuration() << " seconds" << std::endl;
-            std::cout << "Codec:       " << file->getCodec() << std::endl;
-            std::cout << "Bitrate:     " << file->getBitrate() << " kbps" << std::endl;
-            std::cout << "Resolution:  " << file->getResolution() << std::endl;
-            std::cout << std::string(50, '-') << std::endl;
+    for (const auto& file : videoFiles) {
+        std::cout << "File Name:   " << file->getName() << std::endl;
+        std::cout << "File Path:   " << file->getPath() << std::endl;
+        std::cout << "File Type:   " << file->getType() << std::endl;
+        std::cout << "File Size:   " << file->getSize() << " bytes" << std::endl;
+
+        std::cout << "Video Metadata:" << std::endl;
+        for (const auto& [key, value] : file->getAllMetadata()) {
+            std::cout << "  " << key << ": " << value << std::endl;
         }
+
+        std::cout << std::string(50, '-') << std::endl;
     }
 }
-
 
