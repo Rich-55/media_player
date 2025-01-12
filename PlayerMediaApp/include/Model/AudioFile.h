@@ -9,7 +9,6 @@ class AudioFile : public MediaFile {
     private:
         std::unordered_map<std::string, std::string> metadataAudio; 
         const static std::unordered_set<std::string> allowedKeys ;
-        const static std::unordered_map<std::string, std::string> keyToID3Frame;
     public:
         AudioFile();
         AudioFile(const std::string& , const std::string& , double , const std::string& , const std::string&);

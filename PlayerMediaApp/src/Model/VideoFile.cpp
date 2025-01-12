@@ -10,14 +10,6 @@ const std::unordered_set<std::string> VideoFile::allowedKeys = {
         "track"     // Track
 };
 
-const std::unordered_map<std::string, std::string> VideoFile::keyToID3Frame = {
-    {"title", "TIT2"},       // Title
-    {"artist", "TPE1"},      // Artist
-    {"album", "TALB"},       // Album
-    {"genre", "TCON"},       // Genre
-    {"year", "TYER"},        // Year
-    {"track", "TRCK"}        // Track number
-};
 
 VideoFile::VideoFile() {}
 
@@ -172,42 +164,48 @@ void VideoFile::editKey(const std::string& key, const std::string& value) {
 void VideoFile::deleteKey(const std::string& key) {
 
 
-    auto it = keyToID3Frame.find(key);
-    if (it == keyToID3Frame.end()) {
-        std::cerr << "Error: Unsupported metadata key [" << key << "]\n";
+    if (allowedKeys.find(key) == allowedKeys.end()) {
+        std::cerr << "Error: Unsupported metadata key: " << key << "\n";
         return;
     }
 
-    TagLib::ByteVector frameKey(it->second.c_str());
+    TagLib::FileRef fileRef(this->getPath().c_str());
+    if (!fileRef.isNull() && fileRef.tag()) {
+        TagLib::Tag* tag = fileRef.tag();
 
-    TagLib::MPEG::File file(this->getPath().c_str());
-    if (!file.isValid() || !file.ID3v2Tag()) {
-        std::cerr << "Error: File is invalid or does not contain an ID3v2 tag.\n";
-        return;
-    }
+        if (key == "title") {
+            tag->setTitle(TagLib::String("", TagLib::String::UTF8));
+        } else if (key == "album") {
+            tag->setAlbum(TagLib::String("", TagLib::String::UTF8));
+        } else if (key == "artist") {
+            tag->setArtist(TagLib::String("", TagLib::String::UTF8));
+        } else if (key == "genre") {
+            tag->setGenre(TagLib::String("", TagLib::String::UTF8));
+        } else if (key == "year") {
+            tag->setYear(0); 
+        } else if (key == "track") {
+            tag->setTrack(0); 
+        } else {
+            std::cerr << "Error: Unsupported metadata key [" << key << "]\n";
+            return;
+        }
 
-    TagLib::ID3v2::Tag* id3v2Tag = file.ID3v2Tag();
+        if (fileRef.save()) {
+            std::cout << "Deleted metadata [" << key << "] (set to empty value) in ID3v2 tag.\n";
+        } else {
+            std::cerr << "Error: Failed to save changes to the file.\n";
+        }
 
-    TagLib::ID3v2::FrameList frames = id3v2Tag->frameList(frameKey);
-    if (!frames.isEmpty()) {
-        id3v2Tag->removeFrames(frameKey);
-        std::cout << "Deleted metadata [" << key << "] from ID3v2 tag.\n";
+        if (metadataVideo.erase(key)) {
+            std::cout << "Deleted metadata [" << key << "] from map.\n";
+        } else {
+            std::cerr << "Error: Metadata key [" << key << "] does not exist in video.\n";
+        }
     } else {
-        std::cerr << "Error: Metadata key [" << key << "] does not exist in ID3v2 tag.\n";
-    }
-
-    if (metadataVideo.erase(key)) {
-        std::cout << "Deleted metadata [" << key << "] from map.\n";
-    } else {
-        std::cerr << "Error: Metadata key [" << key << "] does not exist in map.\n";
-    }
-
-    if (!file.save()) {
-        std::cerr << "Error: Failed to save changes to the file.\n";
-    } else {
-        std::cout << "Changes saved successfully.\n";
+        std::cerr << "Error: Unable to modify tag for the file.\n";
     }
 }
+
 
 
 
