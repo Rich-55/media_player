@@ -1,9 +1,7 @@
 @startuml Media Player Class Diagram
 
 left to right direction
-skinparam outputFormat svg
-scale 1.2
-
+' Style configurations
 skinparam classAttributeIconSize 0
 skinparam class {
     BackgroundColor white
@@ -11,40 +9,43 @@ skinparam class {
     BorderColor black
 }
 
+
 package View {
     class CLIManager {
-        - views : vector<ViewBase*>
-        - currentView : ViewBase*
-        - baseCurrentPlayView : BaseCurrentPlayView
-        + switchView(view : ViewBase*) : void
-        + addView(view : ViewBase*) : void
-        + removeView(view : ViewBase*) : void
+        - views : unordered_map<string, shared_ptr<ViewBase>> 
+        - currentView : shared_ptr<ViewBase>
+        + getView(String) : shared_ptr<ViewBase>
+        + switchView(string) : void 
     }
 
     abstract class ViewBase {
-        + handleInput() : void
-        + hide() : void
-        + virtual showMenu() : void
-        + virtual ~ViewBase()
+        + virtual showMenu() = 0 : void 
+        + virtual displayAllMediaFile(MetadataManager) : void
+        + virtual displayAllMediaFileOfAudio(MetadataManager) : void
+        + virtual displayAllMediaFileOfVideo(MetadataManager) : void
+        + virtual displayDetailMediaFile(std::shared_ptr<MediaFile> ) : void
+        + virtual displayMenuAddMetadata(std::shared_ptr<MediaFile> ) : void
+        + virtual displayMenuEditMetadata(std::shared_ptr<MediaFile> ) : void
+        + virtual displayMenuDeleteMetadata(std::shared_ptr<MediaFile> ) : void
     }
 
     class ScanView {
         + showMenu() override : void
-        + showScanUSB() : void
-        + showScanDirectory() : void
     }
 
-    class MediaFileView {
+    class MediaFileManagerView {
         + showMenu() override : void
-        + showMetadataFile(file : MediaFile)
-        + showAllMediaFile(metadataManager : MetadataManager)
+        + displayAllMediaFile(MetadataManager) override : void
+        + displayAllMediaFileOfAudio(MetadataManager) override : void
+        + displayAllMediaFileOfVideo(MetadataManager) override : void
     }
 
     class MediaFileHandlerView {
         + showMenu() override : void
-        + showAddMediaFile() : void
-        + showEditMediaFile() : void
-        + showRemoveMediaFile() : void
+        + displayDetailMediaFile(std::shared_ptr<MediaFile> ) override : void
+        + displayMenuAddMetadata(std::shared_ptr<MediaFile> ) override : void
+        + displayMenuEditMetadata(std::shared_ptr<MediaFile> ) override : void
+        + displayMenuDeleteMetadata(std::shared_ptr<MediaFile> ) override : void
     }
 
     class PlaylistView {
@@ -108,23 +109,24 @@ BoardManager --> S32K144InterfaceLCD
 
 package Controller {
     class ControllerManager {
-        - mediaScannerController: MediaScannerController
-        - playerController: PlayerController
-        - mediaPlaylistController: MediaPlaylistController
-        - mediaFileController: MediaFileController
-        - deviceController: DeviceController
+        - mediaScannerController: unique_ptr<MediaScannerController>
+        - playerController: unique_ptr<PlayerController>
+        - mediaPlaylistController: unique_ptr<MediaPlaylistController>
+        - mediaFileController: unique_ptr<MediaFileController>
+        - mediaFileManagerController : unique_ptr<MediaFileManagerController>
+        - deviceController: unique_ptr<DeviceController>
         - modelManager: ModelManager
         - cliManager: CLIManager
-        + handleUserInput(input: string) : void
-        + dispatchToController(input: string) : void
     }
 
     
     class MediaScannerController {
-        - metadataManager: MetadataManager
-        + scanDirectory(path: string) : void
-        + scanUSB(path: string) : void
-        + sendScanResultToView(view: MediaFileView) : void
+        - metadataManager: MetadataManager&
+        - scanView : shared_ptr<ViewBase>
+        - listPaths : unordered_set<string>
+        + scanUSBDevices() : void
+        + scanHomeDirectory() : void
+        + getListPaths() : unordered_set<string> 
     }
 
     
@@ -142,22 +144,25 @@ package Controller {
 
     class MediaPlaylistController {
         - playlistManager: PlaylistManager
-        + createPlaylist(name: string) : void
-        + editPlaylist(id: int, name: string) : void
-        + deletePlaylist(id: int) : void
-        + sendPlaylistToView(view: PlaylistView) : void
-        + sendPlaylistContentToView(playlist: Playlist, view: PlaylistView) : void
     }
 
 
     class MediaFileController {
-        - metadataManager: MetadataManager
-        + addMediaFileFromUSB(file : shared_ptr<MediaFile>)
-        + addMediaFileFromPC(file : shared_ptr<MediaFile>)
-        + editMediaFile(file : shared_ptr<MediaFile>)
-        + removeMediaFile(file : shared_ptr<MediaFile>)
-        + displayAllMediaFiles()
-        + sendMediaFileToView(view: MediaFileView) : void
+        - mediaFile: shared_ptr<MediaFile>
+        - mediaFileHandlerView : shared_ptr<ViewBase>
+        + getDetailMediaFile() : void 
+        + editMediaFile() : void
+        + addNewKey() : void
+        + deleteKey() : void
+    }
+
+    class MediaFileManagerController {
+        - mediaManager: MetadataManager& 
+        - mediaFileManagerView : shared_ptr<ViewBase>
+        + addData(const unordered_set<std::string>&) : void
+        + showAllMediaFile() : void
+        + showAllMediaFileOfVideo() : void 
+        + showAllMediaFileOfAudio() : void
     }
 
     class DeviceController {
@@ -175,6 +180,7 @@ ControllerManager "1" o-- "1" MediaScannerController : has >
 ControllerManager "1" o-- "1" PlayerController : has >
 ControllerManager "1" o-- "1" MediaPlaylistController : has >
 ControllerManager "1" o-- "1" MediaFileController : has >
+ControllerManager "1" o-- "1" MediaFileManagerController : has >
 ControllerManager "1" o-- "1" DeviceController : has >
 
 
@@ -195,12 +201,6 @@ package Model {
         - isPlaying: bool
         - currentPosition: int
         + getCurrentFile(): shared_ptr<MediaFile>
-        + play(file: shared_ptr<MediaFile>)
-        + pause(file: shared_ptr<MediaFile>)
-        + stop(file: shared_ptr<MediaFile>)
-        + nextTrack(file: shared_ptr<MediaFile>)
-        + previousTrack(file: shared_ptr<MediaFile>)
-        + setVolume(level: int)
     }
 
     abstract class MediaFile {
@@ -209,45 +209,45 @@ package Model {
         - size : double
         - duration : String
         - fileType : String
-        + getDuration(): int
-        + getPath(): string
+        + getPath(): String
+        + getSize() : double
         + getName(): string
-        + virtual editMediaFile() : void
-        + virtual detailMediaFile() : void
-        + virtual getType(): string
+        + getDuration(): int
+        + virtual getType : String
+        + virtual inputMediaFile() : void
+        + virtual addNewKey(const string& key, const string& value) : void 
+        + virtual editKey(const string& key, const string& value) : void
+        + virtual deleteKey(const string& key) : void
+        + virtual getMetadata(const std::string& key) const : String
+        + virtual getAllMetadata() const : unordered_map<string, string>
         + virtual ~MediaFile();
     }
     
     class AudioFile {
-        - trackName : String
-        - album : String
-        - artist : String
-        - publisher : String
-        - genre : String
-        - bitrate : int
-        - sampleRate : int
-        + getArtist(): string
-        + getAlbum(): string
-        + setArtist(artist: string)
-        + getType() override : string
-        + editMediaFile() override : void
-        + detailMediaFile() override : void
+        - metadataAudio : unordered_map<string, string> 
+        - allowedKeys : const static unordered_set<string>
+        + getMetadata(const string& key) const : String
+        + getAllMetadata() const : unordered_map<string, string>
+        + getType() override : String
+        + inputMediaFile(string pathName) override : void
+        + addMetadata(const string& key, const string& value) override : void 
+        + editMetadata(const string& key, const string& value) override : void
+        + deleteMetadata(const string& key) override : void
     }
     
     class VideoFile {
-        - codec: string
-        - bitrate: int
-        - resolution: string
-        + getCodec(): string
-        + getBitrate(): int
-        + getResolution(): string
-        + getType() override : string
-        + editMediaFile() override : void
-        + detailMediaFile() override : void
+        - metadataVideo : unordered_map<string, string> 
+        - allowedKeys : const static unordered_set<string>
+        + getMetadata(const string& key) const : String
+        + getAllMetadata() const : unordered_map<string, string>
+        + getType() override : String
+        + inputMediaFile(string pathName) override : void
+        + addMetadata(const string& key, const string& value) override : void 
+        + editMetadata(const string& key, const string& value) override : void
+        + deleteMetadata(const string& key) override : void
     }
     
     class Playlist {
-        - id: int
         - name: string
         - mediaFiles: vector<shared_ptr<MediaFile>>
         + addFile(file: shared_ptr<MediaFile>)
@@ -259,11 +259,13 @@ package Model {
 
     class MetadataManager {
         - listMediaFiles : vector<shared_ptr<MediaFile>>
-        + addMediaFileFromUSB(file : shared_ptr<MediaFile>) : void
-        + addMediaFileFromPC(file : shared_ptr<MediaFile>) : void
-        + editMediaFile(file : shared_ptr<MediaFile>) : void
-        + removeMediaFile(file : shared_ptr<MediaFile>) : void
-        + displayAllMediaFiles() : void
+        - listPaths : unordered_set<std::string>
+        + addMediaFile(string, string) : void
+        + deleteMediaFile(string) : void
+        + getAllMediaFile() : vector<shared_ptr<MediaFile>>
+        + getAllAudioFiles() : vector<shared_ptr<MediaFile>>
+        + getAllVideoFiles() : vector<shared_ptr<MediaFile>>
+        + getAllMediaFiles() : void
     }
     
     class PlaylistManager {
@@ -281,6 +283,16 @@ package Model {
 enum MediaType {
     AUDIO
     VIDEO
+}
+
+enum Metadata{
+    TITLE
+    ARTIST
+    ALBUM
+    GENRE
+    COMMENT
+    YEAR
+    TRACK
 }
 
 enum ButtonType {
@@ -309,6 +321,8 @@ ModelManager "1" o-- "1" CurrentPlay : has >
 
 MediaFile --> "1" MediaType : has type >
 PlayerController --> "1" ButtonType
+AudioFile --> "1" Metadata : has >
+VideoFile --> "1" Metadata : has >
 
 ControllerManager "1" o-- "1" ModelManager : has >
 ControllerManager "1" o-- "1" CLIManager : has >
