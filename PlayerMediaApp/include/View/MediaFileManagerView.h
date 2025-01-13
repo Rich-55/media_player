@@ -15,14 +15,13 @@ public:
 
     MediaFileManagerView();
 
+    void showMenu() override;
+
     void displayAllMediaFile(MetadataManager) override;
 
     void displayAllMediaFileOfAudio(MetadataManager) override;
 
     void displayAllMediaFileOfVideo(MetadataManager) override;
-
-    void showMenu() override;
-
 
 };
 

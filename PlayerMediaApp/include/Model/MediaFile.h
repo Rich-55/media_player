@@ -47,9 +47,7 @@ public:
     virtual void editMediaFile();
    // void editMetadata(TagLib::MPEG::File &file, const std::string &key, const std::string &newValue);
 
-
     // Getter for Audio
-
     virtual std::string getTrackname() const;
     virtual std::string getAlbum() const;
     virtual std::string getArtist() const;

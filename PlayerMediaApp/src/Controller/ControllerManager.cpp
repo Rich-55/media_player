@@ -14,7 +14,7 @@ void ControllerManager::ScanData() {
     scannerController->scan();
 }
 
-void ControllerManager::viewAllDataAdded() {
+void ControllerManager::MediaFileControll() {
     std::shared_ptr<ViewBase> mediaFileManagerView = view.getView("MediaFileManagerView");
     
     if (!mediaFileManagerView) {
@@ -23,25 +23,60 @@ void ControllerManager::viewAllDataAdded() {
     }
 
     view.switchView("MediaFileManagerView");
-    
 
-    MediaFileController fileController(model.getMetadataManager(), mediaFileManagerView);
+    // MediaFileController fileController(model.getMetadataManager(), mediaFileManagerView);
 
-    int choice;
-    std::cin >> choice;
+    std::shared_ptr<MediaFileController> fileController = std::make_shared<MediaFileController>(model.getMetadataManager(), mediaFileManagerView);
+
+    int choice = view.getInput();
 
     if (choice == 1) {
-        fileController.showAllMediaFile();
+        fileController->showAllMediaFile();
+
     } else if (choice == 2) {
-        fileController.showAllAudioFile();
+        fileController->showAllAudioFile();
+
     } else if (choice == 3) {
+        // fileController->showAllVideoFile();
         return;
-    } else if (choice == 4) {
-        std::cout << "Exiting...\n";
+    } else if (choice == 0) {
+        view.prompt("Exiting...");
         return;
     } else {
-        std::cout << "Invalid option. Try again.\n";
+        view.prompt("Invalid option. Try again.");
     }
-
 }
 
+void ControllerManager::MediaFileHandler() {
+    std::shared_ptr<ViewBase> mediaFileHandlerView = view.getView("MediaFileHandlerView");
+    
+    if (!mediaFileHandlerView) {
+        std::cerr << "Error: MediaFileHandlerView not found or failed to initialize.\n";
+        return;
+    }
+
+    view.switchView("MediaFileHandlerView");
+
+    std::shared_ptr<MediaFileController> fileController = std::make_shared<MediaFileController>(model.getMetadataManager(), mediaFileHandlerView);
+
+    int choice = view.getInput();
+
+    if (choice == 1) {
+        // fileController->addMediaFile();
+        return;
+
+    } else if (choice == 2) {
+        view.prompt("Input file name to edit: ");
+        fileController->editMediaFile(view.getString());
+
+    } else if (choice == 3) {
+        view.prompt("Input file name to remove: ");
+        fileController->removeMediaFile(view.getString());
+
+    } else if (choice == 0) {
+        // std::cout << "Go Home blah blah...\n";
+        return;
+    } else {
+        view.prompt("Invalid option. Try again.");
+    }
+}

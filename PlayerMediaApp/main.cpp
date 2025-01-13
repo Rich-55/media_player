@@ -10,7 +10,9 @@ int main() {
 
     controller.ScanData();
 
-    controller.viewAllDataAdded();
+    controller.MediaFileControll();
+
+    controller.MediaFileHandler();
 
     return 0;
 }

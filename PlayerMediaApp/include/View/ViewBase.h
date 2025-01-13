@@ -7,7 +7,7 @@
 #include <unordered_map>
 #include "../Model/MetadataManager.h"
 
-class ViewBase{
+class ViewBase {
     private:
     public:
         ViewBase();

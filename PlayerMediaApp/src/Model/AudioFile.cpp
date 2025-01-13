@@ -76,7 +76,7 @@ void AudioFile::detailMediaFile() const {
 
 
 void AudioFile::editMediaFile() {
-    TagLib::FileRef fileRef(this->getPath().c_str()); // Create FileRef locally
+    TagLib::FileRef fileRef(this->getPath().c_str());
 
     if (!fileRef.isNull() && fileRef.tag()) {
         TagLib::Tag *tag = fileRef.tag();

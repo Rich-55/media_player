@@ -13,13 +13,13 @@ class MetadataManager{
     public:
         MetadataManager();
 
-        void addMediaFile(std::string, std::string);
-
         void getData();
 
-        void editMediaFile(std::shared_ptr<MediaFile>);
+        void addMediaFile(std::string, std::string);
 
-        void deleteMediaFile(std::shared_ptr<MediaFile>);
+        void editMediaFile(std::string);
+
+        void removeMediaFile(std::string);
 
         std::vector<std::shared_ptr<MediaFile>> getAllMediaFile();
 
@@ -28,5 +28,3 @@ class MetadataManager{
 };
 
 #endif
-
-

@@ -8,8 +8,7 @@
 #include "../Controller/MediaFileController.h"
 #include "../Controller/MediaScannerController.h"
 
-
-class ControllerManager{
+class ControllerManager {
     private:
         ModelManager model;
         CLIManager view;
@@ -20,7 +19,9 @@ class ControllerManager{
         
         void ScanData();
 
-        void viewAllDataAdded();
+        void MediaFileControll();
+
+        void MediaFileHandler();
 
 };
 

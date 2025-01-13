@@ -16,10 +16,13 @@ public:
 
     void addData(std::vector<std::string>);
 
+    void editMediaFile(std::string);
+
+    void removeMediaFile(std::string);
+
     void showAllMediaFile();
 
     void showAllAudioFile();
-
 };
 
 #endif 
