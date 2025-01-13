@@ -1,7 +1,7 @@
 #include "../../include/Controller/ControllerManager.h"
 
 ControllerManager::ControllerManager(ModelManager m, CLIManager v) 
-    : model(m), view(v), scannerController(nullptr), mediaFileHandlerController(nullptr), mediaFileManagerController(nullptr) {}
+    : model(m), view(v), scannerController(nullptr), mediaFileHandlerController(nullptr), mediaFileManagerController(nullptr), mediaPlaylistController(nullptr), mediaPlaylistManagerController(nullptr) {}
 
 void ControllerManager::ScanData() 
 {
@@ -134,6 +134,130 @@ void ControllerManager::metadataFileHandler()
 
 }
 
-void ControllerManager::playlistManager(){
+void ControllerManager::playlistManager()
+{
+    std::shared_ptr<ViewBase> playlistManagerView = view.getView("PlaylistManagerView");
 
+    if (!playlistManagerView) {
+        std::cerr << "Error: PlaylistManagerView not found or failed to initialize.\n";
+        return;
+    }
+
+    if (!mediaPlaylistManagerController) {
+        mediaPlaylistManagerController = std::make_unique<MediaPlaylistManagerController>(model.getPlaylistManager(), playlistManagerView);
+    }
+
+    if (!model.getPlaylistManager().checkPlaylist()) {
+        std::cout << "No playlists found. Do you want to create a new playlist? (Y/N): ";
+        char choice;
+        std::cin >> choice;
+
+        if (choice == 'N' || choice == 'n') {
+            return; 
+        }
+
+        mediaPlaylistManagerController->createPlaylist(); 
+    }
+
+    int choice;
+    while (true) {
+        view.switchView("PlaylistManagerView");
+        std::cin >> choice;
+
+        switch (choice) {
+        case 1:
+            mediaPlaylistManagerController->createPlaylist(); 
+            break;
+        case 2:
+        {
+            mediaPlaylistManagerController->deletePlaylist();
+            break;
+        }
+        case 3:
+            mediaPlaylistManagerController->displayAllPlaylist(); 
+            break;
+        case 0:
+            return; 
+        default:
+            std::cerr << "Invalid choice. Please try again.\n";
+            break;
+        }
+    }
+}
+
+void ControllerManager::playlistHandler() {
+    std::shared_ptr<ViewBase> playlistManagerView = view.getView("PlaylistManagerView");
+
+    if (!playlistManagerView) {
+        std::cerr << "Error: PlaylistHandlerView not found or failed to initialize.\n";
+        return;
+    }
+
+    if (!mediaPlaylistManagerController) {
+        mediaPlaylistManagerController = std::make_unique<MediaPlaylistManagerController>(model.getPlaylistManager(), playlistManagerView);
+    }
+
+    if (!model.getPlaylistManager().checkPlaylist()) {
+        std::cout << "Playlist is empty. Are you sure you want to create a new playlist? (Y/N): ";
+        
+        std::string choice;
+        std::cin.ignore();
+        getline(std::cin, choice);
+
+        if (choice == "N" || choice == "n") {
+            return; 
+        }
+
+        mediaPlaylistManagerController->createPlaylist(); 
+    }
+
+    mediaPlaylistManagerController->displayAllPlaylist();
+
+    std::shared_ptr<ViewBase> playlistHandlerView = view.getView("PlaylistHandlerView");
+
+    if (!playlistHandlerView) {
+        std::cerr << "Error: PlaylistHandlerView not found or failed to initialize.\n";
+        return;
+    }
+
+    std::cout << "Enter the name of the playlist you want to edit: ";
+    std::string playlistName;
+    std::cin >> playlistName;
+
+    if (!model.getPlaylistManager().checkPlaylistName(playlistName)) {
+        std::cerr << "Playlist not found!\n";
+        return;
+    }
+
+    if (!mediaPlaylistController) {
+        mediaPlaylistController = std::make_unique<MediaPlaylistController>(model.getPlaylist(playlistName), playlistHandlerView);
+    }
+
+    int choice;
+    while (true) {
+        view.switchView("PlaylistHandlerView");
+        std::cin >> choice;
+        switch (choice) {
+        case 1:
+        {
+            std::cout << "Enter the name of the file you want to add: ";
+            std::string fileName;
+            std::cin >> fileName;
+            mediaPlaylistController->addMediaFile(model.getMediaFile(fileName));
+        }
+            
+            break;
+        case 2:
+            mediaPlaylistController->deleteMediaFile();
+            break;
+        case 3:
+            mediaPlaylistController->displayAllMediaFiles();
+            break;
+        case 0:
+            return; 
+        default:
+            std::cerr << "Invalid choice. Please try again.\n";
+            break;
+        }
+    }
 }

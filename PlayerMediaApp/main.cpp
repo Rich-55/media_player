@@ -14,9 +14,10 @@ int main() {
     int choice;
     while (true) {
         std::cout << "============Main Menu==========" << std::endl;
-        std::cout << "1. Metadata Manager" << std::endl;
+        std::cout << "1. MediaFile Manager" << std::endl;
         std::cout << "2. Metadata File Edit" << std::endl;
         std::cout << "3. Playlist Manager" << std::endl;
+        std::cout << "4. Playlist Handler" << std::endl;
         std::cout << "0. Exit" << std::endl;
 
         std::cin >> choice;
@@ -30,7 +31,9 @@ int main() {
                 break;
             case 3:
                 controller.playlistManager();
-                std::cout << "Playlist Manager is under construction.\n";
+                break;
+            case 4:
+                controller.playlistHandler();
                 break;
             case 0:
                 return 0;

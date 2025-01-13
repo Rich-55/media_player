@@ -14,4 +14,7 @@ void ViewBase::displayMenuAddMetadata(std::shared_ptr<MediaFile>){}
 void ViewBase::displayMenuEditMetadata(std::shared_ptr<MediaFile>){}
 void ViewBase::displayMenuDeleteMetadata(std::shared_ptr<MediaFile>){}
 
+void ViewBase::displayAllPlaylist(PlaylistManager){}
+void ViewBase::displayAllMediaFileInPlaylist(std::shared_ptr<Playlist>){}
+
 ViewBase::~ViewBase(){}

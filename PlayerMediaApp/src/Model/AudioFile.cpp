@@ -160,11 +160,6 @@ void AudioFile::deleteKey(const std::string& key) {
         return;
     }
 
-    if (metadataAudio.find(key) != metadataAudio.end()) {
-        std::cerr << "Error: Metadata key [" << key << "] already exists.\n";
-        return;
-    }
-
     TagLib::FileRef fileRef(this->getPath().c_str());
     if (!fileRef.isNull() && fileRef.tag()) {
         TagLib::Tag* tag = fileRef.tag();

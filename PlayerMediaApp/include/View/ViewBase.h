@@ -7,7 +7,7 @@
 #include <functional>
 #include <unordered_map>
 #include "../Model/MetadataManager.h"
-
+#include "../Model/PlaylistManager.h"
 class ViewBase{
     private:
     public:
@@ -23,6 +23,9 @@ class ViewBase{
         virtual void displayMenuAddMetadata(std::shared_ptr<MediaFile> );
         virtual void displayMenuEditMetadata(std::shared_ptr<MediaFile> );
         virtual void displayMenuDeleteMetadata(std::shared_ptr<MediaFile> );
+
+        virtual void displayAllPlaylist(PlaylistManager);
+        virtual void displayAllMediaFileInPlaylist(std::shared_ptr<Playlist>);
 
         virtual ~ViewBase();
 

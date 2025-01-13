@@ -2,6 +2,7 @@
 
 MediaFileManagerController::MediaFileManagerController(MetadataManager& m, std::shared_ptr<ViewBase> v) : mediaManager(m), mediaFileManagerView(v){}
 
+
 void MediaFileManagerController::addData(const std::unordered_set<std::string> &listPathName) {
     for (const auto &path : listPathName) {
         size_t lastSlashPos = path.find_last_of("/");
