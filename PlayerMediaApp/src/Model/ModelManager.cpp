@@ -16,6 +16,11 @@ PlaylistManager &ModelManager::getPlaylistManager()
     return this->playlistManager;
 }
 
+FolderManager &ModelManager::getFolderManager()
+{
+    return this->folderManager;
+}
+
 std::shared_ptr<Playlist> ModelManager::getPlaylist(std::string name)
 {
     return playlistManager.getPlaylist(name);

@@ -5,6 +5,7 @@ MediaFileManagerController::MediaFileManagerController(MetadataManager& m, std::
 
 void MediaFileManagerController::addData(const std::unordered_set<std::string> &listPathName) {
     for (const auto &path : listPathName) {
+        std::cout << "Reading file: " << path << '\n';
         size_t lastSlashPos = path.find_last_of("/");
         std::string fileName = (lastSlashPos != std::string::npos) ? path.substr(lastSlashPos + 1) : path;
 
@@ -22,9 +23,18 @@ void MediaFileManagerController::addData(const std::unordered_set<std::string> &
     }
 }
 
+std::unordered_set<std::string> MediaFileManagerController::getListFileAdded()
+{
+    return mediaManager.getListFileAdded();
+}
+void MediaFileManagerController::clearListFileAdded(){
+    mediaManager.clearListFileAdded();
+}
+
 void MediaFileManagerController::deleteData(std::string fileName) {
     mediaManager.deleteMediaFile(fileName);
 }
+
 
 void MediaFileManagerController::showAllMediaFile(){
     

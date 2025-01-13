@@ -4,14 +4,16 @@
 #include <iostream>
 #include <memory>
 #include <string>
-#include <unordered_set>
+#include <unordered_map>
+#include <fstream>
 #include "../Model/MediaFile.h"
 #include "../Model/VideoFile.h"
 #include "../Model/AudioFile.h"
 class MetadataManager{
     private:
         std::vector<std::shared_ptr<MediaFile>> listMediaFiles;
-        std::unordered_set<std::string> listPaths;
+        std::unordered_map<std::string, unsigned long long> listMediaFilesSize;
+        std::unordered_set<std::string> listFileAdded;
     public:
         MetadataManager();
 
@@ -20,6 +22,11 @@ class MetadataManager{
         void addMediaFile(std::string, std::string);
 
         void deleteMediaFile(std::string);
+
+        std::unordered_set<std::string> getListFileAdded();
+        void clearListFileAdded();
+
+        void updateDatabase();
 
         std::vector<std::shared_ptr<MediaFile>> getAllMediaFile();
 

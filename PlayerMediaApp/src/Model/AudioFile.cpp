@@ -13,7 +13,7 @@ const std::unordered_set<std::string> AudioFile::allowedKeys = {
 
 AudioFile::AudioFile() {};
 
-AudioFile::AudioFile(const std::string& fileName, const std::string& pathName, unsigned long size, const std::string& duration, const std::string& fileType)
+AudioFile::AudioFile(const std::string& fileName, const std::string& pathName, unsigned long long size, const std::string& duration, const std::string& fileType)
     : MediaFile(fileName, pathName, size, duration, fileType) {}
 
 // Lấy giá trị metadata theo key

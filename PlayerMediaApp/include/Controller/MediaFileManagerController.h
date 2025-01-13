@@ -11,13 +11,15 @@ class MediaFileManagerController {
 private:
     MetadataManager& mediaManager;
     std::shared_ptr<ViewBase> mediaFileManagerView; 
-
 public:
     MediaFileManagerController(MetadataManager&, std::shared_ptr<ViewBase>);
 
     void addData(const std::unordered_set<std::string>&);
 
     void deleteData(std::string);
+
+    std::unordered_set<std::string> getListFileAdded();
+    void clearListFileAdded();
 
     void showAllMediaFile();
 

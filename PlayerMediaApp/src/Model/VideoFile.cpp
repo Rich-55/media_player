@@ -13,7 +13,7 @@ const std::unordered_set<std::string> VideoFile::allowedKeys = {
 
 VideoFile::VideoFile() {}
 
-VideoFile::VideoFile(const std::string& fileName, const std::string& pathName, unsigned long size, const std::string& duration, const std::string& fileType)
+VideoFile::VideoFile(const std::string& fileName, const std::string& pathName, unsigned long long size, const std::string& duration, const std::string& fileType)
     : MediaFile(fileName, pathName, size, duration, fileType) {}
 
 std::string VideoFile::getMetadata(const std::string& key) const {

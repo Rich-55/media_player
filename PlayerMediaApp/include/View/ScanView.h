@@ -10,9 +10,13 @@
 
 class ScanView : public ViewBase{
     private:
-
+        std::unordered_set<std::string> listPathNameIsAdded;
     public:
         ScanView();
+
+        void setListPathNameIsAdded(std::unordered_set<std::string>);
+        void showFileAdded() override;
+
         void showMenu() override;
 };
 #endif

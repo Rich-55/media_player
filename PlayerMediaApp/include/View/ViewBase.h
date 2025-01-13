@@ -27,6 +27,9 @@ class ViewBase{
         virtual void displayAllPlaylist(PlaylistManager);
         virtual void displayAllMediaFileInPlaylist(std::shared_ptr<Playlist>);
 
+        virtual void setListPathNameIsAdded(std::unordered_set<std::string>);
+        virtual void showFileAdded();
+
         virtual ~ViewBase();
 
 };

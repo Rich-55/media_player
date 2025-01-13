@@ -19,7 +19,7 @@ class MediaFile {
 private:
     std::string fileName;
     std::string pathName;
-    unsigned long size;
+    unsigned long long size;
     std::string duration;
     std::string fileType;
 protected:
@@ -27,7 +27,7 @@ protected:
 public:
     // Constructor
     MediaFile();
-    MediaFile(const std::string& , const std::string& , unsigned long, const std::string& , const std::string& );
+    MediaFile(const std::string& , const std::string& , unsigned long long, const std::string& , const std::string& );
 
 
     // Virtual Destructor

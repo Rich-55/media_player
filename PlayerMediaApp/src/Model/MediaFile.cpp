@@ -1,7 +1,7 @@
 #include "../../include/Model/MediaFile.h"
 
 MediaFile::MediaFile(){}
-MediaFile::MediaFile(const std::string& fileName, const std::string& pathName, unsigned long size, const std::string& duration, const std::string& fileType)
+MediaFile::MediaFile(const std::string& fileName, const std::string& pathName, unsigned long long size, const std::string& duration, const std::string& fileType)
     : fileName(fileName), pathName(pathName), size(size), duration(duration), fileType(fileType) {}
 
 MediaFile::~MediaFile() {}

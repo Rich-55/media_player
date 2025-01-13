@@ -23,6 +23,7 @@ void CLIManager::switchView(std::string name) {
     auto it = views.find(name);
     if (it != views.end()) {
         currentView = it->second;
+        //std::system("clear");
         currentView->showMenu();
     } else {
         std::cerr << "View not found: " << name << std::endl;

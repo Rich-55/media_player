@@ -13,7 +13,7 @@ private:
     const static std::unordered_set<std::string> allowedKeys;
 public:
     VideoFile();
-    VideoFile(const std::string&, const std::string&, unsigned long,const std::string&, const std::string&);
+    VideoFile(const std::string&, const std::string&, unsigned long long,const std::string&, const std::string&);
 
     // Metadata operations
     std::string getMetadata(const std::string& key) const override;

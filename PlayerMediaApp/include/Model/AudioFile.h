@@ -11,7 +11,7 @@ class AudioFile : public MediaFile {
         const static std::unordered_set<std::string> allowedKeys ;
     public:
         AudioFile();
-        AudioFile(const std::string& , const std::string& , unsigned long, const std::string& , const std::string&);
+        AudioFile(const std::string& , const std::string& , unsigned long long, const std::string& , const std::string&);
 
         // Get metadata
         std::string getMetadata(const std::string& key) const;
