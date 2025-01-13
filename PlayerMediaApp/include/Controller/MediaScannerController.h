@@ -25,6 +25,8 @@ class MediaScannerController{
         bool checkFolderDirectory();
         bool checkFolderUSB();
 
+        std::unordered_set<std::string> scanFolder(const std::string &path);
+
         std::unordered_set<std::string> getlistFolderDirectory();
         std::unordered_set<std::string> getlistFolderUSB();
 

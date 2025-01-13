@@ -35,7 +35,7 @@ void ControllerManager::ScanData()
             int choice; std::cin >> choice;
             switch (choice)
             {
-            case 1:
+            case ScanHomeDirectory:
                 scannerController->scanHomeDirectory();
                 mediaFileManagerController->addData(scannerController->getListPaths());
                 break;
@@ -102,19 +102,35 @@ void ControllerManager::mediaFileManager()
         {
         case 1:
             {
+            std::cout << "Enter your path of file to add: ";
+            std::string pathFile;
+            std::cin >> pathFile;
+            mediaFileManagerController->addDataFile(pathFile);
+            break;
+            }
+        case 2:
+            {
+            std::cout << "Enter your folder path to add: ";
+            std::string pathFolder;
+            std::cin >> pathFolder;
+            mediaFileManagerController->addData(scannerController->scanFolder(pathFolder));
+            break;
+            }
+        case 3:
+            {
             std::cout << "Enter the name of the file you want to delete: ";
             std::string fileName;
             std::cin >> fileName;
             mediaFileManagerController->deleteData(fileName);
             break;
             }
-        case 2:
+        case 4:
             mediaFileManagerController->showAllMediaFile();
             break;
-        case 3:
+        case 5:
             mediaFileManagerController->showAllMediaFileOfAudio();
             break;
-        case 4:
+        case 6:
             mediaFileManagerController->showAllMediaFileOfVideo();
             break;    
         case 0:
@@ -132,6 +148,10 @@ void ControllerManager::metadataFileHandler()
     if (!mediaFileHandlerView) {
         std::cerr << "Error: MediaFileManagerView not found or failed to initialize.\n";
         return;
+    }
+
+    if(mediaFileManagerController){
+        mediaFileManagerController->showAllMediaFile();
     }
 
     std::cout << "Enter the name of the file you want to edit: ";
@@ -279,7 +299,12 @@ void ControllerManager::playlistHandler() {
             std::cout << "Enter the name of the file you want to add: ";
             std::string fileName;
             std::cin >> fileName;
-            mediaPlaylistController->addMediaFile(model.getMediaFile(fileName));
+            std::shared_ptr<MediaFile> mediaFile = model.getMediaFile(fileName);
+            if(mediaFile == nullptr){
+                std::cerr << "File not found!\n";
+                return;
+            }
+            mediaPlaylistController->addMediaFile(mediaFile);
         }
             
             break;

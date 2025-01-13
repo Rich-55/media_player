@@ -12,6 +12,7 @@
 #include "../Controller/MediaFileManagerController.h"
 #include "../Controller/MediaPlaylistManagerController.h"
 #include "../Controller/MediaPlaylistController.h"
+#define ScanHomeDirectory 1
 
 class ControllerManager{
     private:

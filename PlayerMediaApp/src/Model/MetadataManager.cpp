@@ -8,8 +8,7 @@ std::shared_ptr<MediaFile> MetadataManager::getMediaFile(std::string fileName)
             return file;
         }
     } 
-    throw std::invalid_argument("File not found!");
-
+    return nullptr;
 }
 
 std::unordered_set<std::string> MetadataManager::getListFileAdded()

@@ -1,7 +1,7 @@
 #include "include/Model/ModelManager.h"
 #include "include/View/CLIManager.h"
 #include "include/Controller/ControllerManager.h"
-
+#define MEDIAFILEMANAGER 1 
 
 int main() {
     ModelManager model;
@@ -18,12 +18,13 @@ int main() {
         std::cout << "2. Metadata File Edit" << std::endl;
         std::cout << "3. Playlist Manager" << std::endl;
         std::cout << "4. Playlist Handler" << std::endl;
+        
         std::cout << "0. Exit" << std::endl;
 
         std::cin >> choice;
 
         switch (choice) {
-            case 1:
+            case MEDIAFILEMANAGER:
                 controller.mediaFileManager();
                 break;
             case 2:

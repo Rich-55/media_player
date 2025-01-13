@@ -4,7 +4,9 @@
 #include "../Model/MetadataManager.h"
 #include "../View/ViewBase.h"
 #include "../View/MetadataView.h"
-
+#include <dirent.h>
+#include <sys/stat.h>
+#include <cstdlib>
 #include <memory>
 #include <unordered_set>
 class MediaFileManagerController {
@@ -15,6 +17,8 @@ public:
     MediaFileManagerController(MetadataManager&, std::shared_ptr<ViewBase>);
 
     void addData(const std::unordered_set<std::string>&);
+
+    void addDataFile(std::string);
 
     void deleteData(std::string);
 

@@ -3,18 +3,18 @@
 MediaScannerController::MediaScannerController(MetadataManager& metadataManager, FolderManager& folderManager,std::shared_ptr<ViewBase> scanView): metadataManager(metadataManager), folderManager(folderManager), scanView(scanView){}
 
 
-std::unordered_set<std::string> MediaScannerController::getListPaths(){
-    return this->listPaths;
-}
+std::unordered_set<std::string> MediaScannerController::getListPaths(){return this->listPaths;}
 
-bool has_extension(const std::string &filename, const std::string &extension) {
+bool has_extension(const std::string &filename, const std::string &extension) 
+{
     if (filename.size() >= extension.size()) {
         return (filename.compare(filename.size() - extension.size(), extension.size(), extension) == 0);
     }
     return false;
 }
 
-std::vector<std::string> list_folders(const std::string &path) {
+std::vector<std::string> list_folders(const std::string &path) 
+{
     std::vector<std::string> folders;
     DIR *dir = opendir(path.c_str());
     if (!dir) {
@@ -36,7 +36,8 @@ std::vector<std::string> list_folders(const std::string &path) {
     return folders;
 }
 
-std::vector<std::string> list_media_files(const std::string &path) {
+std::vector<std::string> list_media_files(const std::string &path) 
+{
     std::vector<std::string> media_files;
     DIR *dir = opendir(path.c_str());
     if (!dir) {
@@ -61,7 +62,8 @@ std::vector<std::string> list_media_files(const std::string &path) {
     return media_files;
 }
 
-std::vector<std::string> scan_all_folders(const std::string &path) {
+std::vector<std::string> scan_all_folders(const std::string &path) 
+{
     std::vector<std::string> all_media_files;
     std::vector<std::string> folders = list_folders(path);
     for (const auto &folder : folders) {
@@ -71,7 +73,8 @@ std::vector<std::string> scan_all_folders(const std::string &path) {
     return all_media_files;
 }
 
-void MediaScannerController::scanHomeDirectory() {
+void MediaScannerController::scanHomeDirectory() 
+{
     const char *home = std::getenv("HOME");
     if (!home) {
         std::cerr << "Unable to determine HOME directory.\n";
@@ -118,7 +121,8 @@ void MediaScannerController::scanHomeDirectory() {
     }
 }
 
-void MediaScannerController::scanUSBDevices() {
+void MediaScannerController::scanUSBDevices() 
+{
     std::string usb_base_path = "/media/" + std::string(std::getenv("USER"));
     std::cout << "Scanning USB devices at: " << usb_base_path << std::endl;
 
@@ -169,16 +173,12 @@ void MediaScannerController::scanUSBDevices() {
     }
 }
 
-bool MediaScannerController::checkFolderDirectory()
-{
-    return this->folderManager.getListFolderDirectory().empty();
-}
-bool MediaScannerController::checkFolderUSB()
-{
-    return this->folderManager.getListFolderUSB().empty();
-}
+bool MediaScannerController::checkFolderDirectory(){ return this->folderManager.getListFolderDirectory().empty();}
 
-std::unordered_set<std::string> MediaScannerController::getlistFolderDirectory() {
+bool MediaScannerController::checkFolderUSB(){ return this->folderManager.getListFolderUSB().empty();}
+
+std::unordered_set<std::string> MediaScannerController::getlistFolderDirectory() 
+{
     std::unordered_set<std::string> folderPaths = this->folderManager.getListFolderDirectory();
     std::unordered_set<std::string> mediaFiles;
 
@@ -195,8 +195,8 @@ std::unordered_set<std::string> MediaScannerController::getlistFolderDirectory()
     return mediaFiles;
 }
 
-
-std::unordered_set<std::string> MediaScannerController::getlistFolderUSB() {
+std::unordered_set<std::string> MediaScannerController::getlistFolderUSB() 
+{
     std::unordered_set<std::string> usbPaths = this->folderManager.getListFolderUSB();
     std::unordered_set<std::string> mediaFiles;
 
@@ -210,5 +210,15 @@ std::unordered_set<std::string> MediaScannerController::getlistFolderUSB() {
         }
     }
 
+    return mediaFiles;
+}
+
+std::unordered_set<std::string> MediaScannerController::scanFolder(const std::string &path)
+{
+    std::unordered_set<std::string> mediaFiles;
+    std::vector<std::string> files = list_media_files(path);
+    for (const auto &file : files) {
+        mediaFiles.insert(file);
+    }
     return mediaFiles;
 }

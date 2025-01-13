@@ -4,10 +4,12 @@ MediaFileManagerView::MediaFileManagerView(){}
 
 void MediaFileManagerView::showMenu() {
     std::cout << "========== Media File Menu ==========" << std::endl;
-    std::cout << "1. Delete File" << std::endl;
-    std::cout << "2. View All Media File" << std::endl;
-    std::cout << "3. View All Audio Media File" << std::endl;
-    std::cout << "4. View All Video Media File" << std::endl;
+    std::cout << "1. Add File By File Path" << std::endl;
+    std::cout << "2. Add File By Folder Path" << std::endl;
+    std::cout << "3. Delete File" << std::endl;
+    std::cout << "4. View All Media File" << std::endl;
+    std::cout << "5. View All Audio Media File" << std::endl;
+    std::cout << "6. View All Video Media File" << std::endl;
     std::cout << "0. Back to main menu" << std::endl;
     std::cout << "--------------------------------------------------" << std::endl;
     std::cout << "Enter your choice: ";

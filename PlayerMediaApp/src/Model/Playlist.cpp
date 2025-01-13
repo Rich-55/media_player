@@ -16,7 +16,7 @@ void Playlist::addMediaFile(std::shared_ptr<MediaFile> file)
 {
     for(const auto &mediaFile : listMediaFiles)
     {
-        if(mediaFile->getName() == file->getName())
+        if(mediaFile->getPath() == file->getPath())
         {
             std::cerr << "File already exists in the playlist.\n";
             return;
