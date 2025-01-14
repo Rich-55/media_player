@@ -6,7 +6,7 @@
 #include <iomanip>
 #include <functional>
 #include <unordered_map>
-#include "../Model/MetadataManager.h"
+#include "../Model/MediaFileManager.h"
 #include "../Model/PlaylistManager.h"
 class BaseView{
     private:
@@ -15,9 +15,9 @@ class BaseView{
         
         virtual void showMenu() = 0;
 
-        virtual void displayAllMediaFile(MetadataManager);
-        virtual void displayAllMediaFileOfAudio(MetadataManager);
-        virtual void displayAllMediaFileOfVideo(MetadataManager);
+        virtual void displayAllMediaFile(MediaFileManager);
+        virtual void displayAllMediaFileOfAudio(MediaFileManager);
+        virtual void displayAllMediaFileOfVideo(MediaFileManager);
 
         virtual void displayDetailMediaFile(std::shared_ptr<MediaFile> );
         virtual void displayMenuAddMetadata(std::shared_ptr<MediaFile> );

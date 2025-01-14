@@ -1,7 +1,11 @@
 #include "include/Model/ModelManager.h"
 #include "include/View/ViewManager.h"
 #include "include/Controller/ControllerManager.h"
-#define MEDIAFILEMANAGER 1 
+#define MEDIA_FILE_MANAGER 1 
+#define METADATA_FILE_EDIT 2
+#define PLAYLIST_MANAGER 3
+#define PLAYLIST_HANDLER 4
+#define EXIT 0
 
 int main() {
     ModelManager model;
@@ -24,19 +28,19 @@ int main() {
         std::cin >> choice;
 
         switch (choice) {
-            case MEDIAFILEMANAGER:
+            case MEDIA_FILE_MANAGER:
                 controller.mediaFileManager();
                 break;
-            case 2:
+            case METADATA_FILE_EDIT:
                 controller.metadataFileHandler();
                 break;
-            case 3:
+            case PLAYLIST_MANAGER:
                 controller.playlistManager();
                 break;
-            case 4:
+            case PLAYLIST_HANDLER:
                 controller.playlistHandler();
                 break;
-            case 0:
+            case EXIT:
                 return 0;
             default:
                 std::cerr << "Invalid choice. Please try again.\n";

@@ -1,19 +1,20 @@
 #ifndef MODEL_MANAGER_H
 #define MODEL_MANAGER_H
 
-#include "../Model/MetadataManager.h"
-#include "../Model/MediaFile.h"
-#include "../Model/PlaylistManager.h"
-#include "../Model/FolerManager.h"
+#include "MediaFile.h"
+#include "MediaFileManager.h"
+#include "PlaylistManager.h"
+#include "FolerManager.h"
+
 class ModelManager{
     private:
-        MetadataManager metadataManager;
+        MediaFileManager mediaFileManager;
         PlaylistManager playlistManager;
         FolderManager folderManager;
     public:
         ModelManager();
     
-        MetadataManager &getMetadataManager();
+        MediaFileManager &getMediaFileManager();
 
         PlaylistManager &getPlaylistManager();
 

@@ -1,7 +1,6 @@
 #include "../../include/Controller/MediaFileManagerController.h"
 
-MediaFileManagerController::MediaFileManagerController(MetadataManager& m, std::shared_ptr<BaseView> v) : mediaManager(m), mediaFileManagerView(v){}
-
+MediaFileManagerController::MediaFileManagerController(MediaFileManager& m, std::shared_ptr<BaseView> v) : mediaManager(m), mediaFileManagerView(v){}
 
 void MediaFileManagerController::addData(const std::unordered_set<std::string> &listPathName) {
     for (const auto &path : listPathName) {

@@ -1,7 +1,7 @@
-#include "../../include/Model/MetadataManager.h"
-MetadataManager::MetadataManager(){}
+#include "../../include/Model/MediaFileManager.h"
+MediaFileManager::MediaFileManager(){}
 
-std::shared_ptr<MediaFile> MetadataManager::getMediaFile(std::string fileName)
+std::shared_ptr<MediaFile> MediaFileManager::getMediaFile(std::string fileName)
 {
    for(std::shared_ptr<MediaFile> file : listMediaFiles){
         if(file->getName() == fileName){
@@ -11,11 +11,11 @@ std::shared_ptr<MediaFile> MetadataManager::getMediaFile(std::string fileName)
     return nullptr;
 }
 
-std::unordered_set<std::string> MetadataManager::getListFileAdded()
+std::unordered_set<std::string> MediaFileManager::getListFileAdded()
 {
     return listFileAdded;
 }
-void MetadataManager::clearListFileAdded()
+void MediaFileManager::clearListFileAdded()
 {
     this->listFileAdded.clear();
 }
@@ -30,7 +30,7 @@ void writePathToFile(const std::string &pathName, const std::string &filePath = 
     file.close();
 }
 
-void MetadataManager::loadMediaFile( std::string pathName, std::string type)
+void MediaFileManager::loadMediaFile( std::string pathName, std::string type)
 {   
     std::string fileName = pathName.substr(pathName.find_last_of("/\\") + 1);
     TagLib::MP4::File fileTemp(pathName.c_str());
@@ -61,7 +61,7 @@ void MetadataManager::loadMediaFile( std::string pathName, std::string type)
     listFileAdded.insert(fileName);
 }
 
-void MetadataManager::addMediaFile( std::string pathName, std::string type)
+void MediaFileManager::addMediaFile( std::string pathName, std::string type)
 {   
     std::string fileName = pathName.substr(pathName.find_last_of("/\\") + 1);
     TagLib::MP4::File fileTemp(pathName.c_str());
@@ -94,12 +94,12 @@ void MetadataManager::addMediaFile( std::string pathName, std::string type)
     listFileAdded.insert(fileName);
 }
 
-std::vector<std::shared_ptr<MediaFile>> MetadataManager::getAllMediaFile()
+std::vector<std::shared_ptr<MediaFile>> MediaFileManager::getAllMediaFile()
 {
     return this->listMediaFiles;
 }
 
-std::vector<std::shared_ptr<MediaFile>> MetadataManager::getAllAudioFiles()
+std::vector<std::shared_ptr<MediaFile>> MediaFileManager::getAllAudioFiles()
 {
     std::vector<std::shared_ptr<MediaFile>> audioFiles;
     for(auto file : listMediaFiles){
@@ -110,7 +110,7 @@ std::vector<std::shared_ptr<MediaFile>> MetadataManager::getAllAudioFiles()
     return audioFiles;
 }
 
-std::vector<std::shared_ptr<MediaFile>> MetadataManager::getAllVideoFiles()
+std::vector<std::shared_ptr<MediaFile>> MediaFileManager::getAllVideoFiles()
 {
     std::vector<std::shared_ptr<MediaFile>> videoFiles;
     for(auto file : listMediaFiles){
@@ -121,7 +121,7 @@ std::vector<std::shared_ptr<MediaFile>> MetadataManager::getAllVideoFiles()
     return videoFiles;
 }
 
-void MetadataManager::updateDatabase() 
+void MediaFileManager::updateDatabase() 
 {
     std::ofstream videoFile("database/video/video.data", std::ios::trunc);
     if (!videoFile.is_open()) {
@@ -150,7 +150,7 @@ void MetadataManager::updateDatabase()
 }
 
 
-void MetadataManager::deleteMediaFile(std::string fileName) {
+void MediaFileManager::deleteMediaFile(std::string fileName) {
     for (auto it = listMediaFiles.begin(); it != listMediaFiles.end(); ++it) {
         if ((*it)->getName() == fileName) {
 

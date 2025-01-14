@@ -5,72 +5,19 @@ ControllerManager::ControllerManager(ModelManager m, ViewManager v)
 
 void ControllerManager::ScanData() 
 {   
-    if(model.getFolderManager().getListFolderDirectory().empty() && model.getFolderManager().getListFolderUSB().empty()){
-        std::shared_ptr<BaseView> scanView = view.getView("ScanView");
+    std::shared_ptr<BaseView> scanView = view.getView("ScanView");
 
-        if (!scanView) {
-            std::cerr << "Error: ScanView not found or failed to initialize.\n";
-            return;
-        }
-        if (!scannerController) {
-            scannerController = std::make_unique<MediaScannerController>(model.getMetadataManager(), model.getFolderManager(), scanView);
-        }
-
-        std::shared_ptr<BaseView> mediaFileManagerView = view.getView("MediaFileManagerView");
-        
-        if (!mediaFileManagerView) {
-            std::cerr << "Error: MediaFileManagerView not found or failed to initialize.\n";
-            return;
-        }
-        if(!mediaFileManagerController){
-            mediaFileManagerController = std::make_unique<MediaFileManagerController>(model.getMetadataManager(), mediaFileManagerView);
-        }
-
-        while(true){
-            if(!scannerController->getListPaths().empty()){
-                scanView->setListPathNameIsAdded(mediaFileManagerController->getListFileAdded());
-                mediaFileManagerController->clearListFileAdded();
-            }
-            view.switchView("ScanView");
-            int choice; std::cin >> choice;
-            switch (choice)
-            {
-            case ScanHomeDirectory:
-                scannerController->scanHomeDirectory();
-                mediaFileManagerController->addData(scannerController->getListPaths());
-                break;
-            case 2:
-                scannerController->scanUSBDevices();
-                mediaFileManagerController->addData(scannerController->getListPaths());
-                break;
-            case 0:
-                return;
-            default:
-                break;
-            }
-        }
-    }else{
-        std::shared_ptr<BaseView> scanView = view.getView("ScanView");
-
-        if (!scanView) {
-            std::cerr << "Error: ScanView not found or failed to initialize.\n";
-            return;
-        }
-        if (!scannerController) {
-            scannerController = std::make_unique<MediaScannerController>(model.getMetadataManager(), model.getFolderManager(), scanView);
-        }
-
-        std::shared_ptr<BaseView> mediaFileManagerView = view.getView("MediaFileManagerView");
-        
-        if (!mediaFileManagerView) {
-            std::cerr << "Error: MediaFileManagerView not found or failed to initialize.\n";
-            return;
-        }
-        if(!mediaFileManagerController){
-            mediaFileManagerController = std::make_unique<MediaFileManagerController>(model.getMetadataManager(), mediaFileManagerView);
-        }
-        mediaFileManagerController->loadData(scannerController->scanData());
+    if (!scanView) {
+        std::cerr << "Error: ScanView not found or failed to initialize.\n";
+        return;
     }
+    if (!scannerController) {
+       scannerController = std::make_unique<MediaScannerController>(model.getMediaFileManager(), model.getFolderManager(), scanView);
+    }
+
+    scannerController->handleScan();
+        
+    
 
 }
 
@@ -83,7 +30,7 @@ void ControllerManager::mediaFileManager()
         return;
     }
     if(!mediaFileManagerController){
-        mediaFileManagerController = std::make_unique<MediaFileManagerController>(model.getMetadataManager(), mediaFileManagerView);
+        mediaFileManagerController = std::make_unique<MediaFileManagerController>(model.getMediaFileManager(), mediaFileManagerView);
     }
     int choice; 
     while(true){

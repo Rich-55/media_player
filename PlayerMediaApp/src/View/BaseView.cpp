@@ -2,11 +2,11 @@
 
 BaseView::BaseView(){}
         
-void BaseView::displayAllMediaFile(MetadataManager){}
+void BaseView::displayAllMediaFile(MediaFileManager){}
 
-void BaseView::displayAllMediaFileOfAudio(MetadataManager){}
+void BaseView::displayAllMediaFileOfAudio(MediaFileManager){}
 
-void BaseView::displayAllMediaFileOfVideo(MetadataManager){}
+void BaseView::displayAllMediaFileOfVideo(MediaFileManager){}
 
 
 void BaseView::displayDetailMediaFile(std::shared_ptr<MediaFile>){}

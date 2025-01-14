@@ -1,7 +1,7 @@
 #ifndef MEDIA_FILE_MANAGER_CONTROLLER_H
 #define MEDIA_FILE_MANAGER_CONTROLLER_H
 
-#include "../Model/MetadataManager.h"
+#include "../Model/MediaFileManager.h"
 #include "../View/BaseView.h"
 #include "../View/MetadataView.h"
 #include <dirent.h>
@@ -11,10 +11,10 @@
 #include <unordered_set>
 class MediaFileManagerController {
 private:
-    MetadataManager& mediaManager;
+    MediaFileManager& mediaManager;
     std::shared_ptr<BaseView> mediaFileManagerView; 
 public:
-    MediaFileManagerController(MetadataManager&, std::shared_ptr<BaseView>);
+    MediaFileManagerController(MediaFileManager&, std::shared_ptr<BaseView>);
 
     void addData(const std::unordered_set<std::string>&);
 

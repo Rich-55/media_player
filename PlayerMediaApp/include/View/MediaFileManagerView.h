@@ -7,7 +7,7 @@
 #include "../View/BaseView.h"
 #include "../Model/MediaFile.h"
 #include "../Model/AudioFile.h"
-#include "../Model/MetadataManager.h"
+#include "../Model/MediaFileManager.h"
 
 class MediaFileManagerView : public BaseView{
 private:
@@ -16,9 +16,9 @@ public:
 
     MediaFileManagerView();
     
-    void displayAllMediaFile(MetadataManager) override;
-    void displayAllMediaFileOfAudio(MetadataManager) override;
-    void displayAllMediaFileOfVideo(MetadataManager) override;
+    void displayAllMediaFile(MediaFileManager) override;
+    void displayAllMediaFileOfAudio(MediaFileManager) override;
+    void displayAllMediaFileOfVideo(MediaFileManager) override;
 
     void showMenu() override;
 

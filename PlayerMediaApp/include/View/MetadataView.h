@@ -1,6 +1,6 @@
 #ifndef METADATA_VIEW_H
 #define METADATA_VIEW_H
-#include "../Model/MetadataManager.h"
+#include "../Model/MediaFileManager.h"
 #include "../Model/MediaFile.h"
 #include "../View/BaseCurrentPlayView.h"
 

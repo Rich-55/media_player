@@ -9,13 +9,13 @@
 #include "../Model/MediaFile.h"
 #include "../Model/VideoFile.h"
 #include "../Model/AudioFile.h"
-class MetadataManager{
+class MediaFileManager{
     private:
         std::vector<std::shared_ptr<MediaFile>> listMediaFiles;
         std::unordered_map<std::string, unsigned long long> listMediaFilesSize;
         std::unordered_set<std::string> listFileAdded;
     public:
-        MetadataManager();
+        MediaFileManager();
 
         std::shared_ptr<MediaFile> getMediaFile(std::string);
 

@@ -2,20 +2,30 @@
 #define MEDIA_SCANNER_CONTROLLER_H
 
 #include "../View/ScanView.h"
-#include "../Model/MetadataManager.h"
+#include "../Model/MediaFileManager.h"
 #include "../Model/FolerManager.h"
 #include "../View/BaseView.h"
 #include <memory>
 #include <unordered_set>
+#define ScanHomeDirectory 1
+#define ScanUSBDevices 2
+#define Exit 0
+
 class MediaScannerController{
     private:
-        MetadataManager& metadataManager;
+        MediaFileManager& mediaFileManager;
         FolderManager& folderManager;
         std::shared_ptr<BaseView> scanView;
         std::unordered_set<std::string> listPaths;
-        
+        std::unordered_set<std::string> listPathsAdded;
     public:
-        MediaScannerController(MetadataManager&, FolderManager&, std::shared_ptr<BaseView>);
+        MediaScannerController(MediaFileManager&, FolderManager&, std::shared_ptr<BaseView>);
+
+        void handleScan();
+
+        void addDataFileWithFolder(std::string, std::string);
+
+        void loadData();
 
         std::unordered_set<std::string> getListPaths();
 
@@ -27,7 +37,7 @@ class MediaScannerController{
 
         std::unordered_set<std::string> scanFolder(const std::string &path);
 
-        std::unordered_set<std::string> scanData();
+        
 
 
 

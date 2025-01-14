@@ -15,13 +15,13 @@ void MediaFileManagerView::showMenu() {
     std::cout << "Enter your choice: ";
 }
 
-void MediaFileManagerView::displayAllMediaFile(MetadataManager metadataManager){
-    if (metadataManager.getAllMediaFile().empty()) {
+void MediaFileManagerView::displayAllMediaFile(MediaFileManager MediaFileManager){
+    if (MediaFileManager.getAllMediaFile().empty()) {
         std::cerr << "No media files to display.\n";
         return;
     }
     std::cout << "----- All Media Files -----" << std::endl;
-    for (auto file : metadataManager.getAllMediaFile()) {
+    for (auto file : MediaFileManager.getAllMediaFile()) {
         std::cout << "File Name:   " << file->getName() << std::endl;
         std::cout << "File Path:   " << file->getPath() << std::endl;
         std::cout << "File Type:   " << file->getType() << std::endl;
@@ -31,8 +31,8 @@ void MediaFileManagerView::displayAllMediaFile(MetadataManager metadataManager){
     }
 }
 
-void MediaFileManagerView::displayAllMediaFileOfAudio(MetadataManager metadataManager) {
-    auto audioFiles = metadataManager.getAllAudioFiles();
+void MediaFileManagerView::displayAllMediaFileOfAudio(MediaFileManager MediaFileManager) {
+    auto audioFiles = MediaFileManager.getAllAudioFiles();
     if (audioFiles.empty()) {
         std::cerr << "No audio files to display.\n";
         return;
@@ -54,8 +54,8 @@ void MediaFileManagerView::displayAllMediaFileOfAudio(MetadataManager metadataMa
     }
 }
 
-void MediaFileManagerView::displayAllMediaFileOfVideo(MetadataManager metadataManager) {
-    auto videoFiles = metadataManager.getAllVideoFiles();
+void MediaFileManagerView::displayAllMediaFileOfVideo(MediaFileManager MediaFileManager) {
+    auto videoFiles = MediaFileManager.getAllVideoFiles();
     if (videoFiles.empty()) {
         std::cerr << "No video files to display.\n";
         return;

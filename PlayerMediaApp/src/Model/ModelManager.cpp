@@ -6,9 +6,9 @@ ModelManager::ModelManager(){}
 
 // }
 
-MetadataManager &ModelManager::getMetadataManager()
+MediaFileManager &ModelManager::getMediaFileManager()
 {
-    return this->metadataManager;
+    return this->mediaFileManager;
 }
 
 PlaylistManager &ModelManager::getPlaylistManager()
@@ -28,5 +28,5 @@ std::shared_ptr<Playlist> ModelManager::getPlaylist(std::string name)
 
 std::shared_ptr<MediaFile> ModelManager::getMediaFile(std::string fileName)
 {
-    return metadataManager.getMediaFile(fileName);
+    return mediaFileManager.getMediaFile(fileName);
 }
