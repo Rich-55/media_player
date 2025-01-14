@@ -8,6 +8,7 @@
 #include "../Model/MediaFile.h"
 #include "../Model/AudioFile.h"
 #include "../Model/MetadataManager.h"
+#include "../utils/MediaFileManagerException.h"
 
 class MediaFileManagerView : public ViewBase{
 private:

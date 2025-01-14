@@ -6,9 +6,11 @@
 #include <string>
 #include <unordered_map>
 #include <fstream>
+
 #include "../Model/MediaFile.h"
 #include "../Model/VideoFile.h"
 #include "../Model/AudioFile.h"
+#include "../utils/MediaFileManagerException.h"
 class MetadataManager{
     private:
         std::vector<std::shared_ptr<MediaFile>> listMediaFiles;

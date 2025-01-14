@@ -4,6 +4,7 @@
 #include "../Model/MetadataManager.h"
 #include "../View/ViewBase.h"
 #include "../View/MetadataView.h"
+#include "../utils/MediaFileManagerException.h"
 #include <dirent.h>
 #include <sys/stat.h>
 #include <cstdlib>

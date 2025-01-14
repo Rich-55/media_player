@@ -20,50 +20,53 @@ void MetadataManager::clearListFileAdded()
     this->listFileAdded.clear();
 }
 
-#include <fstream>
 
-void writePathToFile(const std::string &pathName, const std::string &filePath = "database/video/video.data") {
-    std::ofstream file(filePath, std::ios::app); 
+
+void writePathToFile(const std::string& pathName, const std::string& filePath) {
+    std::ofstream file(filePath, std::ios::app);
     if (!file.is_open()) {
-        std::cerr << "Error: Unable to open file " << filePath << '\n';
-        return;
+        throw DatabaseFileException(filePath);
     }
-    file << pathName << '\n'; 
+    file << pathName << '\n';
     file.close();
 }
 
 
-void MetadataManager::addMediaFile( std::string pathName, std::string type)
-{   
-    std::string fileName = pathName.substr(pathName.find_last_of("/\\") + 1);
-    TagLib::MP4::File fileTemp(pathName.c_str());
-    unsigned long long size = fileTemp.length();
+void MetadataManager::addMediaFile(std::string pathName, std::string type) {
+    try {
+        std::string fileName = pathName.substr(pathName.find_last_of("/\\") + 1);
+        TagLib::MP4::File fileTemp(pathName.c_str());
+        unsigned long long size = fileTemp.length();
 
-    for(auto file : listMediaFilesSize){
-        if(file.first == fileName){
-            if(file.second == size){
-                std::cerr << "File already exists!\n";
-                return;
+        for (auto file : listMediaFilesSize) {
+            if (file.first == fileName) {
+                if (file.second == size) {
+                    throw FileAlreadyExistsException(fileName);
+                }
             }
         }
-    }
 
-    listMediaFilesSize[fileName] = size;
+        listMediaFilesSize[fileName] = size;
 
-    if(type == "Video"){        
-        std::shared_ptr<MediaFile> mediaFile =  std::make_shared<VideoFile>();
-        mediaFile->inputMediaFile(pathName);
-        listMediaFiles.push_back(mediaFile);
-        writePathToFile(pathName, "database/video/video.data");
-        std::cout << "Video \""<< mediaFile->getName() << "\" add successfully!" << std::endl;
-    }else {
-        std::shared_ptr<MediaFile> mediaFile =  std::make_shared<AudioFile>();
-        mediaFile->inputMediaFile(pathName);
-        listMediaFiles.push_back(mediaFile);
-        writePathToFile(pathName, "database/audio/audio.data");
-        std::cout << "Audio \""<< mediaFile->getName() << "\" add successfully!" << std::endl;
+        if (type == "Video") {
+            std::shared_ptr<MediaFile> mediaFile = std::make_shared<VideoFile>();
+            mediaFile->inputMediaFile(pathName);
+            listMediaFiles.push_back(mediaFile);
+            writePathToFile(pathName, "database/video/video.data");
+            std::cout << "Video \"" << mediaFile->getName() << "\" add successfully!" << std::endl;
+        } else {
+            std::shared_ptr<MediaFile> mediaFile = std::make_shared<AudioFile>();
+            mediaFile->inputMediaFile(pathName);
+            listMediaFiles.push_back(mediaFile);
+            writePathToFile(pathName, "database/audio/audio.data");
+            std::cout << "Audio \"" << mediaFile->getName() << "\" add successfully!" << std::endl;
+        }
+        listFileAdded.insert(fileName);
+    } catch (const FileAlreadyExistsException& e) {
+        std::cerr << "Error: " << e.what() << std::endl;
+    } catch (const std::exception& e) {
+        std::cerr << "An unexpected error occurred: " << e.what() << std::endl;
     }
-    listFileAdded.insert(fileName);
 }
 
 std::vector<std::shared_ptr<MediaFile>> MetadataManager::getAllMediaFile()
@@ -93,21 +96,19 @@ std::vector<std::shared_ptr<MediaFile>> MetadataManager::getAllVideoFiles()
     return videoFiles;
 }
 
-void MetadataManager::updateDatabase() 
-{
+void MetadataManager::updateDatabase() {
     std::ofstream videoFile("database/video/video.data", std::ios::trunc);
     if (!videoFile.is_open()) {
-        std::cerr << "Error: Unable to open video database file.\n";
-        return;
+        throw DatabaseFileException("video.data");
     }
 
     std::ofstream audioFile("database/audio/audio.data", std::ios::trunc);
     if (!audioFile.is_open()) {
-        std::cerr << "Error: Unable to open audio database file.\n";
-        return;
+        videoFile.close(); // Close the video file before throwing
+        throw DatabaseFileException("audio.data");
     }
 
-    for (const auto &mediaFile : listMediaFiles) {
+    for (const auto& mediaFile : listMediaFiles) {
         if (mediaFile->getType() == "Video") {
             videoFile << mediaFile->getPath() << '\n';
         } else if (mediaFile->getType() == "Audio") {
@@ -123,16 +124,28 @@ void MetadataManager::updateDatabase()
 
 
 void MetadataManager::deleteMediaFile(std::string fileName) {
-    for (auto it = listMediaFiles.begin(); it != listMediaFiles.end(); ++it) {
-        if ((*it)->getName() == fileName) {
-
-            listMediaFiles.erase(it);
-
-            updateDatabase();
-
-            std::cout << "File \"" << fileName << "\" deleted successfully!" << std::endl;
-            return;
+    try {
+        bool found = false;
+        for (auto it = listMediaFiles.begin(); it != listMediaFiles.end(); ++it) {
+            if ((*it)->getName() == fileName) {
+                listMediaFiles.erase(it);
+                found = true;
+                break;
+            }
         }
+
+        if (!found) {
+            throw FileNotFoundException(fileName);
+        }
+
+        updateDatabase();
+        std::cout << "File \"" << fileName << "\" deleted successfully!" << std::endl;
+
+    } catch (const FileNotFoundException& e) {
+        std::cerr << "Error: " << e.what() << std::endl;
+    } catch (const DatabaseFileException& e) {
+        std::cerr << "Error: " << e.what() << std::endl;
+    } catch (const std::exception& e) {
+        std::cerr << "An unexpected error occurred: " << e.what() << std::endl;
     }
-    std::cerr << "Error: File not found.\n";
 }

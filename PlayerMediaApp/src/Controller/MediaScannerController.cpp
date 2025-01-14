@@ -18,8 +18,7 @@ std::vector<std::string> list_folders(const std::string &path)
     std::vector<std::string> folders;
     DIR *dir = opendir(path.c_str());
     if (!dir) {
-        std::cerr << "Error opening directory: " << path << '\n';
-        return folders;
+        throw DirectoryOpenException(path);
     }
 
     struct dirent *entry;
@@ -41,8 +40,7 @@ std::vector<std::string> list_media_files(const std::string &path)
     std::vector<std::string> media_files;
     DIR *dir = opendir(path.c_str());
     if (!dir) {
-        std::cerr << "Error opening directory: " << path << '\n';
-        return media_files;
+        throw DirectoryOpenException(path);
     }
 
     struct dirent *entry;
@@ -77,16 +75,14 @@ void MediaScannerController::scanHomeDirectory()
 {
     const char *home = std::getenv("HOME");
     if (!home) {
-        std::cerr << "Unable to determine HOME directory.\n";
-        return;
+        throw HomeDirectoryException();
     }
 
     std::string home_path = std::string(home);
     std::vector<std::string> folders = list_folders(home_path);
 
     if (folders.empty()) {
-        std::cerr << "No folders found in Home directory.\n";
-        return;
+        throw NoFoldersFoundException(home_path);
     }
 
     std::cout << "Folders in Home:\n";
@@ -99,8 +95,7 @@ void MediaScannerController::scanHomeDirectory()
     std::cin >> choice;
 
     if (choice < 1 || choice > static_cast<int>(folders.size())) {
-        std::cerr << "Invalid choice.\n";
-        return;
+        throw InvalidChoiceException();
     }
 
     std::string selected_folder = folders[choice - 1];
@@ -117,7 +112,7 @@ void MediaScannerController::scanHomeDirectory()
     }
 
     if (listPaths.empty()) {
-        std::cerr << "No media files found in the selected folder.\n";
+        throw NoMediaFilesFoundException(selected_folder);
     }
 }
 
@@ -129,8 +124,7 @@ void MediaScannerController::scanUSBDevices()
     std::vector<std::string> usb_devices = list_folders(usb_base_path);
 
     if (usb_devices.empty()) {
-        std::cerr << "No USB devices found.\n";
-        return;
+        throw NoUSBDevicesFoundException();
     }
 
     std::cout << "USB Devices:\n";
@@ -148,8 +142,7 @@ void MediaScannerController::scanUSBDevices()
     std::cin >> choice;
 
     if (choice < 1 || choice > static_cast<int>(usb_devices.size())) {
-        std::cerr << "Invalid choice.\n";
-        return;
+        throw InvalidChoiceException();
     }
 
     std::string selected_usb = usb_devices[choice - 1];
@@ -169,7 +162,7 @@ void MediaScannerController::scanUSBDevices()
     }
 
     if (listPaths.empty()) {
-        std::cerr << "No media files found on the selected USB device.\n";
+        throw NoMediaFilesFoundException(selected_usb);
     }
 }
 

@@ -1,17 +1,17 @@
 #ifndef CONTROLLER_MANAGER_H
 #define CONTROLLER_MANAGER_H
 
+#include <limits>
 #include "../Model/ModelManager.h"
-
 #include "../View/CLIManager.h"
 #include "../View/ScanView.h"
 #include "../View/MediaFileManagerView.h"
-
 #include "../Controller/MediaScannerController.h"
 #include "../Controller/MediaFileController.h"
 #include "../Controller/MediaFileManagerController.h"
 #include "../Controller/MediaPlaylistManagerController.h"
 #include "../Controller/MediaPlaylistController.h"
+
 #define ScanHomeDirectory 1
 
 class ControllerManager{

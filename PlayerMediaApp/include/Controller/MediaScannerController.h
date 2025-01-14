@@ -5,6 +5,8 @@
 #include "../Model/MetadataManager.h"
 #include "../Model/FolerManager.h"
 #include "../View/ViewBase.h"
+#include "../utils/ScanException.h"
+
 #include <memory>
 #include <unordered_set>
 class MediaScannerController{

@@ -50,7 +50,7 @@ void MediaFileHandlerView::displayMenuEditMetadata(std::shared_ptr<MediaFile> me
 void MediaFileHandlerView::displayMenuAddMetadata(std::shared_ptr<MediaFile> mediaFile){
     std::cout << "Add new key media file: " << mediaFile->getName() << ": " << std::endl;
     //list key can be added in taglib 
-    std::cout << "List key can be added in taglib: " << std::endl;;
+    std::cout << "List keys can be added in taglib: " << std::endl;;
     std::cout << "title" << std::endl;
     std::cout << "artist" << std::endl;
     std::cout << "album" << std::endl;
@@ -58,8 +58,7 @@ void MediaFileHandlerView::displayMenuAddMetadata(std::shared_ptr<MediaFile> med
     std::cout << "comment" << std::endl;
     std::cout << "year" << std::endl;
     std::cout << "track" << std::endl;
-    std::cout << "Enter the key you want to add: ";
-
+    std::cout << "Enter the key you want to add (or enter 0 to back to Menu): ";
     
 }
 
