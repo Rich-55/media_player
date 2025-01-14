@@ -16,6 +16,8 @@ private:
 public:
     MediaFileController(std::shared_ptr<MediaFile> , std::shared_ptr<BaseView>);
 
+    void handlerMediaFile();
+
     void getDetailMediaFile();
 
     void addMetadata();

@@ -57,3 +57,30 @@ void MediaFileController::deleteMetadata(){
     mediaFile->deleteKey(key);
   
 }
+
+void MediaFileController::handlerMediaFile()
+{
+    
+    int choice;
+    while(true){
+        getDetailMediaFile();
+        mediaFileHandlerView->showMenu();
+        std::cin >> choice;
+        switch (choice)
+        {
+        case 1:
+            addMetadata();
+            break;
+        case 2:
+            editMetadata();
+            break;
+        case 3:
+            deleteMetadata();
+            break;    
+        case 0:
+            return;
+        default:
+            break;
+        }
+    }
+}

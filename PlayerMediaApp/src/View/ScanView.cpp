@@ -19,7 +19,7 @@ void ScanView::setListPathNameIsAdded(std::unordered_set<std::string> listPathNa
 
 void ScanView::showFileAdded()
 {
-    std::cout << "List of files add new:\n";
+    std::cout << "List of path file add new:\n";
 
     if (this->listPathNameIsAdded.empty()) {
         std::cout << "No files added.\n";

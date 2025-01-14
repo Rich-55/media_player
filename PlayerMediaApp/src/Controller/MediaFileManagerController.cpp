@@ -1,8 +1,8 @@
 #include "../../include/Controller/MediaFileManagerController.h"
 
-MediaFileManagerController::MediaFileManagerController(MediaFileManager& m, std::shared_ptr<BaseView> v) : mediaManager(m), mediaFileManagerView(v){}
+MediaFileManagerController::MediaFileManagerController(MediaFileManager& m, std::shared_ptr<BaseView> v, std::shared_ptr<MediaScannerController> c) : mediaManager(m), mediaFileManagerView(v), scannerController(c){}
 
-void MediaFileManagerController::addData(const std::unordered_set<std::string> &listPathName) {
+void MediaFileManagerController::addDataFolder(const std::unordered_set<std::string> &listPathName) {
     for (const auto &path : listPathName) {
         std::cout << "Reading file: " << path << '\n';
         size_t lastSlashPos = path.find_last_of("/");
@@ -42,7 +42,6 @@ void MediaFileManagerController::loadData(const std::unordered_set<std::string> 
     }
 }
 
-
 void MediaFileManagerController::addDataFile(std::string pathName) {
 
     size_t lastSlashPos = pathName.find_last_of("/");
@@ -70,3 +69,49 @@ void MediaFileManagerController::showAllMediaFile(){ mediaFileManagerView->displ
 void MediaFileManagerController::showAllMediaFileOfVideo(){ mediaFileManagerView->displayAllMediaFileOfVideo(mediaManager);}
 
 void MediaFileManagerController::showAllMediaFileOfAudio(){ mediaFileManagerView->displayAllMediaFileOfAudio(mediaManager);}
+
+void MediaFileManagerController::handleMediaFileManager()
+{
+    int choice; 
+    while(true){
+        mediaFileManagerView->showMenu();
+        std::cin >> choice;
+        switch (choice)
+        {
+        case 1:
+            {
+            std::cout << "Enter your path of file to add: ";
+            std::string pathFile;
+            std::cin >> pathFile;
+            addDataFile(pathFile);
+            break;
+            }
+        case 2:
+            {
+            scannerController->handleScan(true);
+            break;
+            }
+        case 3:
+            {
+            std::cout << "Enter the name of the file you want to delete: ";
+            std::string fileName;
+            std::cin >> fileName;
+            deleteData(fileName);
+            break;
+            }
+        case 4:
+            showAllMediaFile();
+            break;
+        case 5:
+            showAllMediaFileOfAudio();
+            break;
+        case 6:
+            showAllMediaFileOfVideo();
+            break;    
+        case 0:
+            return;
+        default:
+            break;
+        }
+    }
+}

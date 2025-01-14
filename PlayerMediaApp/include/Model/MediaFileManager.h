@@ -19,9 +19,9 @@ class MediaFileManager{
 
         std::shared_ptr<MediaFile> getMediaFile(std::string);
 
-        void addMediaFile(std::string, std::string);
+        bool addMediaFile(std::string, std::string);
 
-        void loadMediaFile(std::string, std::string);
+        bool loadMediaFile(std::string, std::string);
 
         void deleteMediaFile(std::string);
 

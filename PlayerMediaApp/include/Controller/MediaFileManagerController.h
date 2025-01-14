@@ -4,6 +4,7 @@
 #include "../Model/MediaFileManager.h"
 #include "../View/BaseView.h"
 #include "../View/MetadataView.h"
+#include "../Controller/MediaScannerController.h"
 #include <dirent.h>
 #include <sys/stat.h>
 #include <cstdlib>
@@ -13,14 +14,17 @@ class MediaFileManagerController {
 private:
     MediaFileManager& mediaManager;
     std::shared_ptr<BaseView> mediaFileManagerView; 
+    std::shared_ptr<MediaScannerController> scannerController;
+    
 public:
-    MediaFileManagerController(MediaFileManager&, std::shared_ptr<BaseView>);
+    MediaFileManagerController(MediaFileManager&, std::shared_ptr<BaseView>, std::shared_ptr<MediaScannerController>);
 
-    void addData(const std::unordered_set<std::string>&);
+    void handleMediaFileManager();
 
     void loadData(const std::unordered_set<std::string>&);
 
     void addDataFile(std::string);
+    void addDataFolder(const std::unordered_set<std::string>&);
 
     void deleteData(std::string);
 

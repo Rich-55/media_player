@@ -11,6 +11,8 @@ class MediaPlaylistManagerController{
     public:
         MediaPlaylistManagerController(PlaylistManager&, std::shared_ptr<BaseView>);
 
+        void handlerPlaylistManager();
+
         void createPlaylist();
         
         void deletePlaylist();

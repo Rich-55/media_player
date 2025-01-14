@@ -12,17 +12,23 @@ void ControllerManager::ScanData()
         return;
     }
     if (!scannerController) {
-       scannerController = std::make_unique<MediaScannerController>(model.getMediaFileManager(), model.getFolderManager(), scanView);
+       scannerController = std::make_shared<MediaScannerController>(model.getMediaFileManager(), model.getFolderManager(), scanView);
     }
-
-    scannerController->handleScan();
-        
-    
-
+    scannerController->handleScan(false);
 }
 
 void ControllerManager::mediaFileManager() 
 {
+    std::shared_ptr<BaseView> scanView = view.getView("ScanView");
+
+    if (!scanView) {
+        std::cerr << "Error: ScanView not found or failed to initialize.\n";
+        return;
+    }
+    if (!scannerController) {
+       scannerController = std::make_shared<MediaScannerController>(model.getMediaFileManager(), model.getFolderManager(), scanView);
+    }
+
     std::shared_ptr<BaseView> mediaFileManagerView = view.getView("MediaFileManagerView");
     
     if (!mediaFileManagerView) {
@@ -30,53 +36,9 @@ void ControllerManager::mediaFileManager()
         return;
     }
     if(!mediaFileManagerController){
-        mediaFileManagerController = std::make_unique<MediaFileManagerController>(model.getMediaFileManager(), mediaFileManagerView);
+        mediaFileManagerController = std::make_unique<MediaFileManagerController>(model.getMediaFileManager(), mediaFileManagerView, scannerController);
     }
-    int choice; 
-    while(true){
-        view.switchView("MediaFileManagerView");
-        std::cin >> choice;
-        switch (choice)
-        {
-        case 1:
-            {
-            std::cout << "Enter your path of file to add: ";
-            std::string pathFile;
-            std::cin >> pathFile;
-            mediaFileManagerController->addDataFile(pathFile);
-            break;
-            }
-        case 2:
-            {
-            std::cout << "Enter your folder path to add: ";
-            std::string pathFolder;
-            std::cin >> pathFolder;
-            mediaFileManagerController->addData(scannerController->scanFolder(pathFolder));
-            break;
-            }
-        case 3:
-            {
-            std::cout << "Enter the name of the file you want to delete: ";
-            std::string fileName;
-            std::cin >> fileName;
-            mediaFileManagerController->deleteData(fileName);
-            break;
-            }
-        case 4:
-            mediaFileManagerController->showAllMediaFile();
-            break;
-        case 5:
-            mediaFileManagerController->showAllMediaFileOfAudio();
-            break;
-        case 6:
-            mediaFileManagerController->showAllMediaFileOfVideo();
-            break;    
-        case 0:
-            return;
-        default:
-            break;
-        }
-    }
+    mediaFileManagerController->handleMediaFileManager();
 }
 
 void ControllerManager::metadataFileHandler()
@@ -88,10 +50,16 @@ void ControllerManager::metadataFileHandler()
         return;
     }
 
-    if(mediaFileManagerController){
+    std::shared_ptr<BaseView> mediaFileManagerView = view.getView("MediaFileManagerView");
+    
+    if (!mediaFileManagerView) {
+        std::cerr << "Error: MediaFileManagerView not found or failed to initialize.\n";
+        return;
+    }
+    if(!mediaFileManagerController){
+        mediaFileManagerController = std::make_unique<MediaFileManagerController>(model.getMediaFileManager(), mediaFileManagerView, scannerController);
         mediaFileManagerController->showAllMediaFile();
     }
-
     std::cout << "Enter the name of the file you want to edit: ";
     std::string fileName;
     std::cin >> fileName;
@@ -103,29 +71,8 @@ void ControllerManager::metadataFileHandler()
         }
         mediaFileHandlerController = std::make_unique<MediaFileController>(model.getMediaFile(fileName), mediaFileHandlerView);
     }
-    int choice;
-    while(true){
-        mediaFileHandlerController->getDetailMediaFile();
-        view.switchView("MediaFileHandlerView");
-         std::cin >> choice;
-        switch (choice)
-        {
-        case 1:
-            mediaFileHandlerController->addMetadata();
-            break;
-        case 2:
-            mediaFileHandlerController->editMetadata();
-            break;
-        case 3:
-            mediaFileHandlerController->deleteMetadata();
-            break;    
-        case 0:
-            return;
-        default:
-            break;
-        }
-    }
 
+    mediaFileHandlerController->handlerMediaFile();
 }
 
 void ControllerManager::playlistManager()
@@ -152,31 +99,7 @@ void ControllerManager::playlistManager()
 
         mediaPlaylistManagerController->createPlaylist(); 
     }
-
-    int choice;
-    while (true) {
-        view.switchView("PlaylistManagerView");
-        std::cin >> choice;
-
-        switch (choice) {
-        case 1:
-            mediaPlaylistManagerController->createPlaylist(); 
-            break;
-        case 2:
-        {
-            mediaPlaylistManagerController->deletePlaylist();
-            break;
-        }
-        case 3:
-            mediaPlaylistManagerController->displayAllPlaylist(); 
-            break;
-        case 0:
-            return; 
-        default:
-            std::cerr << "Invalid choice. Please try again.\n";
-            break;
-        }
-    }
+    mediaPlaylistManagerController->handlerPlaylistManager();
 }
 
 void ControllerManager::playlistHandler() {
@@ -224,39 +147,8 @@ void ControllerManager::playlistHandler() {
     }
 
     if (!mediaPlaylistController) {
-        mediaPlaylistController = std::make_unique<MediaPlaylistController>(model.getPlaylist(playlistName), playlistHandlerView);
+        mediaPlaylistController = std::make_unique<MediaPlaylistController>(model.getMediaFileManager(), model.getPlaylist(playlistName), playlistHandlerView);
     }
 
-    int choice;
-    while (true) {
-        view.switchView("PlaylistHandlerView");
-        std::cin >> choice;
-        switch (choice) {
-        case 1:
-        {
-            std::cout << "Enter the name of the file you want to add: ";
-            std::string fileName;
-            std::cin >> fileName;
-            std::shared_ptr<MediaFile> mediaFile = model.getMediaFile(fileName);
-            if(mediaFile == nullptr){
-                std::cerr << "File not found!\n";
-                return;
-            }
-            mediaPlaylistController->addMediaFile(mediaFile);
-        }
-            
-            break;
-        case 2:
-            mediaPlaylistController->deleteMediaFile();
-            break;
-        case 3:
-            mediaPlaylistController->displayAllMediaFiles();
-            break;
-        case 0:
-            return; 
-        default:
-            std::cerr << "Invalid choice. Please try again.\n";
-            break;
-        }
-    }
+    mediaPlaylistController->handlerPlaylist();
 }

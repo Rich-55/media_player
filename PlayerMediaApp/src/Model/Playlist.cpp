@@ -26,10 +26,18 @@ void Playlist::addMediaFile(std::shared_ptr<MediaFile> file)
     std::cout << "Media file added to playlist.\n";
 }
 
-void Playlist::deleteMediaFile(std::string)
+void Playlist::deleteMediaFile(std::string file)
 {
-    std::cout << "Media file deleted from playlist.\n";
-
+    for(auto it = listMediaFiles.begin(); it != listMediaFiles.end(); ++it)
+    {
+        if((*it)->getName() == file)
+        {
+            listMediaFiles.erase(it);
+            std::cout << "Media file deleted from playlist.\n";
+            return;
+        }
+    }
+    std::cerr << "File not found in the playlist.\n";
 }
 
 Playlist::~Playlist() {}

@@ -7,6 +7,8 @@
 #include "../View/BaseView.h"
 #include <memory>
 #include <unordered_set>
+#include <unistd.h>
+
 #define ScanHomeDirectory 1
 #define ScanUSBDevices 2
 #define Exit 0
@@ -19,9 +21,10 @@ class MediaScannerController{
         std::unordered_set<std::string> listPaths;
         std::unordered_set<std::string> listPathsAdded;
     public:
+        
         MediaScannerController(MediaFileManager&, FolderManager&, std::shared_ptr<BaseView>);
 
-        void handleScan();
+        void handleScan(bool);
 
         void addDataFileWithFolder(std::string, std::string);
 

@@ -85,8 +85,8 @@ std::string FolderManager::getFolderUSB(std::string folderName)
     }
 }
 
-void FolderManager::addDataFolderDirectory(const std::string &folder, std::unordered_set<std::string> listFiles) {
-
+void FolderManager::addDataFolderDirectory(const std::string &folder, std::unordered_set<std::string> listFiles) 
+{
     listFolderDirectory[folder] = listFiles;
     std::cout << "Folder added successfully.\n";
 }
@@ -106,26 +106,10 @@ void FolderManager::saveFolderDirectory(std::string folderName)
 }
 
 
-void FolderManager::addDataFolderUSB(const std::string &folder, std::unordered_set<std::string> listFiles) {
-
-    if (listFolderUSB.find(folder) != listFolderUSB.end()) {
-        std::cerr << "Folder already exists.\n";
-        return;
-    }
-
+void FolderManager::addDataFolderUSB(const std::string &folder, std::unordered_set<std::string> listFiles) 
+{
     listFolderDirectory[folder] = listFiles;  
     std::cout << "Folder added successfully.\n";
-
-    try {
-        std::ofstream outFile("database/listFolderUSB.data", std::ios::app);
-        if (!outFile) {
-            throw std::ios_base::failure("Failed to open file.");
-        }
-        outFile << folder << '\n';
-        outFile.close(); 
-    } catch (const std::exception &e) {
-        std::cerr << "Error writing to file: " << e.what() << '\n';
-    }
 }
 
 void FolderManager::saveFolderUSB(std::string folderName)

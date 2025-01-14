@@ -12,7 +12,6 @@ int main() {
     ViewManager view;
     ControllerManager controller(model, view);
 
-    // Init data
     controller.ScanData();
 
     int choice;

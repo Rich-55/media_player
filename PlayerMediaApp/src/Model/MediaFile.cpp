@@ -20,8 +20,7 @@ void MediaFile::inputMediaFile(std::string pathName){
         std::cerr << "File not found!";
     }
     size_t lastSlash = pathName.find_last_of("/\\"); 
-    size_t lastDot = pathName.find_last_of('.');   
-    this->fileName =  pathName.substr(lastSlash + 1, lastDot - lastSlash - 1);
+    this->fileName =  pathName.substr(lastSlash + 1);
     this->pathName = pathName;
 
     TagLib::MP4::File fileTemp(pathName.c_str());

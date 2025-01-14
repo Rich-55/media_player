@@ -18,7 +18,7 @@ class ControllerManager{
     private:
         ModelManager model;
         ViewManager view;
-        std::unique_ptr<MediaScannerController> scannerController;
+        std::shared_ptr<MediaScannerController> scannerController;
         std::unique_ptr<MediaFileController> mediaFileHandlerController;
         std::unique_ptr<MediaFileManagerController> mediaFileManagerController;
         std::unique_ptr<MediaPlaylistController> mediaPlaylistController;

@@ -23,3 +23,31 @@ void MediaPlaylistManagerController::displayAllPlaylist()
 {
     playlistManagerView->displayAllPlaylist(playlistManager);
 }
+
+void MediaPlaylistManagerController::handlerPlaylistManager()
+{
+    int choice;
+    while (true) {
+        playlistManagerView->showMenu();
+        std::cin >> choice;
+
+        switch (choice) {
+        case 1:
+            createPlaylist(); 
+            break;
+        case 2:
+        {
+            deletePlaylist();
+            break;
+        }
+        case 3:
+            displayAllPlaylist(); 
+            break;
+        case 0:
+            return; 
+        default:
+            std::cerr << "Invalid choice. Please try again.\n";
+            break;
+        }
+    }
+}

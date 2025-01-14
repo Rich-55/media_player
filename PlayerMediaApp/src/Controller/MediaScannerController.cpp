@@ -72,7 +72,6 @@ std::vector<std::string> scan_all_folders(const std::string &path)
 
 void MediaScannerController::addDataFileWithFolder(std::string nameFolder, std::string nameLocation) 
 {
-
     std::unordered_set<std::string> listPath;
 
     if (nameLocation == "Directory") {
@@ -91,87 +90,72 @@ void MediaScannerController::addDataFileWithFolder(std::string nameFolder, std::
         std::string extension = (lastDotPos != std::string::npos) ? path.substr(lastDotPos + 1) : "";
 
         if (extension == "mp4") {
-            this->mediaFileManager.addMediaFile(path, "Video");
+            if(this->mediaFileManager.addMediaFile(path, "Video")){
+                listPathsAdded.insert(path);
+            }
         } else if (extension == "mp3") {
-            this->mediaFileManager.addMediaFile(path, "Audio");
+            if(this->mediaFileManager.addMediaFile(path, "Audio")){
+                listPathsAdded.insert(path);
+            }
         } else {
             std::cerr << "Unsupported file type: " << fileName << '\n';
         }
     }
 }
 
+bool fileExists(const std::string& path) {
+    return access(path.c_str(), F_OK) == 0; 
+}
+
 void MediaScannerController::loadData() 
 {
-    std::unordered_set<std::string> folderDirectories = folderManager.getListFolderDirectory();
-    std::unordered_set<std::string> folderUSBs = folderManager.getListFolderUSB();
+    std::ifstream videoFile("database/video/video.data");
+    std::ofstream tempVideoFile("database/video/temp_video.data", std::ios::trunc);
 
-    std::ofstream videoFile("database/video/video.data", std::ios::trunc);  
-    if (videoFile.is_open()) {
-        videoFile.close(); 
-    }
-
-    std::ofstream audioFile("database/audio/audio.data", std::ios::trunc);  
-    if (audioFile.is_open()) {
-        audioFile.close(); 
-    }
-
-    for (const auto& dir : folderDirectories) {
-        std::vector<std::string> mediaFiles = list_media_files(dir);
-        for (const auto& file : mediaFiles) {
-            size_t lastDotPos = file.find_last_of(".");
-            std::string extension = (lastDotPos != std::string::npos) ? file.substr(lastDotPos + 1) : "";
-
-            if (extension == "mp4") {
-                std::ofstream videoFile("database/video/video.data", std::ios::app); 
-                if (videoFile.is_open()) {
-                    videoFile << file << std::endl; 
-                    videoFile.close();
-                    this->mediaFileManager.loadMediaFile(file, "Video"); 
-                }
-            } 
-            else if (extension == "mp3") {
-                std::ofstream audioFile("database/audio/audio.data", std::ios::app);
-                if (audioFile.is_open()) {
-                    audioFile << file << std::endl;  
-                    audioFile.close();
-                    this->mediaFileManager.loadMediaFile(file, "Audio"); 
-                }
+    if (videoFile.is_open() && tempVideoFile.is_open()) {
+        std::string line;
+        while (std::getline(videoFile, line)) {
+            if (fileExists(line)) {
+                this->mediaFileManager.loadMediaFile(line, "Video");
+                tempVideoFile << line << std::endl; 
+            } else {
+                std::cerr << "Warning: File does not exist: " << line << std::endl;
             }
         }
+        videoFile.close();
+        tempVideoFile.close();
+
+        std::remove("database/video/video.data"); 
+        std::rename("database/video/temp_video.data", "database/video/video.data");
     }
 
-    for (const auto& usb : folderUSBs) {
-        std::vector<std::string> mediaFiles = list_media_files(usb);
-        for (const auto& file : mediaFiles) {
-            size_t lastDotPos = file.find_last_of(".");
-            std::string extension = (lastDotPos != std::string::npos) ? file.substr(lastDotPos + 1) : "";
+    std::ifstream audioFile("database/audio/audio.data");
+    std::ofstream tempAudioFile("database/audio/temp_audio.data", std::ios::trunc);
 
-            if (extension == "mp4") {
-                std::ofstream videoFile("database/video/video.data", std::ios::app);
-                if (videoFile.is_open()) {
-                    videoFile << file << std::endl; 
-                    videoFile.close();
-                    this->mediaFileManager.loadMediaFile(file, "Video"); 
-                }
-            } 
-            else if (extension == "mp3") {
-                std::ofstream audioFile("database/audio/audio.data", std::ios::app);
-                if (audioFile.is_open()) {
-                    audioFile << file << std::endl; 
-                    audioFile.close();
-                    this->mediaFileManager.loadMediaFile(file, "Audio"); 
-                }
+    if (audioFile.is_open() && tempAudioFile.is_open()) {
+        std::string line;
+        while (std::getline(audioFile, line)) {
+            if (fileExists(line)) {
+                this->mediaFileManager.loadMediaFile(line, "Audio");
+                tempAudioFile << line << std::endl; 
+            } else {
+                std::cerr << "Warning: File does not exist: " << line << std::endl;
             }
         }
-    }
+        audioFile.close();
+        tempAudioFile.close();
 
+        std::remove("database/audio/audio.data"); 
+        std::rename("database/audio/temp_audio.data", "database/audio/audio.data");
+    }
 }
 
 
-void MediaScannerController::handleScan()
+
+void MediaScannerController::handleScan(bool isRunning)
 {
     int choice;
-    if(folderManager.getListFolderDirectory().empty() && folderManager.getListFolderUSB().empty()){
+    if((folderManager.getListFolderDirectory().empty() && folderManager.getListFolderUSB().empty()) || isRunning){
         while(1){
             scanView->setListPathNameIsAdded(listPathsAdded);
             listPathsAdded.clear();
@@ -241,18 +225,9 @@ void MediaScannerController::scanHomeDirectory()
     }
 
     for (const auto &file : media_files) {
-        if (listPathToAdd.find(file) == listPathToAdd.end()) {
-            listPathToAdd.insert(file);
-            std::cout << "Reading file in folder"<< selected_folder <<" : " << file << '\n';
-        }else{
-            std::cout << "File already read.\n";
-        }
-
-        if(listPaths.find(file) == listPaths.end()){
-            listPaths.insert(file);
-            listPathsAdded.insert(file);
-        }
-        
+        listPathToAdd.insert(file);
+        listPaths.insert(file);
+        std::cout << "Reading file in folder"<< selected_folder <<" : " << file << '\n';
     }
 
     if (listPathToAdd.empty()) {
@@ -308,17 +283,9 @@ void MediaScannerController::scanUSBDevices()
     for (const auto &folder : folders) {
         std::vector<std::string> files_in_folder = list_media_files(folder);
         for (const auto &file : files_in_folder) {
-            if (listPathToAdd.find(file) == listPathToAdd.end()) {
-                listPathToAdd.insert(file);
-                std::cout << "Reading file: " << file << '\n';
-            }else{
-                std::cout << "File already read.\n";
-            }
-
-            if(listPaths.find(file) == listPaths.end()){
-                listPaths.insert(file);
-                listPathsAdded.insert(file);
-            }
+            listPathToAdd.insert(file);
+            listPaths.insert(file);
+            std::cout << "Reading file in folder"<< selected_usb <<" : " << file << '\n';
         }
     }
 
