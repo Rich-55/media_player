@@ -4,26 +4,26 @@
 #include <string>
 #include <vector>
 #include <memory>
-#include "../View/ViewBase.h"
+#include "../View/BaseView.h"
 #include "../View/MetadataView.h"
 #include "../View/ScanView.h"
 #include "../View/MediaFileManagerView.h"
 #include "../View/MediaFileHandlerView.h"
 #include "../View/PlaylistHandlerView.h"
 #include "../View/PlaylistManagerView.h"
-class CLIManager{
+class ViewManager{
     private:
-        std::unordered_map<std::string, std::shared_ptr<ViewBase>> views; 
-        std::shared_ptr<ViewBase> currentView;
+        std::unordered_map<std::string, std::shared_ptr<BaseView>> views; 
+        std::shared_ptr<BaseView> currentView;
     public: 
 
-        CLIManager();
+        ViewManager();
 
-        std::shared_ptr<ViewBase> getView(std::string);
+        std::shared_ptr<BaseView> getView(std::string);
 
         void switchView(std::string);
 
-        ~CLIManager();
+        ~ViewManager();
     
 };
 

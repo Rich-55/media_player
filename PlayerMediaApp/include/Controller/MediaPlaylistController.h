@@ -6,9 +6,9 @@
 class MediaPlaylistController{
     private:
         std::shared_ptr<Playlist> playlist;
-        std::shared_ptr<ViewBase> playlistHandlerView;
+        std::shared_ptr<BaseView> playlistHandlerView;
     public:
-        MediaPlaylistController(std::shared_ptr<Playlist>, std::shared_ptr<ViewBase>);
+        MediaPlaylistController(std::shared_ptr<Playlist>, std::shared_ptr<BaseView>);
         
         void addMediaFile(std::shared_ptr<MediaFile>);
 

@@ -4,18 +4,18 @@
 #include "../View/ScanView.h"
 #include "../Model/MetadataManager.h"
 #include "../Model/FolerManager.h"
-#include "../View/ViewBase.h"
+#include "../View/BaseView.h"
 #include <memory>
 #include <unordered_set>
 class MediaScannerController{
     private:
         MetadataManager& metadataManager;
         FolderManager& folderManager;
-        std::shared_ptr<ViewBase> scanView;
+        std::shared_ptr<BaseView> scanView;
         std::unordered_set<std::string> listPaths;
         
     public:
-        MediaScannerController(MetadataManager&, FolderManager&, std::shared_ptr<ViewBase>);
+        MediaScannerController(MetadataManager&, FolderManager&, std::shared_ptr<BaseView>);
 
         std::unordered_set<std::string> getListPaths();
 
@@ -27,8 +27,7 @@ class MediaScannerController{
 
         std::unordered_set<std::string> scanFolder(const std::string &path);
 
-        std::unordered_set<std::string> getlistFolderDirectory();
-        std::unordered_set<std::string> getlistFolderUSB();
+        std::unordered_set<std::string> scanData();
 
 
 

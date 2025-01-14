@@ -1,6 +1,6 @@
 #include "../../include/Controller/MediaPlaylistController.h"
 
-MediaPlaylistController::MediaPlaylistController(std::shared_ptr<Playlist> p, std::shared_ptr<ViewBase> v) : playlist(p), playlistHandlerView(v){}
+MediaPlaylistController::MediaPlaylistController(std::shared_ptr<Playlist> p, std::shared_ptr<BaseView> v) : playlist(p), playlistHandlerView(v){}
 
 void MediaPlaylistController::addMediaFile(std::shared_ptr<MediaFile> mediaFile)
 {

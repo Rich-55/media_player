@@ -55,7 +55,8 @@
         "set": "cpp",
         "unordered_set": "cpp",
         "playlistmanagerview": "cpp",
-        "fstream": "cpp"
+        "fstream": "cpp",
+        "cinttypes": "cpp"
     },
     "C_Cpp.errorSquiggles": "enabled"
 }

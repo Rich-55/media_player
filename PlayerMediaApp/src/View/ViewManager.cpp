@@ -1,7 +1,7 @@
-#include "../../include/View/CLIManager.h"
-CLIManager::CLIManager(){}
+#include "../../include/View/ViewManager.h"
+ViewManager::ViewManager(){}
 
-std::shared_ptr<ViewBase> CLIManager::getView(std::string name)  {
+std::shared_ptr<BaseView> ViewManager::getView(std::string name)  {
     auto it = views.find(name);
     if (it == views.end()) {
         if (name == "ScanView") {
@@ -19,7 +19,7 @@ std::shared_ptr<ViewBase> CLIManager::getView(std::string name)  {
     return views[name];
 }
 
-void CLIManager::switchView(std::string name) {
+void ViewManager::switchView(std::string name) {
     auto it = views.find(name);
     if (it != views.end()) {
         currentView = it->second;
@@ -30,5 +30,5 @@ void CLIManager::switchView(std::string name) {
     }
 }
 
-CLIManager::~CLIManager(){}
+ViewManager::~ViewManager(){}
 

@@ -3,7 +3,7 @@
 
 #include "../Model/ModelManager.h"
 
-#include "../View/CLIManager.h"
+#include "../View/ViewManager.h"
 #include "../View/ScanView.h"
 #include "../View/MediaFileManagerView.h"
 
@@ -17,7 +17,7 @@
 class ControllerManager{
     private:
         ModelManager model;
-        CLIManager view;
+        ViewManager view;
         std::unique_ptr<MediaScannerController> scannerController;
         std::unique_ptr<MediaFileController> mediaFileHandlerController;
         std::unique_ptr<MediaFileManagerController> mediaFileManagerController;
@@ -25,7 +25,7 @@ class ControllerManager{
         std::unique_ptr<MediaPlaylistManagerController> mediaPlaylistManagerController;
 
     public:
-        ControllerManager(ModelManager, CLIManager);
+        ControllerManager(ModelManager, ViewManager);
         
         void ScanData();
 

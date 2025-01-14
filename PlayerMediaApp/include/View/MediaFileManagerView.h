@@ -4,12 +4,12 @@
 #include <iostream>
 #include <vector>
 #include <iomanip>
-#include "../View/ViewBase.h"
+#include "../View/BaseView.h"
 #include "../Model/MediaFile.h"
 #include "../Model/AudioFile.h"
 #include "../Model/MetadataManager.h"
 
-class MediaFileManagerView : public ViewBase{
+class MediaFileManagerView : public BaseView{
 private:
 
 public:

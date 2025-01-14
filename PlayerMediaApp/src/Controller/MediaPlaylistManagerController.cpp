@@ -1,5 +1,5 @@
 #include "../../include/Controller/MediaPlaylistManagerController.h"
-MediaPlaylistManagerController::MediaPlaylistManagerController(PlaylistManager& m, std::shared_ptr<ViewBase> v) : playlistManager(m), playlistManagerView(v){}
+MediaPlaylistManagerController::MediaPlaylistManagerController(PlaylistManager& m, std::shared_ptr<BaseView> v) : playlistManager(m), playlistManagerView(v){}
 
 void MediaPlaylistManagerController::createPlaylist()
 {

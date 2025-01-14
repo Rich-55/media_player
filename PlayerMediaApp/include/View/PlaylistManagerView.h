@@ -1,9 +1,9 @@
 #ifndef PLAYLIST_MANAGER_VIEW_H
 #define PLAYLIST_MANAGER_VIEW_H
 
-#include "ViewBase.h"
+#include "BaseView.h"
 
-class PlaylistManagerView : public ViewBase {
+class PlaylistManagerView : public BaseView {
     private:
     public:
         PlaylistManagerView();

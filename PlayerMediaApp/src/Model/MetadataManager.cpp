@@ -20,8 +20,6 @@ void MetadataManager::clearListFileAdded()
     this->listFileAdded.clear();
 }
 
-#include <fstream>
-
 void writePathToFile(const std::string &pathName, const std::string &filePath = "database/video/video.data") {
     std::ofstream file(filePath, std::ios::app); 
     if (!file.is_open()) {
@@ -32,6 +30,36 @@ void writePathToFile(const std::string &pathName, const std::string &filePath = 
     file.close();
 }
 
+void MetadataManager::loadMediaFile( std::string pathName, std::string type)
+{   
+    std::string fileName = pathName.substr(pathName.find_last_of("/\\") + 1);
+    TagLib::MP4::File fileTemp(pathName.c_str());
+    unsigned long long size = fileTemp.length();
+
+    for(auto file : listMediaFilesSize){
+        if(file.first == fileName){
+            if(file.second == size){
+                std::cerr << "File already exists!\n";
+                return;
+            }
+        }
+    }
+
+    listMediaFilesSize[fileName] = size;
+
+    if(type == "Video"){        
+        std::shared_ptr<MediaFile> mediaFile =  std::make_shared<VideoFile>();
+        mediaFile->inputMediaFile(pathName);
+        listMediaFiles.push_back(mediaFile);
+        std::cout << "Video \""<< mediaFile->getName() << "\" add successfully!" << std::endl;
+    }else {
+        std::shared_ptr<MediaFile> mediaFile =  std::make_shared<AudioFile>();
+        mediaFile->inputMediaFile(pathName);
+        listMediaFiles.push_back(mediaFile);
+        std::cout << "Audio \""<< mediaFile->getName() << "\" add successfully!" << std::endl;
+    }
+    listFileAdded.insert(fileName);
+}
 
 void MetadataManager::addMediaFile( std::string pathName, std::string type)
 {   

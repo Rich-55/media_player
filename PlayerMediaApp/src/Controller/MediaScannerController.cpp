@@ -1,6 +1,6 @@
 #include "../../include/Controller/MediaScannerController.h"
 
-MediaScannerController::MediaScannerController(MetadataManager& metadataManager, FolderManager& folderManager,std::shared_ptr<ViewBase> scanView): metadataManager(metadataManager), folderManager(folderManager), scanView(scanView){}
+MediaScannerController::MediaScannerController(MetadataManager& metadataManager, FolderManager& folderManager,std::shared_ptr<BaseView> scanView): metadataManager(metadataManager), folderManager(folderManager), scanView(scanView){}
 
 
 std::unordered_set<std::string> MediaScannerController::getListPaths(){return this->listPaths;}
@@ -177,41 +177,35 @@ bool MediaScannerController::checkFolderDirectory(){ return this->folderManager.
 
 bool MediaScannerController::checkFolderUSB(){ return this->folderManager.getListFolderUSB().empty();}
 
-std::unordered_set<std::string> MediaScannerController::getlistFolderDirectory() 
+std::unordered_set<std::string> MediaScannerController::scanData() 
 {
-    std::unordered_set<std::string> folderPaths = this->folderManager.getListFolderDirectory();
-    std::unordered_set<std::string> mediaFiles;
+    std::unordered_set<std::string> mediaPaths;
+    std::ifstream videoFile("database/video/video.data");
+    std::ifstream audioFile("database/audio/audio.data");
 
-    for (const auto &folder : folderPaths) {
-        std::vector<std::string> files = list_media_files(folder);
-        for (const auto &file : files) {
-            if (listPaths.find(file) == listPaths.end()) {
-                listPaths.insert(file);
-                mediaFiles.insert(file);  
-            }
+    if (videoFile.is_open()) {
+        std::string path;
+        while (std::getline(videoFile, path)) {
+            mediaPaths.insert(path);
         }
+        videoFile.close();
+    } else {
+        std::cerr << "Can not open file database/video/video.data" << std::endl;
     }
 
-    return mediaFiles;
-}
-
-std::unordered_set<std::string> MediaScannerController::getlistFolderUSB() 
-{
-    std::unordered_set<std::string> usbPaths = this->folderManager.getListFolderUSB();
-    std::unordered_set<std::string> mediaFiles;
-
-    for (const auto &usbFolder : usbPaths) {
-        std::vector<std::string> files = list_media_files(usbFolder);
-        for (const auto &file : files) {
-            if (listPaths.find(file) == listPaths.end()) {
-                listPaths.insert(file);
-                mediaFiles.insert(file);  
-            }
+    if (audioFile.is_open()) {
+        std::string path;
+        while (std::getline(audioFile, path)) {
+            mediaPaths.insert(path); 
         }
+        audioFile.close(); 
+    } else {
+        std::cerr << "Can not open file database/audio/audio.data" << std::endl;
     }
 
-    return mediaFiles;
+    return mediaPaths; 
 }
+
 
 std::unordered_set<std::string> MediaScannerController::scanFolder(const std::string &path)
 {

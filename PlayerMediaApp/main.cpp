@@ -1,11 +1,11 @@
 #include "include/Model/ModelManager.h"
-#include "include/View/CLIManager.h"
+#include "include/View/ViewManager.h"
 #include "include/Controller/ControllerManager.h"
 #define MEDIAFILEMANAGER 1 
 
 int main() {
     ModelManager model;
-    CLIManager view;
+    ViewManager view;
     ControllerManager controller(model, view);
 
     // Init data

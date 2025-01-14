@@ -7,9 +7,9 @@
 class MediaPlaylistManagerController{
     private:
         PlaylistManager& playlistManager;
-        std::shared_ptr<ViewBase> playlistManagerView;
+        std::shared_ptr<BaseView> playlistManagerView;
     public:
-        MediaPlaylistManagerController(PlaylistManager&, std::shared_ptr<ViewBase>);
+        MediaPlaylistManagerController(PlaylistManager&, std::shared_ptr<BaseView>);
 
         void createPlaylist();
         

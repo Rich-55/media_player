@@ -1,14 +1,14 @@
 #ifndef SCAN_VIEW_H
 #define SCAN_VIEW_H
 
-#include "../View/ViewBase.h"
+#include "../View/BaseView.h"
 #include <vector>
 #include <dirent.h>
 #include <sys/stat.h>
 #include <cstdlib>
 
 
-class ScanView : public ViewBase{
+class ScanView : public BaseView{
     private:
         std::unordered_set<std::string> listPathNameIsAdded;
     public:

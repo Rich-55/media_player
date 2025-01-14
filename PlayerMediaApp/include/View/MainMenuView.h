@@ -1,10 +1,10 @@
 #ifndef MAIN_MENU_VIEW_H
 #define MAIN_MENU_VIEW_H
 
-#include "ViewBase.h"
+#include "BaseView.h"
 #include <functional>
 
-class MainMenuView : public ViewBase {
+class MainMenuView : public BaseView {
 private:
 
 public:

@@ -21,6 +21,8 @@ class MetadataManager{
 
         void addMediaFile(std::string, std::string);
 
+        void loadMediaFile(std::string, std::string);
+
         void deleteMediaFile(std::string);
 
         std::unordered_set<std::string> getListFileAdded();

@@ -1,12 +1,12 @@
 #include "../../include/Controller/ControllerManager.h"
 
-ControllerManager::ControllerManager(ModelManager m, CLIManager v) 
+ControllerManager::ControllerManager(ModelManager m, ViewManager v) 
     : model(m), view(v), scannerController(nullptr), mediaFileHandlerController(nullptr), mediaFileManagerController(nullptr), mediaPlaylistController(nullptr), mediaPlaylistManagerController(nullptr) {}
 
 void ControllerManager::ScanData() 
 {   
     if(model.getFolderManager().getListFolderDirectory().empty() && model.getFolderManager().getListFolderUSB().empty()){
-        std::shared_ptr<ViewBase> scanView = view.getView("ScanView");
+        std::shared_ptr<BaseView> scanView = view.getView("ScanView");
 
         if (!scanView) {
             std::cerr << "Error: ScanView not found or failed to initialize.\n";
@@ -16,7 +16,7 @@ void ControllerManager::ScanData()
             scannerController = std::make_unique<MediaScannerController>(model.getMetadataManager(), model.getFolderManager(), scanView);
         }
 
-        std::shared_ptr<ViewBase> mediaFileManagerView = view.getView("MediaFileManagerView");
+        std::shared_ptr<BaseView> mediaFileManagerView = view.getView("MediaFileManagerView");
         
         if (!mediaFileManagerView) {
             std::cerr << "Error: MediaFileManagerView not found or failed to initialize.\n";
@@ -50,7 +50,7 @@ void ControllerManager::ScanData()
             }
         }
     }else{
-        std::shared_ptr<ViewBase> scanView = view.getView("ScanView");
+        std::shared_ptr<BaseView> scanView = view.getView("ScanView");
 
         if (!scanView) {
             std::cerr << "Error: ScanView not found or failed to initialize.\n";
@@ -60,7 +60,7 @@ void ControllerManager::ScanData()
             scannerController = std::make_unique<MediaScannerController>(model.getMetadataManager(), model.getFolderManager(), scanView);
         }
 
-        std::shared_ptr<ViewBase> mediaFileManagerView = view.getView("MediaFileManagerView");
+        std::shared_ptr<BaseView> mediaFileManagerView = view.getView("MediaFileManagerView");
         
         if (!mediaFileManagerView) {
             std::cerr << "Error: MediaFileManagerView not found or failed to initialize.\n";
@@ -69,23 +69,14 @@ void ControllerManager::ScanData()
         if(!mediaFileManagerController){
             mediaFileManagerController = std::make_unique<MediaFileManagerController>(model.getMetadataManager(), mediaFileManagerView);
         }
-
-
-        if(!scannerController->checkFolderDirectory()){
-            mediaFileManagerController->addData(scannerController->getlistFolderDirectory());
-        }
-        if(!scannerController->checkFolderUSB()){
-            mediaFileManagerController->addData(scannerController->getlistFolderUSB());
-        }
-
-
+        mediaFileManagerController->loadData(scannerController->scanData());
     }
 
 }
 
 void ControllerManager::mediaFileManager() 
 {
-    std::shared_ptr<ViewBase> mediaFileManagerView = view.getView("MediaFileManagerView");
+    std::shared_ptr<BaseView> mediaFileManagerView = view.getView("MediaFileManagerView");
     
     if (!mediaFileManagerView) {
         std::cerr << "Error: MediaFileManagerView not found or failed to initialize.\n";
@@ -143,7 +134,7 @@ void ControllerManager::mediaFileManager()
 
 void ControllerManager::metadataFileHandler()
 {
-    std::shared_ptr<ViewBase> mediaFileHandlerView = view.getView("MediaFileHandlerView");
+    std::shared_ptr<BaseView> mediaFileHandlerView = view.getView("MediaFileHandlerView");
 
     if (!mediaFileHandlerView) {
         std::cerr << "Error: MediaFileManagerView not found or failed to initialize.\n";
@@ -192,7 +183,7 @@ void ControllerManager::metadataFileHandler()
 
 void ControllerManager::playlistManager()
 {
-    std::shared_ptr<ViewBase> playlistManagerView = view.getView("PlaylistManagerView");
+    std::shared_ptr<BaseView> playlistManagerView = view.getView("PlaylistManagerView");
 
     if (!playlistManagerView) {
         std::cerr << "Error: PlaylistManagerView not found or failed to initialize.\n";
@@ -242,7 +233,7 @@ void ControllerManager::playlistManager()
 }
 
 void ControllerManager::playlistHandler() {
-    std::shared_ptr<ViewBase> playlistManagerView = view.getView("PlaylistManagerView");
+    std::shared_ptr<BaseView> playlistManagerView = view.getView("PlaylistManagerView");
 
     if (!playlistManagerView) {
         std::cerr << "Error: PlaylistHandlerView not found or failed to initialize.\n";
@@ -269,7 +260,7 @@ void ControllerManager::playlistHandler() {
 
     mediaPlaylistManagerController->displayAllPlaylist();
 
-    std::shared_ptr<ViewBase> playlistHandlerView = view.getView("PlaylistHandlerView");
+    std::shared_ptr<BaseView> playlistHandlerView = view.getView("PlaylistHandlerView");
 
     if (!playlistHandlerView) {
         std::cerr << "Error: PlaylistHandlerView not found or failed to initialize.\n";

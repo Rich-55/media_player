@@ -8,10 +8,10 @@
 #include <unordered_map>
 #include "../Model/MetadataManager.h"
 #include "../Model/PlaylistManager.h"
-class ViewBase{
+class BaseView{
     private:
     public:
-        ViewBase();
+        BaseView();
         
         virtual void showMenu() = 0;
 
@@ -30,7 +30,7 @@ class ViewBase{
         virtual void setListPathNameIsAdded(std::unordered_set<std::string>);
         virtual void showFileAdded();
 
-        virtual ~ViewBase();
+        virtual ~BaseView();
 
 };
 

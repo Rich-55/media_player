@@ -1,6 +1,6 @@
 #include "../../include/Controller/MediaFileController.h"
 
-MediaFileController::MediaFileController(std::shared_ptr<MediaFile>  m, std::shared_ptr<ViewBase> v) : mediaFile(m), mediaFileHandlerView(v){}
+MediaFileController::MediaFileController(std::shared_ptr<MediaFile>  m, std::shared_ptr<BaseView> v) : mediaFile(m), mediaFileHandlerView(v){}
 
 void MediaFileController::getDetailMediaFile(){
     mediaFileHandlerView->displayDetailMediaFile(mediaFile);

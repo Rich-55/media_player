@@ -1,9 +1,9 @@
 #ifndef MEDIA_FILE_HANDLER_VIEW_H
 #define MEDIA_FILE_HANDLER_VIEW_H
 
-#include "ViewBase.h"
+#include "BaseView.h"
 
-class MediaFileHandlerView : public ViewBase {
+class MediaFileHandlerView : public BaseView {
     public:
         MediaFileHandlerView();
 
