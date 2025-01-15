@@ -1,2 +1,0 @@
-//Audio Exception
-//Video Exception
