@@ -1,30 +1,59 @@
 #include "../../include/Controller/MediaFileController.h"
 
-MediaFileController::MediaFileController(MetadataManager m, std::shared_ptr<ViewBase> v) : mediaManager(m), mediaView(v){}
+MediaFileController::MediaFileController(std::shared_ptr<MediaFile>  m, std::shared_ptr<ViewBase> v) : mediaFile(m), mediaFileHandlerView(v){}
 
-void MediaFileController::addData(std::vector<std::string> listPathName){
-    for(std::string v : listPathName){
+void MediaFileController::getDetailMediaFile(){
+    mediaFileHandlerView->displayDetailMediaFile(mediaFile);
+}
 
-        std::string check = "";
-        size_t pos = v.rfind('.');
-        if (pos != std::string::npos) {
-            check = v.substr(pos); 
-        }
-        if(check == "mp4"){
-            this->mediaManager.addMediaFile(v, "Video");
-        } else {
-            this->mediaManager.addMediaFile(v, "Audio");  
-        }
-        
+void MediaFileController::addMetadata(){
+    mediaFileHandlerView->displayMenuAddMetadata(mediaFile);
+    std::cout << "Enter the key you want to add (or enter 0 to back to Menu): ";
+    std::string key;
+    std::cin >> key;
+
+    if(key == "0"){
+        return;
     }
+
+    std::cout << "Enter the value: ";
+    std::string value;
+    std::cin.ignore(); 
+    std::getline(std::cin, value);
+
+    mediaFile->addNewKey(key, value);
 }
 
-void MediaFileController::showMediaFile(){
-    
-    mediaView->displayAllMediaFile(mediaManager);
-    
+void MediaFileController::editMetadata(){
+    mediaFileHandlerView->displayMenuEditMetadata(mediaFile);
+    std::cout << "Enter the key you want to edit (or enter 0 to back to Menu): ";
+    std::string key;
+    std::cin >> key;
 
+    if(key == "0"){
+        return;
+    }
+
+    if(mediaFile->getMetadata(key) == ""){
+        std::cerr << "Error: Key not found!\n";
+        return;
+    }
+
+    std::cout << "Current value: " << mediaFile->getMetadata(key) << std::endl;
+
+    std::cout << "Enter new value: ";
+    std::string newValue;
+    std::cin.ignore(); 
+    std::getline(std::cin, newValue);
+
+    mediaFile->editKey(key, newValue);
 }
 
-//void MediaFileController::setData(int data) {
-    // Logic for setting data for media or video
+void MediaFileController::deleteMetadata(){
+    mediaFileHandlerView->displayMenuDeleteMetadata(mediaFile);
+    std::string key;
+    std::cin >> key;
+
+    mediaFile->deleteKey(key);
+  
+}

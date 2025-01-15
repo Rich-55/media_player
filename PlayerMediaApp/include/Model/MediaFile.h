@@ -8,25 +8,27 @@
 #include <taglib/id3v2tag.h>
 #include <taglib/textidentificationframe.h>
 #include <taglib/tbytevector.h>
+#include <taglib/id3v2frame.h>
+#include <taglib/mp4file.h>
 
 #include <iostream>
 #include <string>
+#include <unordered_map>
 
 class MediaFile {
 private:
     std::string fileName;
     std::string pathName;
-    double size;
+    unsigned long long size;
     std::string duration;
     std::string fileType;
-
 protected:
     void setType(std::string);
-
 public:
     // Constructor
     MediaFile();
-    MediaFile(const std::string& , const std::string& , double , const std::string&, const std::string&);
+    MediaFile(const std::string& , const std::string& , unsigned long long, const std::string& , const std::string& );
+
 
     // Virtual Destructor
     virtual ~MediaFile();
@@ -34,30 +36,21 @@ public:
     // Getters
     std::string getName() const;
     std::string getPath() const;
-    double getSize() const;
+    unsigned long getSize() const;
     std::string getDuration() const;
 
-    // Virtual method to get type
     virtual std::string getType();
-    virtual std::string getCodec ();
-    virtual int getBitrate ();
-    virtual std::string getResolution ();
 
-    // Getters for metadata
-    virtual std::string getTitle() const;
-    virtual std::string getArtist() const;
-    virtual std::string getAlbum() const;
-    virtual int getYear() const;
-
-    // Virtual methods for file operations
+    // Virtual methods
     virtual void inputMediaFile(std::string);
-    virtual void detailMediaFile() const;
-    virtual void editMediaFile();
+    
+    virtual void addNewKey(const std::string& key, const std::string& value);
+    virtual void editKey(const std::string& key, const std::string& value);
+    virtual void deleteKey(const std::string& key);
 
-    virtual void addNewKey(const std::string& key, const std::string& value) = 0;
-    virtual void editKey(const std::string& key, const std::string& newValue) = 0;
-    virtual void deleteKey(const std::string& key) = 0;
+    virtual std::string getMetadata(const std::string& key) const;
+    virtual std::unordered_map<std::string, std::string> getAllMetadata() const;
+    
+
 };
-   // void editMetadata(TagLib::MPEG::File &file, const std::string &key, const std::string &newValue);
-
 #endif

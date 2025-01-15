@@ -1,53 +1,79 @@
 #include "../../include/View/MediaFileManagerView.h"
 
-MediaFileManagerView::MediaFileManagerView(){
-    std::cout <<"added" << std::endl;
-}
+MediaFileManagerView::MediaFileManagerView(){}
 
 void MediaFileManagerView::showMenu() {
     std::cout << "========== Media File Menu ==========" << std::endl;
-    std::cout << "1. View All Media File" << std::endl;
-    std::cout << "2. View All Video Media File" << std::endl;
-    std::cout << "3. View All Video Media File" << std::endl;
-    std::cout << "0. Exit" << std::endl;
+    std::cout << "1. Add File By File Path" << std::endl;
+    std::cout << "2. Add File By Folder Path" << std::endl;
+    std::cout << "3. Delete File" << std::endl;
+    std::cout << "4. View All Media File" << std::endl;
+    std::cout << "5. View All Audio Media File" << std::endl;
+    std::cout << "6. View All Video Media File" << std::endl;
+    std::cout << "0. Back to main menu" << std::endl;
     std::cout << "--------------------------------------------------" << std::endl;
     std::cout << "Enter your choice: ";
 }
 
 void MediaFileManagerView::displayAllMediaFile(MetadataManager metadataManager){
-     if (metadataManager.getAllMediaFile().empty()) {
+    if (metadataManager.getAllMediaFile().empty()) {
         std::cerr << "No media files to display.\n";
         return;
     }
+    std::cout << "----- All Media Files -----" << std::endl;
     for (auto file : metadataManager.getAllMediaFile()) {
-        std::cout << "----- Media Files -----" << std::endl;
         std::cout << "File Name:   " << file->getName() << std::endl;
         std::cout << "File Path:   " << file->getPath() << std::endl;
         std::cout << "File Type:   " << file->getType() << std::endl;
         std::cout << "File Size:   " << file->getSize() << " bytes" << std::endl;
+        std::cout << "File Duration:   " << file->getDuration() << std::endl;
         std::cout << "------------------------------" << std::endl;
     }
 }
 
-void MediaFileManagerView::displayAllMediaFileOfAudio(MetadataManager metadataManager){
-    for (auto file : metadataManager.getAllVideoFiles()) {
-        std::cout << "----- Video Files Details -----" << std::endl;
+void MediaFileManagerView::displayAllMediaFileOfAudio(MetadataManager metadataManager) {
+    auto audioFiles = metadataManager.getAllAudioFiles();
+    if (audioFiles.empty()) {
+        std::cerr << "No audio files to display.\n";
+        return;
+    }
+
+    std::cout << "----- All Audio Files -----" << std::endl;
+    for (const auto& file : audioFiles) {
         std::cout << "File Name:   " << file->getName() << std::endl;
         std::cout << "File Path:   " << file->getPath() << std::endl;
-        std::cout << "File Type:   " << "Video File" << std::endl;
-        std::cout << "File Size:   " << file->getSize() << std::endl;
-        std::cout << "Title:  " << file->getTitle() << std::endl;
-        std::cout << "Artist:      " << file->getArtist() << std::endl;
-        std::cout << "Album:       " << file->getAlbum() << std::endl;
-        std::cout << "Year:       " << file->getYear() << std::endl;
-        std::cout << "Duration:    " << file->getDuration() << " seconds" << std::endl;
-        std::cout << "Bitrate:     " << file->getBitrate() << " kbps" << std::endl;
-        std::cout << "Resolution: " << file->getResolution() << " Hz" << std::endl;
-        std::cout << "------------------------------" << std::endl;
+        std::cout << "File Type:   " << file->getType() << std::endl;
+        std::cout << "File Size:   " << file->getSize() << " bytes" << std::endl;
+
+        std::cout << "Audio Metadata:" << std::endl;
+        for (const auto& [key, value] : file->getAllMetadata()) {
+            std::cout << "  " << key << ": " << value << std::endl;
+        }
+
+        std::cout << std::string(50, '-') << std::endl;
     }
 }
 
-void MediaFileManagerView::displayAllMediaFileOfVideo(MetadataManager metadataManager){
-    metadataManager.getAllMediaFile();
+void MediaFileManagerView::displayAllMediaFileOfVideo(MetadataManager metadataManager) {
+    auto videoFiles = metadataManager.getAllVideoFiles();
+    if (videoFiles.empty()) {
+        std::cerr << "No video files to display.\n";
+        return;
+    }
+
+    std::cout << "----- All Video Files -----" << std::endl;
+    for (const auto& file : videoFiles) {
+        std::cout << "File Name:   " << file->getName() << std::endl;
+        std::cout << "File Path:   " << file->getPath() << std::endl;
+        std::cout << "File Type:   " << file->getType() << std::endl;
+        std::cout << "File Size:   " << file->getSize() << " bytes" << std::endl;
+
+        std::cout << "Video Metadata:" << std::endl;
+        for (const auto& [key, value] : file->getAllMetadata()) {
+            std::cout << "  " << key << ": " << value << std::endl;
+        }
+
+        std::cout << std::string(50, '-') << std::endl;
+    }
 }
 

@@ -6,17 +6,27 @@
 #include "../View/MetadataView.h"
 
 #include <memory>
+#include <unordered_set>
+
 class MediaFileController {
 private:
-    MetadataManager mediaManager;
-    std::shared_ptr<ViewBase> mediaView; 
+    std::shared_ptr<MediaFile> mediaFile;
+    std::shared_ptr<ViewBase> mediaFileHandlerView; 
 
 public:
-    MediaFileController(MetadataManager, std::shared_ptr<ViewBase>);
+    MediaFileController(std::shared_ptr<MediaFile> , std::shared_ptr<ViewBase>);
 
-    void addData(std::vector<std::string>);
+    void getDetailMediaFile();
 
-    void showMediaFile();
+    void addMetadata();
+
+    void editMetadata();
+
+    void deleteMetadata();
+
+
+
+
 
 };
 

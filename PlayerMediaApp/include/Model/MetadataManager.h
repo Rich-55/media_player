@@ -1,31 +1,41 @@
 #ifndef METADATA_MANAGER_H
 #define METADATA_MANAGER_H
-
 #include <vector>
+#include <iostream>
 #include <memory>
 #include <string>
-#include "MediaFile.h"
+#include <unordered_map>
+#include <fstream>
+#include "../Model/MediaFile.h"
 #include "../Model/VideoFile.h"
+#include "../Model/AudioFile.h"
+class MetadataManager{
+    private:
+        std::vector<std::shared_ptr<MediaFile>> listMediaFiles;
+        std::unordered_map<std::string, unsigned long long> listMediaFilesSize;
+        std::unordered_set<std::string> listFileAdded;
+    public:
+        MetadataManager();
 
-// MetadataManager (Model)
-class MetadataManager {
-private:
-    std::vector<std::shared_ptr<MediaFile>> listMediaFiles;
+        std::shared_ptr<MediaFile> getMediaFile(std::string);
 
-public:
-    MetadataManager(); // Khai báo hàm khởi tạo mặc định
-      ~MetadataManager(); // Khai báo destructor
+        void addMediaFile(std::string, std::string);
 
-    std::vector<std::shared_ptr<MediaFile>> getAllMediaFile();
-    std::vector<std::shared_ptr<MediaFile>> getAllVideoFiles();
+        void deleteMediaFile(std::string);
 
-    void getData();
-    void addMediaFile(std::string, std::string);
-    void removeMediaFile(std::shared_ptr<MediaFile>);
-    void editMediaFile(std::shared_ptr<MediaFile>);
-    
+        std::unordered_set<std::string> getListFileAdded();
+        void clearListFileAdded();
+
+        void updateDatabase();
+
+        std::vector<std::shared_ptr<MediaFile>> getAllMediaFile();
+
+        std::vector<std::shared_ptr<MediaFile>> getAllAudioFiles();
+
+        std::vector<std::shared_ptr<MediaFile>> getAllVideoFiles();
     
 };
 
-#endif // METADATA_MANAGER_H
+#endif
+
 
