@@ -1,18 +1,14 @@
-#ifndef MEDIACONTROLLER_H
-#define MEDIACONTROLLER_H
+#ifndef MEDIA_CONTROLLER_H
+#define MEDIA_CONTROLLER_H
 
+#include <iostream>
 #include <vector>
 #include <string>
 #include <thread>
 #include <atomic>
 #include <mutex>
-
-#include <mutex>
-#include <vector>
-#include <string>
-#include <thread>
-#include <atomic>
-// #include <libswresample/swresample.h>
+#include <stdexcept>
+#include <queue>
 
 class MediaController {
 public:
@@ -41,4 +37,4 @@ private:
 };
 
 
-#endif // MEDIACONTROLLER_H
+#endif
