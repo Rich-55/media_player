@@ -29,8 +29,8 @@ std::unordered_map<std::string, std::string> AudioFile::getAllMetadata() const {
 }
 
 
-void AudioFile::inputMediaFile(std::string pathName) {
-    MediaFile::inputMediaFile(pathName);
+void AudioFile::inputMediaFile(std::string pathName, bool isSame) {
+    MediaFile::inputMediaFile(pathName, isSame);
 
     TagLib::FileRef file(pathName.c_str());
 
@@ -40,11 +40,11 @@ void AudioFile::inputMediaFile(std::string pathName) {
     }
 
     TagLib::Tag* tag = file.tag();
-    metadataAudio["trackName"] = tag->title().to8Bit(true).empty() ? "Unknown" : tag->title().to8Bit(true);
+    metadataAudio["track"] = tag->title().to8Bit(true).empty() ? "Unknown" : tag->title().to8Bit(true);
     metadataAudio["album"] = tag->album().to8Bit(true).empty() ? "Unknown" : tag->album().to8Bit(true);
     metadataAudio["artist"] = tag->artist().to8Bit(true).empty() ? "Unknown" : tag->artist().to8Bit(true);
     metadataAudio["genre"] = tag->genre().to8Bit(true).empty() ? "Unknown" : tag->genre().to8Bit(true);
-
+    metadataAudio["comment"] = tag->comment().to8Bit(true).empty() ? "Unknown" : tag->comment().to8Bit(true);
     TagLib::AudioProperties* audioProperties = file.audioProperties();
     if (audioProperties) {
         metadataAudio["bitrate"] = std::to_string(audioProperties->bitrate());
@@ -54,16 +54,10 @@ void AudioFile::inputMediaFile(std::string pathName) {
     setType("Audio");
 }
 
-void AudioFile::addNewKey(const std::string& key, const std::string& value) {
-
-    if (allowedKeys.find(key) == allowedKeys.end()) {
-        std::cerr << "Error: Unsupported metadata key: " << key << "\n";
-        return;
-    }
-
+bool AudioFile::addNewKey(const std::string& key, const std::string& value) {
+    bool check = false;
     if (metadataAudio.find(key) != metadataAudio.end()) {
-        std::cerr << "Error: Metadata key [" << key << "] already exists.\n";
-        return;
+        return check;
     }
 
     TagLib::FileRef fileRef(this->getPath().c_str());
@@ -86,7 +80,7 @@ void AudioFile::addNewKey(const std::string& key, const std::string& value) {
                 tag->setYear(year);
             } catch (const std::invalid_argument& e) {
                 std::cerr << "Error: Year must be a valid number.\n";
-                return;
+                return check;
             }
         } else if (key == "track") {
             try {
@@ -94,23 +88,26 @@ void AudioFile::addNewKey(const std::string& key, const std::string& value) {
                 tag->setTrack(track);
             } catch (const std::invalid_argument& e) {
                 std::cerr << "Error: Track must be a valid number.\n";
-                return;
+                return check;
             }
         }
 
         if (fileRef.save()) {
             metadataAudio[key] = value;
-            std::cout << "Added new metadata [" << key << "] with value: " << value << "\n";
+            check = true;
         } else {
             std::cerr << "Error: Failed to save changes to the file.\n";
+            check = false;
         }
     } else {
         std::cerr << "Error: Could not retrieve tag information or file is invalid.\n";
+        check = false;
     }
+    return check;
 }
 
-void AudioFile::editKey(const std::string& key, const std::string& value) {
-
+bool AudioFile::editKey(const std::string& key, const std::string& value) {
+    bool check = false;
     TagLib::FileRef fileRef(this->getPath().c_str());
     if (!fileRef.isNull() && fileRef.tag()) {
         TagLib::Tag* tag = fileRef.tag();
@@ -131,7 +128,7 @@ void AudioFile::editKey(const std::string& key, const std::string& value) {
                 tag->setYear(year);
             } catch (const std::invalid_argument& e) {
                 std::cerr << "Error: Year must be a valid number.\n";
-                return;
+                return check;
             }
         } else if (key == "track") {
             try {
@@ -139,26 +136,26 @@ void AudioFile::editKey(const std::string& key, const std::string& value) {
                 tag->setTrack(track);
             } catch (const std::invalid_argument& e) {
                 std::cerr << "Error: Track must be a valid number.\n";
-                return;
+                return check;
             }
         }
 
         if (fileRef.save()) {
             metadataAudio[key] = value;
-            std::cout << "Updated metadata [" << key << "] to: " << value << "\n";
+            check = true;
         } else {
             std::cerr << "Error: Failed to save changes to the file.\n";
+            check = false;
         }
     } else {
         std::cerr << "Error: Could not retrieve tag information or file is invalid.\n";
+        check = false;
     }
+    return check;
 }
 
-void AudioFile::deleteKey(const std::string& key) {
-    if (allowedKeys.find(key) == allowedKeys.end()) {
-        std::cerr << "Error: Unsupported metadata key: " << key << "\n";
-        return;
-    }
+bool AudioFile::deleteKey(const std::string& key) {
+    bool check = false;
 
     TagLib::FileRef fileRef(this->getPath().c_str());
     if (!fileRef.isNull() && fileRef.tag()) {
@@ -176,9 +173,11 @@ void AudioFile::deleteKey(const std::string& key) {
             tag->setYear(0); 
         } else if (key == "track") {
             tag->setTrack(0); 
-        } else {
+        } else if(key == "comment"){
+            tag->setComment(TagLib::String("", TagLib::String::UTF8));
+        }else {
             std::cerr << "Error: Unsupported metadata key [" << key << "]\n";
-            return;
+            check = false;
         }
 
         if (fileRef.save()) {
@@ -188,13 +187,15 @@ void AudioFile::deleteKey(const std::string& key) {
         }
 
         if (metadataAudio.erase(key)) {
-            std::cout << "Deleted metadata [" << key << "] from map.\n";
+            check = true;
         } else {
-            std::cerr << "Error: Metadata key [" << key << "] does not exist in audio.\n";
+            check = false;
         }
     } else {
         std::cerr << "Error: Unable to modify tag for the file.\n";
+        check = false;
     }
+    return check;
 }
 
 

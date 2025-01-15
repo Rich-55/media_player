@@ -11,6 +11,7 @@
 #include "../View/MediaFileHandlerView.h"
 #include "../View/PlaylistHandlerView.h"
 #include "../View/PlaylistManagerView.h"
+#include "../View/MainMenuView.h"
 class ViewManager{
     private:
         std::unordered_map<std::string, std::shared_ptr<BaseView>> views; 
@@ -20,8 +21,6 @@ class ViewManager{
         ViewManager();
 
         std::shared_ptr<BaseView> getView(std::string);
-
-        void switchView(std::string);
 
         ~ViewManager();
     

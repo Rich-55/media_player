@@ -21,11 +21,11 @@ public:
 
     // Overridden methods
     std::string getType() override;
-    void inputMediaFile(std::string) override;
+    void inputMediaFile(std::string pathName, bool isSame) override;
 
-    void addNewKey(const std::string& key, const std::string& value) override;
-    void editKey(const std::string& key, const std::string& value) override;
-    void deleteKey(const std::string& key) override;
+    bool addNewKey(const std::string& key, const std::string& value) override;
+    bool editKey(const std::string& key, const std::string& value) override;
+    bool deleteKey(const std::string& key) override;
 };
 
 #endif

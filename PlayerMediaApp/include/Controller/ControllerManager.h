@@ -12,7 +12,10 @@
 #include "../Controller/MediaFileManagerController.h"
 #include "../Controller/MediaPlaylistManagerController.h"
 #include "../Controller/MediaPlaylistController.h"
-#define ScanHomeDirectory 1
+
+#include "../utils/MainMenuException.h"
+#include "../utils/ConfigLoader.h"
+#include <limits>
 
 class ControllerManager{
     private:
@@ -27,6 +30,11 @@ class ControllerManager{
     public:
         ControllerManager(ModelManager, ViewManager);
         
+        std::shared_ptr<BaseView> getView(const std::string&);
+        bool getYesNoInput(const std::string&);
+
+        void runApp();
+
         void ScanData();
 
         void mediaFileManager();

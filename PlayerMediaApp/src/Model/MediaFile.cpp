@@ -13,29 +13,41 @@ std::string MediaFile::getDuration() const { return this->duration;}
 
 void MediaFile::setType(std::string type) { this->fileType = type;}
 
-void MediaFile::inputMediaFile(std::string pathName){
+void MediaFile::inputMediaFile(std::string pathName, bool isSame) {
     TagLib::FileRef file(pathName.c_str());
     TagLib::AudioProperties *audioProps = file.audioProperties();
-    if(!audioProps){
+    if (!audioProps) {
         std::cerr << "File not found!";
+        return;
     }
-    size_t lastSlash = pathName.find_last_of("/\\"); 
-    this->fileName =  pathName.substr(lastSlash + 1);
+
+    size_t lastSlash = pathName.find_last_of("/\\");
+    this->fileName = pathName.substr(lastSlash + 1);
+    
+    if (isSame) {
+        size_t dotPos = this->fileName.find_last_of('.');
+        if (dotPos != std::string::npos) {
+            this->fileName.insert(dotPos, "(another)");
+        } else {
+            this->fileName += "(another)";
+        }
+    }
+
     this->pathName = pathName;
 
     TagLib::MP4::File fileTemp(pathName.c_str());
     this->size = fileTemp.length();
-    
-    
+
     this->duration = std::to_string(audioProps->length() / 60) + "m " +
-                       std::to_string(audioProps->length() % 60) + "s";
+                     std::to_string(audioProps->length() % 60) + "s";
 }
 
-void MediaFile::addNewKey(const std::string&, const std::string&){}
 
-void MediaFile::editKey(const std::string&, const std::string&) {}
+bool MediaFile::addNewKey(const std::string&, const std::string&){return false;}
 
-void MediaFile::deleteKey(const std::string& ) {}
+bool MediaFile::editKey(const std::string&, const std::string&) {return false;}
+
+bool MediaFile::deleteKey(const std::string& ) {return false;}
 
 std::string MediaFile::getType() { return "";}
 

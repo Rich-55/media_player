@@ -23,7 +23,7 @@ class MediaFileManager{
 
         bool loadMediaFile(std::string, std::string);
 
-        void deleteMediaFile(std::string);
+        bool deleteMediaFile(std::string);
 
         std::unordered_set<std::string> getListFileAdded();
         void clearListFileAdded();

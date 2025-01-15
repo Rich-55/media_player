@@ -42,11 +42,11 @@ public:
     virtual std::string getType();
 
     // Virtual methods
-    virtual void inputMediaFile(std::string);
+    virtual void inputMediaFile(std::string, bool);
     
-    virtual void addNewKey(const std::string& key, const std::string& value);
-    virtual void editKey(const std::string& key, const std::string& value);
-    virtual void deleteKey(const std::string& key);
+    virtual bool addNewKey(const std::string& key, const std::string& value);
+    virtual bool editKey(const std::string& key, const std::string& value);
+    virtual bool deleteKey(const std::string& key);
 
     virtual std::string getMetadata(const std::string& key) const;
     virtual std::unordered_map<std::string, std::string> getAllMetadata() const;

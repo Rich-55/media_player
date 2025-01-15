@@ -5,13 +5,14 @@
 #include "../Model/MediaFileManager.h"
 #include "../Model/FolerManager.h"
 #include "../View/BaseView.h"
+
+#include "../utils/ScanException.h"
+#include "../utils/ConfigLoader.h"
+
 #include <memory>
 #include <unordered_set>
 #include <unistd.h>
 
-#define ScanHomeDirectory 1
-#define ScanUSBDevices 2
-#define Exit 0
 
 class MediaScannerController{
     private:
@@ -41,9 +42,6 @@ class MediaScannerController{
         std::unordered_set<std::string> scanFolder(const std::string &path);
 
         
-
-
-
 };
 
 #endif

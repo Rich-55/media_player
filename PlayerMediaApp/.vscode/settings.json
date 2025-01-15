@@ -57,7 +57,10 @@
         "playlistmanagerview": "cpp",
         "fstream": "cpp",
         "cinttypes": "cpp",
-        "filesystem": "cpp"
+        "filesystem": "cpp",
+        "regex": "cpp",
+        "bitset": "cpp",
+        "cstring": "cpp"
     },
     "C_Cpp.errorSquiggles": "enabled"
 }

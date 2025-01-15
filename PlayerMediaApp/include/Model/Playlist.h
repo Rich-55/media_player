@@ -17,6 +17,8 @@ class Playlist {
 
         std::string getName() const;
 
+        bool checkMediaFile(std::string);
+
         std::vector<std::shared_ptr<MediaFile>> getListMediaFiles();
 
         void addMediaFile(std::shared_ptr<MediaFile>);

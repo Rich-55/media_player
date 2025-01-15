@@ -7,6 +7,18 @@ std::string Playlist::getName() const
     return this->name;
 }
 
+bool Playlist::checkMediaFile(std::string file)
+{
+    for(const auto &mediaFile : listMediaFiles)
+    {
+        if(mediaFile->getName() == file)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
 std::vector<std::shared_ptr<MediaFile>> Playlist::getListMediaFiles()
 {
     return this->listMediaFiles;

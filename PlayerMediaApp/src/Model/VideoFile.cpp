@@ -28,8 +28,8 @@ std::unordered_map<std::string, std::string> VideoFile::getAllMetadata() const {
 }
 
 
-void VideoFile::inputMediaFile(std::string pathName) {
-    MediaFile::inputMediaFile(pathName);
+void VideoFile::inputMediaFile(std::string pathName, bool isSame) {
+    MediaFile::inputMediaFile(pathName, isSame);
 
     TagLib::FileRef file(pathName.c_str());
 
@@ -43,7 +43,7 @@ void VideoFile::inputMediaFile(std::string pathName) {
     metadataVideo["album"] = tag->album().to8Bit(true).empty() ? "Unknown" : tag->album().to8Bit(true);
     metadataVideo["artist"] = tag->artist().to8Bit(true).empty() ? "Unknown" : tag->artist().to8Bit(true);
     metadataVideo["year"] = tag->year() == 0 ? "Unknown" : std::to_string(tag->year());
-
+    metadataVideo["comment"] = tag->comment().to8Bit(true).empty() ? "Unknown" : tag->comment().to8Bit(true);
     TagLib::AudioProperties* audioProperties = file.audioProperties();
     if (audioProperties) {
         metadataVideo["bitrate"] = std::to_string(audioProperties->bitrate());
@@ -54,16 +54,10 @@ void VideoFile::inputMediaFile(std::string pathName) {
     setType("Video");
 }
 
-void VideoFile::addNewKey(const std::string& key, const std::string& value) {
-
-    if (allowedKeys.find(key) == allowedKeys.end()) {
-        std::cerr << "Error: Unsupported metadata key: " << key << "\n";
-        return;
-    }
-
+bool VideoFile::addNewKey(const std::string& key, const std::string& value) {
+    bool check = false;
     if (metadataVideo.find(key) != metadataVideo.end()) {
-        std::cerr << "Error: Metadata key [" << key << "] already exists.\n";
-        return;
+        check = false;
     }
 
     TagLib::FileRef fileRef(this->getPath().c_str());
@@ -86,7 +80,7 @@ void VideoFile::addNewKey(const std::string& key, const std::string& value) {
                 tag->setYear(year);
             } catch (const std::invalid_argument& e) {
                 std::cerr << "Error: Year must be a valid number.\n";
-                return;
+                check = false;
             }
         } else if (key == "track") {
             try {
@@ -94,23 +88,27 @@ void VideoFile::addNewKey(const std::string& key, const std::string& value) {
                 tag->setTrack(track);
             } catch (const std::invalid_argument& e) {
                 std::cerr << "Error: Track must be a valid number.\n";
-                return;
+                check = false;
             }
         }
 
         if (fileRef.save()) {
             metadataVideo[key] = value;
-            std::cout << "Added new metadata [" << key << "] with value: " << value << "\n";
+            check = true;
         } else {
             std::cerr << "Error: Failed to save changes to the file.\n";
+            check = false;
         }
     } else {
         std::cerr << "Error: Could not retrieve tag information or file is invalid.\n";
+        check = false;
     }
+    return check;
 }
 
 
-void VideoFile::editKey(const std::string& key, const std::string& value) {
+bool VideoFile::editKey(const std::string& key, const std::string& value) {
+    bool check = false;
 
     TagLib::FileRef fileRef(this->getPath().c_str());
     if (!fileRef.isNull() && fileRef.tag()) {
@@ -132,7 +130,7 @@ void VideoFile::editKey(const std::string& key, const std::string& value) {
                 tag->setYear(year);
             } catch (const std::invalid_argument& e) {
                 std::cerr << "Error: Year must be a valid number.\n";
-                return;
+                check = false;
             }
         } else if (key == "track") {
             try {
@@ -140,35 +138,26 @@ void VideoFile::editKey(const std::string& key, const std::string& value) {
                 tag->setTrack(track);
             } catch (const std::invalid_argument& e) {
                 std::cerr << "Error: Track must be a valid number.\n";
-                return;
+                check = false;
             }
         }
 
         if (fileRef.save()) {
             metadataVideo[key] = value;
-            std::cout << "Updated metadata [" << key << "] to: " << value << "\n";
+            check = true;
         } else {
-            std::cerr << "Error: Failed to save changes to the file.\n";
+            check = false;
         }
     } else {
         std::cerr << "Error: Could not retrieve tag information or file is invalid.\n";
+        check = false;
     }
+    return check;
 }
 
 
-void VideoFile::deleteKey(const std::string& key) {
-
-
-    if (allowedKeys.find(key) == allowedKeys.end()) {
-        std::cerr << "Error: Unsupported metadata key: " << key << "\n";
-        return;
-    }
-
-    if (metadataVideo.find(key) != metadataVideo.end()) {
-        std::cerr << "Error: Metadata key [" << key << "] already exists.\n";
-        return;
-    }
-
+bool VideoFile::deleteKey(const std::string& key) {
+    bool check = false;
     TagLib::FileRef fileRef(this->getPath().c_str());
     if (!fileRef.isNull() && fileRef.tag()) {
         TagLib::Tag* tag = fileRef.tag();
@@ -185,9 +174,11 @@ void VideoFile::deleteKey(const std::string& key) {
             tag->setYear(0); 
         } else if (key == "track") {
             tag->setTrack(0); 
-        } else {
+        }else if(key == "comment") {
+            tag->setComment(TagLib::String("", TagLib::String::UTF8));
+        }else {
             std::cerr << "Error: Unsupported metadata key [" << key << "]\n";
-            return;
+            check =  false; 
         }
 
         if (fileRef.save()) {
@@ -197,13 +188,15 @@ void VideoFile::deleteKey(const std::string& key) {
         }
 
         if (metadataVideo.erase(key)) {
-            std::cout << "Deleted metadata [" << key << "] from map.\n";
+            check = true;
         } else {
-            std::cerr << "Error: Metadata key [" << key << "] does not exist in video.\n";
+            check = false;
         }
     } else {
         std::cerr << "Error: Unable to modify tag for the file.\n";
+        check = false;
     }
+    return check;
 }
 
 std::string VideoFile::getType() {

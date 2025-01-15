@@ -33,6 +33,7 @@ void writePathToFile(const std::string &pathName, const std::string &filePath = 
 bool MediaFileManager::loadMediaFile( std::string pathName, std::string type)
 {   
     bool result = false;
+    bool isSame = false;
     std::string fileName = pathName.substr(pathName.find_last_of("/\\") + 1);
     TagLib::MP4::File fileTemp(pathName.c_str());
     unsigned long long size = fileTemp.length();
@@ -42,6 +43,8 @@ bool MediaFileManager::loadMediaFile( std::string pathName, std::string type)
             if(file.second == size){
                 std::cerr << "File already exists!\n";
                 return result;
+            }else{
+                isSame = true;
             }
         }
     }
@@ -50,13 +53,13 @@ bool MediaFileManager::loadMediaFile( std::string pathName, std::string type)
 
     if(type == "Video"){        
         std::shared_ptr<MediaFile> mediaFile =  std::make_shared<VideoFile>();
-        mediaFile->inputMediaFile(pathName);
+        mediaFile->inputMediaFile(pathName, isSame);
         listMediaFiles.push_back(mediaFile);
         std::cout << "Video \""<< mediaFile->getName() << "\" add successfully!" << std::endl;
         result = true;
     }else {
         std::shared_ptr<MediaFile> mediaFile =  std::make_shared<AudioFile>();
-        mediaFile->inputMediaFile(pathName);
+        mediaFile->inputMediaFile(pathName, isSame);
         listMediaFiles.push_back(mediaFile);
         std::cout << "Audio \""<< mediaFile->getName() << "\" add successfully!" << std::endl;
         result = true;
@@ -66,7 +69,9 @@ bool MediaFileManager::loadMediaFile( std::string pathName, std::string type)
 }
 
 bool MediaFileManager::addMediaFile( std::string pathName, std::string type)
-{   bool result = false;
+{   
+    bool result = false;
+    bool isSame = false;
     std::string fileName = pathName.substr(pathName.find_last_of("/\\") + 1);
     TagLib::MP4::File fileTemp(pathName.c_str());
     unsigned long long size = fileTemp.length();
@@ -74,8 +79,9 @@ bool MediaFileManager::addMediaFile( std::string pathName, std::string type)
     for(auto file : listMediaFilesSize){
         if(file.first == fileName){
             if(file.second == size){
-                std::cerr << "File already exists!\n";
                 return result;
+            }else{
+                isSame = true;
             }
         }
     }
@@ -84,14 +90,14 @@ bool MediaFileManager::addMediaFile( std::string pathName, std::string type)
 
     if(type == "Video"){        
         std::shared_ptr<MediaFile> mediaFile =  std::make_shared<VideoFile>();
-        mediaFile->inputMediaFile(pathName);
+        mediaFile->inputMediaFile(pathName, isSame);
         listMediaFiles.push_back(mediaFile);
         writePathToFile(pathName, "database/video/video.data");
         std::cout << "Video \""<< mediaFile->getName() << "\" add successfully!" << std::endl;
         result = true;
     }else {
         std::shared_ptr<MediaFile> mediaFile =  std::make_shared<AudioFile>();
-        mediaFile->inputMediaFile(pathName);
+        mediaFile->inputMediaFile(pathName, isSame);
         listMediaFiles.push_back(mediaFile);
         writePathToFile(pathName, "database/audio/audio.data");
         std::cout << "Audio \""<< mediaFile->getName() << "\" add successfully!" << std::endl;
@@ -157,17 +163,18 @@ void MediaFileManager::updateDatabase()
 }
 
 
-void MediaFileManager::deleteMediaFile(std::string fileName) {
+bool MediaFileManager::deleteMediaFile(std::string fileName) {
     for (auto it = listMediaFiles.begin(); it != listMediaFiles.end(); ++it) {
         if ((*it)->getName() == fileName) {
 
             listMediaFiles.erase(it);
 
             updateDatabase();
-
+            
             std::cout << "File \"" << fileName << "\" deleted successfully!" << std::endl;
-            return;
+            
+            return true;
         }
     }
-    std::cerr << "Error: File not found.\n";
+    return false;
 }
