@@ -1,4 +1,0 @@
-#ifndef MEDIA_FILE_HANDLER_VIEW_H
-#define MEDIA_FILE_HANDLER_VIEW_H
-
-#endif
