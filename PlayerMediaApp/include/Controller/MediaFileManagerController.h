@@ -52,7 +52,7 @@ public:
     std::unordered_set<std::string> getListFileAdded();
     void clearListFileAdded();
 
-    void showAllMediaFile();
+    std::string showAllMediaFile();
 
     void showAllMediaFileOfVideo();
 

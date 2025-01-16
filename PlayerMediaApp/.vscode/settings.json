@@ -1,4 +1,5 @@
 {
+    
     "files.associations": {
         "algorithm": "cpp",
         "array": "cpp",
@@ -60,7 +61,15 @@
         "filesystem": "cpp",
         "regex": "cpp",
         "bitset": "cpp",
-        "cstring": "cpp"
+        "cstring": "cpp",
+        "condition_variable": "cpp",
+        "optional": "cpp",
+        "mutex": "cpp",
+        "semaphore": "cpp",
+        "stop_token": "cpp",
+        "thread": "cpp",
+        "variant": "cpp",
+        "csignal": "cpp"
     },
     "C_Cpp.errorSquiggles": "enabled"
 }

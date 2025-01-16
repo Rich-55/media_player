@@ -8,7 +8,7 @@ class PlaylistManagerView : public BaseView {
     public:
         PlaylistManagerView();
         
-        void showMenu() override;
+        int showMenu() override;
 
         void displayAllPlaylist(PlaylistManager) override;
 };

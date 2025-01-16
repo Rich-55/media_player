@@ -1,6 +1,12 @@
 #ifndef CONFIG_LOADER_H
 #define CONFIG_LOADER_H
+//lib
+#include <ftxui/component/component.hpp>
+#include <ftxui/dom/elements.hpp>
+#include <ftxui/component/screen_interactive.hpp>
+#include <algorithm>
 
+using namespace ftxui;
 //MainMenu
 #define METADATA_FILE_HANDLER 1
 #define MEDIA_FILE_MANAGER 2 

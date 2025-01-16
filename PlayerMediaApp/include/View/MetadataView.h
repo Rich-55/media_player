@@ -10,9 +10,11 @@ class MetadataView : public BaseCurrentPlayView{
     public:
         MetadataView();
 
+        void showMenu() override;
+
         void showMetadata(std::shared_ptr<MediaFile>);
 
-        void showMenu() override;
+        
 
 };
 

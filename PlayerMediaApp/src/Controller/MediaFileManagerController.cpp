@@ -81,7 +81,10 @@ std::unordered_set<std::string> MediaFileManagerController::getListFileAdded(){ 
 
 void MediaFileManagerController::clearListFileAdded(){ mediaManager.clearListFileAdded();}
 
-void MediaFileManagerController::showAllMediaFile(){ mediaFileManagerView->displayAllMediaFile(mediaManager);}
+std::string MediaFileManagerController::showAllMediaFile()
+{   
+    return mediaFileManagerView->displayAllMediaFile(mediaManager);
+}
 
 void MediaFileManagerController::showAllMediaFileOfVideo(){ mediaFileManagerView->displayAllMediaFileOfVideo(mediaManager);}
 

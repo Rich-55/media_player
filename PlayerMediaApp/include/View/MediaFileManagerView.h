@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <iomanip>
+#include <cmath>
 #include "../View/BaseView.h"
 #include "../Model/MediaFile.h"
 #include "../Model/AudioFile.h"
@@ -15,12 +16,14 @@ private:
 public:
 
     MediaFileManagerView();
+
+    int showMenu() override;
     
-    void displayAllMediaFile(MediaFileManager) override;
+    std::string displayAllMediaFile(MediaFileManager) override;
     void displayAllMediaFileOfAudio(MediaFileManager) override;
     void displayAllMediaFileOfVideo(MediaFileManager) override;
 
-    void showMenu() override;
+    
 
 
 };

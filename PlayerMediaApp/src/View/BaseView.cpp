@@ -2,7 +2,7 @@
 
 BaseView::BaseView(){}
         
-void BaseView::displayAllMediaFile(MediaFileManager){}
+std::string BaseView::displayAllMediaFile(MediaFileManager){return "";}
 
 void BaseView::displayAllMediaFileOfAudio(MediaFileManager){}
 

@@ -8,14 +8,15 @@
 #include <unordered_map>
 #include "../Model/MediaFileManager.h"
 #include "../Model/PlaylistManager.h"
+#include "../utils/ConfigLoader.h"
 class BaseView{
     private:
     public:
         BaseView();
         
-        virtual void showMenu() = 0;
+        virtual int showMenu() = 0;
 
-        virtual void displayAllMediaFile(MediaFileManager);
+        virtual std::string displayAllMediaFile(MediaFileManager);
         virtual void displayAllMediaFileOfAudio(MediaFileManager);
         virtual void displayAllMediaFileOfVideo(MediaFileManager);
 

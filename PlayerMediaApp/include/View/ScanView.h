@@ -14,9 +14,11 @@ class ScanView : public BaseView{
     public:
         ScanView();
 
+        int showMenu() override;
+
         void setListPathNameIsAdded(std::unordered_set<std::string>);
         void showFileAdded() override;
 
-        void showMenu() override;
+        
 };
 #endif

@@ -11,6 +11,16 @@ std::shared_ptr<MediaFile> MediaFileManager::getMediaFile(std::string fileName)
     return nullptr;
 }
 
+bool MediaFileManager::checkFileExists(std::string fileName)
+{
+    for(std::shared_ptr<MediaFile> file : listMediaFiles){
+        if(file->getName() == fileName){
+            return true;
+        }
+    } 
+    return false;
+}
+
 std::unordered_set<std::string> MediaFileManager::getListFileAdded()
 {
     return listFileAdded;

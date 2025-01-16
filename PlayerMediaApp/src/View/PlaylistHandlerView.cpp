@@ -2,12 +2,13 @@
 
 PlaylistHandlerView::PlaylistHandlerView(){}
         
-void PlaylistHandlerView::showMenu(){
+int PlaylistHandlerView::showMenu(){
     std::cout << "============Playlist Manager==========" << std::endl;
     std::cout << "1. Add MediaFile" << std::endl;
     std::cout << "2. Delete MediaFile" << std::endl;
     std::cout << "3. Display All MediaFiles" << std::endl;
     std::cout << "0. Exit" << std::endl;
+    return 1;
 }
 
 void PlaylistHandlerView::displayAllMediaFileInPlaylist(std::shared_ptr<Playlist> playlist)

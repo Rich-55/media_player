@@ -10,7 +10,7 @@ private:
 public:
     MainMenuView();
 
-    void showMenu() override;
+    int showMenu() override;
 };
 
 #endif 

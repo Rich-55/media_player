@@ -2,7 +2,7 @@
 
 MediaFileHandlerView::MediaFileHandlerView(){}
 
-void MediaFileHandlerView::showMenu() {
+int MediaFileHandlerView::showMenu() {
     std::cout << "========== Media File Menu ==========" << std::endl;
     std::cout << "1. Add metadata" << std::endl;
     std::cout << "2. Edit metadata" << std::endl;
@@ -10,6 +10,7 @@ void MediaFileHandlerView::showMenu() {
     std::cout << "0. Back to main menu" << std::endl;
     std::cout << "--------------------------------------------------" << std::endl;
     std::cout << "Enter your choice: ";
+    return 1;
 }
 
 void MediaFileHandlerView::displayDetailMediaFile(std::shared_ptr<MediaFile> mediaFile){
@@ -17,6 +18,7 @@ void MediaFileHandlerView::displayDetailMediaFile(std::shared_ptr<MediaFile> med
     std::cout << "File Path:   " << mediaFile->getPath() << std::endl;
     std::cout << "File Type:   " << mediaFile->getType() << std::endl;
     std::cout << "File Size:   " << mediaFile->getSize() << std::endl;
+    std::cout << "File Duration:   " << mediaFile->getDuration() << std::endl;
     if(mediaFile->getType() == "Audio"){
         std::cout << "Audio Metadata:" << std::endl;
         for (const auto& [key, value] : mediaFile->getAllMetadata()) {

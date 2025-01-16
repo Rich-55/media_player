@@ -8,7 +8,7 @@ class PlaylistHandlerView : public BaseView {
     public:
         PlaylistHandlerView();
         
-        void showMenu()override;
+        int showMenu()override;
 
         void displayAllMediaFileInPlaylist(std::shared_ptr<Playlist>) override;
         
