@@ -2,12 +2,12 @@
 #define AUDIO_FILE_H
 
 #include "MediaFile.h"
-#include <unordered_map>
+#include <map>
 #include <unordered_set>    
 
 class AudioFile : public MediaFile {
     private:
-        std::unordered_map<std::string, std::string> metadataAudio; 
+        std::map<std::string, std::string> metadataAudio; 
         const static std::unordered_set<std::string> allowedKeys ;
     public:
         AudioFile();
@@ -15,8 +15,7 @@ class AudioFile : public MediaFile {
 
         // Get metadata
         std::string getMetadata(const std::string& key) const;
-        std::unordered_map<std::string, std::string> getAllMetadata() const;
-
+        std::map<std::string, std::string> getAllMetadata() const override;
         // Input file and initialize metadata
         void inputMediaFile(std::string pathName, bool isSame) override;
 

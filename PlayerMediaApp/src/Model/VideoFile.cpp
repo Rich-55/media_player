@@ -23,7 +23,7 @@ std::string VideoFile::getMetadata(const std::string& key) const {
     return "";
 }
 
-std::unordered_map<std::string, std::string> VideoFile::getAllMetadata() const {
+std::map<std::string, std::string> VideoFile::getAllMetadata() const {
     return metadataVideo;
 }
 
@@ -57,7 +57,7 @@ void VideoFile::inputMediaFile(std::string pathName, bool isSame) {
 bool VideoFile::addNewKey(const std::string& key, const std::string& value) {
     bool check = false;
     if (metadataVideo.find(key) != metadataVideo.end()) {
-        check = false;
+        return check;
     }
 
     TagLib::FileRef fileRef(this->getPath().c_str());

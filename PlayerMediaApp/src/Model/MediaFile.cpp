@@ -27,9 +27,9 @@ void MediaFile::inputMediaFile(std::string pathName, bool isSame) {
     if (isSame) {
         size_t dotPos = this->fileName.find_last_of('.');
         if (dotPos != std::string::npos) {
-            this->fileName.insert(dotPos, "(another)");
+            this->fileName.insert(dotPos, "(another size)");
         } else {
-            this->fileName += "(another)";
+            this->fileName += "(another size)";
         }
     }
 
@@ -53,6 +53,6 @@ std::string MediaFile::getType() { return "";}
 
 std::string MediaFile::getMetadata(const std::string&) const { return "";}
 
-std::unordered_map<std::string, std::string> MediaFile::getAllMetadata() const { return {};}
+std::map<std::string, std::string> MediaFile::getAllMetadata() const { return {};}
 
 

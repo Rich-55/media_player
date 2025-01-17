@@ -8,11 +8,13 @@ void MediaPlaylistManagerController::createPlaylist() {
         std::cin >> name;
 
         if (name.empty() || name.find(' ') != std::string::npos) {
-            throw InvalidPlaylistNameException(name);
+            throw InvalidPlaylistNameException("Playlist name cannot be empty or contain spaces. Provided: " + name);
         }
 
-        if (!std::all_of(name.begin(), name.end(), ::isalpha)) {
-            throw InvalidPlaylistNameException("Playlist name must contain only alphabetic characters. Provided: " + name);
+        if (!std::all_of(name.begin(), name.end(), [](unsigned char c) {
+                return std::isalnum(c); // Kiểm tra chữ cái hoặc số
+            })) {
+            throw InvalidPlaylistNameException("Playlist name must contain only alphabetic or numeric characters. Provided: " + name);
         }
 
         if (playlistManager.checkPlaylistName(name)) {
@@ -25,6 +27,7 @@ void MediaPlaylistManagerController::createPlaylist() {
         std::cerr << "Error: " << e.what() << std::endl;
     }
 }
+
 
 void MediaPlaylistManagerController::deletePlaylist() {
     try {
@@ -56,13 +59,7 @@ void MediaPlaylistManagerController::handlerPlaylistManager() {
     int choice;
     while (true) {
         try {
-            playlistManagerView->showMenu();
-
-            if (!(std::cin >> choice)) {
-                std::cin.clear();
-                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-                throw InvalidPlaylistNameException("Invalid input. Expected a number.");
-            }
+            choice = playlistManagerView->showMenu();
 
             switch (choice) {
             case CREATE_PLAYLIST:

@@ -3,18 +3,83 @@
 MediaFileManagerView::MediaFileManagerView(){}
 
 int MediaFileManagerView::showMenu() {
-    std::cout << "========== Media File Menu ==========" << std::endl;
-    std::cout << "1. Add File By File Path" << std::endl;
-    std::cout << "2. Add File By Folder Path" << std::endl;
-    std::cout << "3. Delete File" << std::endl;
-    std::cout << "4. View All Media File" << std::endl;
-    std::cout << "5. View All Audio Media File" << std::endl;
-    std::cout << "6. View All Video Media File" << std::endl;
-    std::cout << "0. Back to main menu" << std::endl;
-    std::cout << "--------------------------------------------------" << std::endl;
-    std::cout << "Enter your choice: ";
-    return 1;
+    system("clear");
+    std::vector<std::string> menu_entries = {
+        "1. Add File By File Path",
+        "2. Add File By Folder Path",
+        "3. Delete File",
+        "4. View All Media File",
+        "5. View All Audio Media File",
+        "6. View All Video Media File",
+        "0. Back to main menu"
+    };
+
+    std::vector<int> logic_mapping = {1, 2, 3, 4, 5, 6, 0};
+
+    int selected = 0; 
+    std::string error_message; 
+    int final_selected = -1; 
+
+    auto menu = Menu(&menu_entries, &selected);
+    auto screen = ScreenInteractive::TerminalOutput();
+
+    auto main_component = Renderer(menu, [&] {
+        return vbox({
+            text("========== Media File Menu ==========") | bold | center,
+            separator(),
+            menu->Render() | border, 
+            separator(),
+            text("Use UP/DOWN keys, numbers (0-9), or click to navigate. Press ENTER to select.") | dim | center,
+            separator(),
+            text(error_message) | color(Color::Red) | center 
+        });
+    });
+
+    main_component = CatchEvent(main_component, [&](Event event) {
+        if (event == Event::Return) {
+            final_selected = logic_mapping[selected]; 
+            screen.ExitLoopClosure()(); 
+            return true;
+        }
+
+        if (event.is_character() && std::isdigit(event.character()[0])) {
+            int number = event.character()[0] - '0'; 
+            auto it = std::find(logic_mapping.begin(), logic_mapping.end(), number);
+            if (it != logic_mapping.end()) {
+                final_selected = number; 
+                screen.ExitLoopClosure()(); 
+                return true;
+            } else {
+                error_message = "Invalid input: number not in menu!"; 
+                return true;
+            }
+        }
+
+        if (event.is_mouse() && event.mouse().button == Mouse::Left && event.mouse().motion == Mouse::Pressed) {
+            int clicked_index = event.mouse().y - 3; 
+            if (clicked_index >= 0 && clicked_index < (int)menu_entries.size()) {
+                final_selected = logic_mapping[clicked_index]; 
+                screen.ExitLoopClosure()(); 
+                return true;
+            } else {
+                error_message = "Invalid click: out of menu range!"; 
+                return true;
+            }
+        }
+
+        if (event == Event::ArrowUp || event == Event::ArrowDown) {
+            menu->OnEvent(event); 
+            return true;
+        }
+
+        return false; 
+    });
+
+    screen.Loop(main_component);
+
+    return final_selected; 
 }
+
 
 std::string MediaFileManagerView::displayAllMediaFile(MediaFileManager MediaFileManager) {
     system("clear");
@@ -98,10 +163,7 @@ std::string MediaFileManagerView::displayAllMediaFile(MediaFileManager MediaFile
         text(error_message) | color(Color::Red) | center, 
     });
 };
-
-                             
-
-
+                       
     auto main_view = Renderer([&]() {
         return create_table_view();
     });
@@ -234,8 +296,6 @@ std::string MediaFileManagerView::displayAllMediaFile(MediaFileManager MediaFile
 
     return false;
 });
-
-
     screen.Loop(main_view);
     return selected_filename;
 }

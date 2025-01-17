@@ -1,6 +1,7 @@
 #include "../../include/Controller/MediaScannerController.h"
 
-MediaScannerController::MediaScannerController(MediaFileManager& m, FolderManager& f,std::shared_ptr<BaseView> v) : mediaFileManager(m), folderManager(f), scanView(v){}
+MediaScannerController::MediaScannerController(MediaFileManager& m, PlaylistManager& p, FolderManager& f,std::shared_ptr<BaseView> v)
+     : mediaFileManager(m), playlistManager(p) ,folderManager(f), scanView(v){}
 
 bool has_extension(const std::string &filename, const std::string &extension) 
 {
@@ -79,7 +80,6 @@ void MediaScannerController::addDataFileWithFolder(std::string nameFolder, std::
     }
     
     for (const auto &path : folderManager.getListPathDirectory(nameFolder)) {
-        std::cout << "Reading file: " << path << '\n';
 
         size_t lastSlashPos = path.find_last_of("/");
         std::string fileName = (lastSlashPos != std::string::npos) ? path.substr(lastSlashPos + 1) : "";
@@ -146,12 +146,54 @@ void MediaScannerController::loadData()
     }
 }
 
+void MediaScannerController::loadMediaPlaylist()
+{
+    std::string directory = "database/playlist";
+
+    if (!std::filesystem::exists(directory) || !std::filesystem::is_directory(directory)) {
+        std::cerr << "Playlist directory does not exist or is not a directory: " << directory << "\n";
+        return;
+    }
+
+    std::vector<std::shared_ptr<MediaFile>> allMediaFiles = mediaFileManager.getAllMediaFile();
+
+    for (const auto &entry : std::filesystem::directory_iterator(directory)) {
+        if (entry.is_regular_file()) { 
+            std::string fileName = entry.path().filename().string();
+            std::string playlistName = fileName.substr(0, fileName.find_last_of('.')); 
+
+            std::shared_ptr<Playlist> playlist = std::make_shared<Playlist>(playlistName);
+
+            std::ifstream inFile(entry.path());
+            if (inFile.is_open()) {
+                std::string mediaPath;
+                while (std::getline(inFile, mediaPath)) {
+                    for (const auto &mediaFile : allMediaFiles) {
+                        if (mediaFile->getPath() == mediaPath) {
+                            playlist->loadMediaFile(mediaFile);
+                            break;
+                        }
+                    }
+                }
+                inFile.close();
+                std::cout << "Loaded playlist: " << playlistName << " with media files.\n";
+            } else {
+                std::cerr << "Failed to open playlist file: " << entry.path() << "\n";
+            }
+
+            playlistManager.loadPlaylist(playlist);
+        }
+    }
+}
+
 std::unordered_set<std::string> MediaScannerController::getListPaths(){return this->listPaths;}
 
 void MediaScannerController::scanHomeDirectory() 
 {
     try{
+        int choice;
         std::unordered_set<std::string> listPathToAdd;
+        std::vector<std::string> folders;
 
         const char *home = std::getenv("HOME");
         if (!home) {
@@ -159,32 +201,18 @@ void MediaScannerController::scanHomeDirectory()
         }
 
         std::string home_path = std::string(home);
-        std::vector<std::string> folders = list_folders(home_path);
+        folders = list_folders(home_path);
 
         if (folders.empty()) {
             throw NoFoldersFoundException(home_path);
         }
 
-        std::cout << "Folders in Home:\n";
-        for (size_t i = 0; i < folders.size(); ++i) {
-            std::cout << i + 1 << ". " << folders[i] << '\n';
+        choice = scanView->showListFolder(folders);
+        if(choice == -1){
+            return;
         }
-
-        int choice = 0;
-        std::cout << "Enter the number of the folder you want to scan: ";
-        std::cin >> choice;
-
-        if(std::cin.fail()){
-            std::cin.clear();
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            throw InvalidChoiceException();
-        }
-
-        if (std::cin.fail() || choice < 1 || choice > static_cast<int>(folders.size())) {
-            throw InvalidChoiceException(); 
-        }
-
-        std::string selected_folder = folders[choice - 1];
+        std::string selected_folder = folders[choice];
+        std::cout << "Scanning home directory: " << selected_folder << std::endl;
         std::vector<std::string> media_files = list_media_files(selected_folder);
         
         if(folderManager.getFolderDirectory(selected_folder) != "Folder not found."){
@@ -196,7 +224,6 @@ void MediaScannerController::scanHomeDirectory()
         for (const auto &file : media_files) {
             listPathToAdd.insert(file);
             listPaths.insert(file);
-            std::cout << "Reading file in folder"<< selected_folder <<" : " << file << '\n';
         }
 
         if (listPathToAdd.empty()) {
@@ -210,10 +237,11 @@ void MediaScannerController::scanHomeDirectory()
     }
 }
 
-void MediaScannerController::scanUSBDevices() 
-{
-    try{
+void MediaScannerController::scanUSBDevices() {
+    try {
         std::unordered_set<std::string> listPathToAdd;
+        int choiceUSB;
+        int choiceFolder;
 
         std::string usb_base_path = "/media/" + std::string(std::getenv("USER"));
         std::cout << "Scanning USB devices at: " << usb_base_path << std::endl;
@@ -221,61 +249,44 @@ void MediaScannerController::scanUSBDevices()
         std::vector<std::string> usb_devices = list_folders(usb_base_path);
 
         if (usb_devices.empty()) {
-            throw NoUSBDevicesFoundException(); 
+            throw NoUSBDevicesFoundException();
         }
 
-        std::cout << "USB Devices:\n";
-        for (size_t i = 0; i < usb_devices.size(); ++i) {
-            size_t lastSlashPos = usb_devices[i].find_last_of("/");
-            std::string usb_name = (lastSlashPos != std::string::npos) 
-                                ? usb_devices[i].substr(lastSlashPos + 1)
-                                : usb_devices[i];
-
-            std::cout << i + 1 << ". " << usb_name << '\n';
+        choiceUSB = scanView->showListUSBName(usb_devices);
+        if(choiceUSB == -1){
+            return;
         }
-
-        int choice = 0;
-        std::cout << "Enter the number of the USB you want to scan: ";
-        std::cin >> choice;
-
-        if(std::cin.fail()){
-            std::cin.clear();
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            throw InvalidChoiceException();
-        }
-
-        if (std::cin.fail() || choice < 1 || choice > static_cast<int>(usb_devices.size())) {
-            throw InvalidChoiceException(); 
-        }
-
-        std::string selected_usb = usb_devices[choice - 1];
+        std::string selected_usb = usb_devices[choiceUSB];
         std::vector<std::string> folders = list_folders(selected_usb);
 
-        if(folderManager.getFolderUSB(selected_usb) != "Folder not found."){
-            folderManager.updateFolderUSB(selected_usb);
-        }else{
-            folderManager.saveFolderUSB(selected_usb);
+        if (folders.empty()) {
+            throw NoFoldersFoundException(selected_usb);
         }
 
-        for (const auto &folder : folders) {
-            std::vector<std::string> files_in_folder = list_media_files(folder);
-            for (const auto &file : files_in_folder) {
-                listPathToAdd.insert(file);
-                listPaths.insert(file);
-                std::cout << "Reading file in folder"<< selected_usb <<" : " << file << '\n';
-            }
+        choiceFolder = scanView->showListFolder(folders);
+        if(choiceFolder == -1){
+            return;
+        }
+        std::string selected_folder = folders[choiceFolder];
+        std::cout << "Scanning folder: " << selected_folder << std::endl;
+
+        std::vector<std::string> files_in_folder = list_media_files(selected_folder);
+        for (const auto &file : files_in_folder) {
+            listPathToAdd.insert(file);
+            listPaths.insert(file);
         }
 
         if (listPaths.empty()) {
-            throw NoFoldersFoundException(selected_usb);
-        }else{
-            folderManager.addDataFolderUSB(selected_usb, listPathToAdd);
-            addDataFileWithFolder(selected_usb , "USB");
+            throw NoMediaFilesFoundException(selected_folder);
+        } else {
+            folderManager.addDataFolderUSB(selected_folder, listPathToAdd);
+            addDataFileWithFolder(selected_folder, "USB");
         }
-    }catch (const ScanException &e) {
+    } catch (const ScanException &e) {
         std::cerr << e.what() << '\n';
     }
 }
+
 
 bool MediaScannerController::checkFolderDirectory(){ return this->folderManager.getListFolderDirectory().empty();}
 
@@ -298,17 +309,11 @@ void MediaScannerController::handleScan(bool isRunning)
         if ((folderManager.getListFolderDirectory().empty() && folderManager.getListFolderUSB().empty()) || isRunning) {
             while (true) { 
                 try {
+                    system("clear");
                     scanView->setListPathNameIsAdded(listPathsAdded);
                     listPathsAdded.clear();
-                    scanView->showMenu();
-                    std::cin >> choice;
-
-                    if (std::cin.fail()) {
-                        std::cin.clear();
-                        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-                        throw InvalidChoiceException();
-                    }
-
+                    choice = scanView->showMenu();
+                    
                     switch (choice) {
                         case SCAN_HOME_DIRECTORY:
                             scanHomeDirectory();
@@ -327,6 +332,7 @@ void MediaScannerController::handleScan(bool isRunning)
             }
         } else {
             loadData();
+            loadMediaPlaylist();
         }
     } catch (const ScanException &e) {
         std::cerr << e.what() << '\n';

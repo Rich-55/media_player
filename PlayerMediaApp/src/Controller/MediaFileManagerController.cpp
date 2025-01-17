@@ -1,6 +1,7 @@
 #include "../../include/Controller/MediaFileManagerController.h"
 
-MediaFileManagerController::MediaFileManagerController(MediaFileManager& m, std::shared_ptr<BaseView> v, std::shared_ptr<MediaScannerController> c) : mediaManager(m), mediaFileManagerView(v), scannerController(c){}
+MediaFileManagerController::MediaFileManagerController(MediaFileManager& m, std::shared_ptr<BaseView> v, std::shared_ptr<MediaScannerController> c) 
+    : mediaManager(m), mediaFileManagerView(v), scannerController(c){}
 
 void MediaFileManagerController::addDataFolder(const std::unordered_set<std::string> &listPathName) {
     for (const auto &path : listPathName) {
@@ -81,10 +82,7 @@ std::unordered_set<std::string> MediaFileManagerController::getListFileAdded(){ 
 
 void MediaFileManagerController::clearListFileAdded(){ mediaManager.clearListFileAdded();}
 
-std::string MediaFileManagerController::showAllMediaFile()
-{   
-    return mediaFileManagerView->displayAllMediaFile(mediaManager);
-}
+std::string MediaFileManagerController::showAllMediaFile(){ return mediaFileManagerView->displayAllMediaFile(mediaManager);}
 
 void MediaFileManagerController::showAllMediaFileOfVideo(){ mediaFileManagerView->displayAllMediaFileOfVideo(mediaManager);}
 
@@ -92,16 +90,9 @@ void MediaFileManagerController::showAllMediaFileOfAudio(){ mediaFileManagerView
 
 void MediaFileManagerController::handleMediaFileManager() {
     int choice;
+    std::string message;
     while (true) {
-        mediaFileManagerView->showMenu();
-
-        if (!(std::cin >> choice)) {
-            std::cin.clear();
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); 
-            std::cerr << "Invalid input. Please enter a number.\n";
-            continue; 
-        }
-
+        choice = mediaFileManagerView->showMenu();
         try {
             switch (choice) {
                 case ADD_FILE_PATH: {
@@ -149,25 +140,13 @@ void MediaFileManagerController::handleMediaFileManager() {
                 case DELETE_FILE: {
                      while (true) {
                         try {
-                            std::cout << "Enter the name of the file you want to delete (or press 0 to return to the menu): ";
                             std::string fileName;
-                            if (std::cin.peek() == '\n') {
-                                std::cin.ignore();
-                            }
-                            std::getline(std::cin, fileName);
+                            fileName = showAllMediaFile();
 
-                            if (fileName == "0") {
-                                std::cout << "Returning to the menu.\n";
+                            if (fileName == "") {
                                 break;
                             }
-
-                            if (fileName.empty()) {
-                                throw InvalidFilePathException("File name cannot be empty.");
-                            }
-
-                            if (!deleteData(fileName)) {
-                                throw FileNotFoundException(fileName);
-                            }
+                            deleteData(fileName);
                             break; 
                         } catch (const MediaFileManagerException &e) {
                             std::cerr << e.what() << '\n'; 

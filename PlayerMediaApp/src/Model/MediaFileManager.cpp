@@ -103,14 +103,12 @@ bool MediaFileManager::addMediaFile( std::string pathName, std::string type)
         mediaFile->inputMediaFile(pathName, isSame);
         listMediaFiles.push_back(mediaFile);
         writePathToFile(pathName, "database/video/video.data");
-        std::cout << "Video \""<< mediaFile->getName() << "\" add successfully!" << std::endl;
         result = true;
     }else {
         std::shared_ptr<MediaFile> mediaFile =  std::make_shared<AudioFile>();
         mediaFile->inputMediaFile(pathName, isSame);
         listMediaFiles.push_back(mediaFile);
         writePathToFile(pathName, "database/audio/audio.data");
-        std::cout << "Audio \""<< mediaFile->getName() << "\" add successfully!" << std::endl;
         result = true;
     }
     listFileAdded.insert(fileName);

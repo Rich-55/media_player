@@ -38,6 +38,7 @@ void ControllerManager::ScanData() {
         if (!scannerController) {
             scannerController = std::make_shared<MediaScannerController>(
                 model.getMediaFileManager(), 
+                model.getPlaylistManager(),
                 model.getFolderManager(), 
                 scanView
             );
@@ -48,29 +49,6 @@ void ControllerManager::ScanData() {
     }
 }
 
-// MediaFileManager function
-void ControllerManager::mediaFileManager() {
-    try {
-        auto scanView = getView("ScanView");
-        
-        scannerController = std::make_shared<MediaScannerController>(
-            model.getMediaFileManager(), 
-            model.getFolderManager(), 
-            scanView
-        );
-        
-
-        auto mediaFileManagerView = getView("MediaFileManagerView");
-        mediaFileManagerController = std::make_unique<MediaFileManagerController>(
-            model.getMediaFileManager(), 
-            mediaFileManagerView, 
-            scannerController
-        );
-        mediaFileManagerController->handleMediaFileManager();
-    } catch (const std::exception& e) {
-        std::cerr << "Error: " << e.what() << std::endl;
-    }
-}
 
 // MetadataFileHandler function
 void ControllerManager::metadataFileHandler() {
@@ -85,10 +63,7 @@ void ControllerManager::metadataFileHandler() {
             model.getMediaFileManager(), 
             mediaFileManagerView, 
             scannerController
-        );
-            
-        
-        
+        );   
         
         fileName = mediaFileManagerController->showAllMediaFile();
         if(fileName == ""){
@@ -106,24 +81,26 @@ void ControllerManager::metadataFileHandler() {
     }
 }
 
-// PlaylistManager function
-void ControllerManager::playlistManager() {
+// MediaFileManager function
+void ControllerManager::mediaFileManager() {
     try {
-        auto playlistManagerView = getView("PlaylistManagerView");
-
-         mediaPlaylistManagerController = std::make_unique<MediaPlaylistManagerController>(
-            model.getPlaylistManager(), 
-            playlistManagerView
+        auto scanView = getView("ScanView");
+        
+        scannerController = std::make_shared<MediaScannerController>(
+            model.getMediaFileManager(), 
+            model.getPlaylistManager(),
+            model.getFolderManager(), 
+            scanView
         );
         
 
-        if (!model.getPlaylistManager().checkPlaylist()) {
-            if (!getYesNoInput("No playlists found. Do you want to create a new playlist? (Y/N): ")) {
-                return;
-            }
-            mediaPlaylistManagerController->createPlaylist();
-        }
-        mediaPlaylistManagerController->handlerPlaylistManager();
+        auto mediaFileManagerView = getView("MediaFileManagerView");
+        mediaFileManagerController = std::make_unique<MediaFileManagerController>(
+            model.getMediaFileManager(), 
+            mediaFileManagerView, 
+            scannerController
+        );
+        mediaFileManagerController->handleMediaFileManager();
     } catch (const std::exception& e) {
         std::cerr << "Error: " << e.what() << std::endl;
     }
@@ -175,6 +152,30 @@ void ControllerManager::playlistHandler() {
         );
         
         mediaPlaylistController->handlerPlaylist();
+    } catch (const std::exception& e) {
+        std::cerr << "Error: " << e.what() << std::endl;
+    }
+}
+
+
+// PlaylistManager function
+void ControllerManager::playlistManager() {
+    try {
+        auto playlistManagerView = getView("PlaylistManagerView");
+
+         mediaPlaylistManagerController = std::make_unique<MediaPlaylistManagerController>(
+            model.getPlaylistManager(), 
+            playlistManagerView
+        );
+        
+
+        if (!model.getPlaylistManager().checkPlaylist()) {
+            if (!getYesNoInput("No playlists found. Do you want to create a new playlist? (Y/N): ")) {
+                return;
+            }
+            mediaPlaylistManagerController->createPlaylist();
+        }
+        mediaPlaylistManagerController->handlerPlaylistManager();
     } catch (const std::exception& e) {
         std::cerr << "Error: " << e.what() << std::endl;
     }

@@ -20,14 +20,16 @@ class BaseView{
         virtual void displayAllMediaFileOfAudio(MediaFileManager);
         virtual void displayAllMediaFileOfVideo(MediaFileManager);
 
-        virtual void displayDetailMediaFile(std::shared_ptr<MediaFile> );
-        virtual void displayMenuAddMetadata(std::shared_ptr<MediaFile> );
-        virtual void displayMenuEditMetadata(std::shared_ptr<MediaFile> );
-        virtual void displayMenuDeleteMetadata(std::shared_ptr<MediaFile> );
+        virtual void displayDetailMediaFile(std::shared_ptr<MediaFile>, std::string );
+        virtual std::pair<std::string, std::string> displayMenuAddMetadata(std::shared_ptr<MediaFile>, std::string);
+        virtual std::pair<std::string, std::string> displayMenuEditMetadata(std::shared_ptr<MediaFile>, std::string);
+        virtual std::string displayMenuDeleteMetadata(std::shared_ptr<MediaFile> );
 
         virtual void displayAllPlaylist(PlaylistManager);
         virtual void displayAllMediaFileInPlaylist(std::shared_ptr<Playlist>);
 
+        virtual int showListFolder(std::vector<std::string>);
+        virtual int showListUSBName(std::vector<std::string>);
         virtual void setListPathNameIsAdded(std::unordered_set<std::string>);
         virtual void showFileAdded();
 

@@ -13,7 +13,7 @@
 
 #include <iostream>
 #include <string>
-#include <unordered_map>
+#include <map>
 
 class MediaFile {
 private:
@@ -49,7 +49,7 @@ public:
     virtual bool deleteKey(const std::string& key);
 
     virtual std::string getMetadata(const std::string& key) const;
-    virtual std::unordered_map<std::string, std::string> getAllMetadata() const;
+    virtual std::map<std::string, std::string> getAllMetadata() const;
     
 
 };

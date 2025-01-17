@@ -3,13 +3,13 @@
 
 #include <iostream>
 #include <string>
-#include <unordered_map>
+#include <map>
 #include <unordered_set>
 #include "MediaFile.h"
 
 class VideoFile : public MediaFile {
 private:
-    std::unordered_map<std::string, std::string> metadataVideo;
+    std::map<std::string, std::string> metadataVideo;
     const static std::unordered_set<std::string> allowedKeys;
 public:
     VideoFile();
@@ -17,7 +17,7 @@ public:
 
     // Metadata operations
     std::string getMetadata(const std::string& key) const override;
-    std::unordered_map<std::string, std::string> getAllMetadata() const override;
+    std::map<std::string, std::string> getAllMetadata() const override;
 
     // Overridden methods
     std::string getType() override;

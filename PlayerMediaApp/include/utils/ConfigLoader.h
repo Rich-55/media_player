@@ -1,9 +1,10 @@
 #ifndef CONFIG_LOADER_H
 #define CONFIG_LOADER_H
 //lib
-#include <ftxui/component/component.hpp>
-#include <ftxui/dom/elements.hpp>
-#include <ftxui/component/screen_interactive.hpp>
+#include <ftxui/component/component.hpp>  // For Scroller and Scrollbar
+#include <ftxui/component/screen_interactive.hpp>  // For ScreenInteractive
+#include <ftxui/dom/elements.hpp>        // For Elements
+#include <ftxui/component/event.hpp> 
 #include <algorithm>
 
 using namespace ftxui;

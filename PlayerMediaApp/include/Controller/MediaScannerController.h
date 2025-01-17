@@ -17,19 +17,21 @@
 class MediaScannerController{
     private:
         MediaFileManager& mediaFileManager;
+        PlaylistManager& playlistManager;
         FolderManager& folderManager;
         std::shared_ptr<BaseView> scanView;
         std::unordered_set<std::string> listPaths;
         std::unordered_set<std::string> listPathsAdded;
     public:
         
-        MediaScannerController(MediaFileManager&, FolderManager&, std::shared_ptr<BaseView>);
+        MediaScannerController(MediaFileManager&, PlaylistManager&,FolderManager&, std::shared_ptr<BaseView>);
 
         void handleScan(bool);
 
         void addDataFileWithFolder(std::string, std::string);
 
         void loadData();
+        void loadMediaPlaylist();
 
         std::unordered_set<std::string> getListPaths();
 

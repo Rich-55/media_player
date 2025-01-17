@@ -45,13 +45,13 @@ public:
 
     void handlerMediaFile();
 
-    void getDetailMediaFile();
+    void getDetailMediaFile(std::string);
 
-    void addMetadata();
+    std::string addMetadata();
 
-    void editMetadata();
+    std::string editMetadata();
 
-    void deleteMetadata();
+    std::string deleteMetadata();
 
 
 

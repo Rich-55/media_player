@@ -88,7 +88,6 @@ std::string FolderManager::getFolderUSB(std::string folderName)
 void FolderManager::addDataFolderDirectory(const std::string &folder, std::unordered_set<std::string> listFiles) 
 {
     listFolderDirectory[folder] = listFiles;
-    std::cout << "Folder added successfully.\n";
 }
 
 void FolderManager::saveFolderDirectory(std::string folderName)
@@ -109,7 +108,6 @@ void FolderManager::saveFolderDirectory(std::string folderName)
 void FolderManager::addDataFolderUSB(const std::string &folder, std::unordered_set<std::string> listFiles) 
 {
     listFolderDirectory[folder] = listFiles;  
-    std::cout << "Folder added successfully.\n";
 }
 
 void FolderManager::saveFolderUSB(std::string folderName)

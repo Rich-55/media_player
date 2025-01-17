@@ -24,7 +24,7 @@ std::string AudioFile::getMetadata(const std::string& key) const {
     return "";
 }
 
-std::unordered_map<std::string, std::string> AudioFile::getAllMetadata() const {
+std::map<std::string, std::string> AudioFile::getAllMetadata() const{
     return metadataAudio;
 }
 
@@ -45,6 +45,8 @@ void AudioFile::inputMediaFile(std::string pathName, bool isSame) {
     metadataAudio["artist"] = tag->artist().to8Bit(true).empty() ? "Unknown" : tag->artist().to8Bit(true);
     metadataAudio["genre"] = tag->genre().to8Bit(true).empty() ? "Unknown" : tag->genre().to8Bit(true);
     metadataAudio["comment"] = tag->comment().to8Bit(true).empty() ? "Unknown" : tag->comment().to8Bit(true);
+    metadataAudio["year"] = tag->year() == 0 ? "Unknown" : std::to_string(tag->year());
+    metadataAudio["title"] = tag->title().to8Bit(true).empty() ? "Unknown" : tag->title().to8Bit(true);
     TagLib::AudioProperties* audioProperties = file.audioProperties();
     if (audioProperties) {
         metadataAudio["bitrate"] = std::to_string(audioProperties->bitrate());
@@ -56,6 +58,7 @@ void AudioFile::inputMediaFile(std::string pathName, bool isSame) {
 
 bool AudioFile::addNewKey(const std::string& key, const std::string& value) {
     bool check = false;
+    //check key is exist in metadataAudio
     if (metadataAudio.find(key) != metadataAudio.end()) {
         return check;
     }

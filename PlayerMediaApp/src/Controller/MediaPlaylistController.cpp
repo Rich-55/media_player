@@ -45,12 +45,7 @@ void MediaPlaylistController::handlerPlaylist() {
     int choice;
     while (true) {
         try {
-            playlistHandlerView->showMenu();
-            if (!(std::cin >> choice)) {
-                std::cin.clear();
-                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-                throw InvalidFileNameException("Invalid input. Expected a number.");
-            }
+            choice = playlistHandlerView->showMenu();
 
             switch (choice) {
             case ADD_MEDIA_FILE_TO_PLAYLIST:
