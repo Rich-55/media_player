@@ -1,10 +1,12 @@
 #ifndef MEDIA_SCANNER_CONTROLLER_H
 #define MEDIA_SCANNER_CONTROLLER_H
 
-#include "../View/ScanView.h"
+
 #include "../Model/MediaFileManager.h"
 #include "../Model/FolerManager.h"
 #include "../View/BaseView.h"
+#include "../View/ScanView.h"
+
 
 #include "../utils/ScanException.h"
 #include "../utils/ConfigLoader.h"
@@ -16,6 +18,7 @@
 
 class MediaScannerController{
     private:
+        
         MediaFileManager& mediaFileManager;
         PlaylistManager& playlistManager;
         FolderManager& folderManager;

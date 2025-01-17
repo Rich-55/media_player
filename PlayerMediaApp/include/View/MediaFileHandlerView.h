@@ -8,6 +8,9 @@ class MediaFileHandlerView : public BaseView {
 
         int showMenu() override;
 
+        void showSuccessMessage(std::string) override;
+        bool showConfirmMenu(std::string) override;
+
         void displayDetailMediaFile(std::shared_ptr<MediaFile>, std::string) override;
         std::pair<std::string, std::string> displayMenuAddMetadata(std::shared_ptr<MediaFile>, std::string) override;
         std::pair<std::string, std::string> displayMenuEditMetadata(std::shared_ptr<MediaFile>, std::string) override;

@@ -21,14 +21,8 @@ bool MediaFileManager::checkFileExists(std::string fileName)
     return false;
 }
 
-std::unordered_set<std::string> MediaFileManager::getListFileAdded()
-{
-    return listFileAdded;
-}
-void MediaFileManager::clearListFileAdded()
-{
-    this->listFileAdded.clear();
-}
+
+
 
 void writePathToFile(const std::string &pathName, const std::string &filePath = "database/video/video.data") {
     std::ofstream file(filePath, std::ios::app); 

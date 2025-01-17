@@ -77,6 +77,15 @@ int MediaFileHandlerView::showMenu() {
     return final_selected; 
 }
 
+void MediaFileHandlerView::showSuccessMessage(std::string message)
+{
+    BaseView::showSuccessMessage(message);
+}
+
+bool MediaFileHandlerView::showConfirmMenu(std::string message)
+{
+    return BaseView::showConfirmMenu(message);
+}
 
 void MediaFileHandlerView::displayDetailMediaFile(std::shared_ptr<MediaFile> mediaFile, std::string message) {
     system("clear");
@@ -131,7 +140,6 @@ void MediaFileHandlerView::displayDetailMediaFile(std::shared_ptr<MediaFile> med
     Render(screen, centered_layout);
     screen.Print(); // In giao diện ra console
 }
-
 
 std::pair<std::string, std::string> MediaFileHandlerView::displayMenuAddMetadata(
     std::shared_ptr<MediaFile> mediaFile, std::string exception) {

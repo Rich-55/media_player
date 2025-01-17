@@ -18,13 +18,13 @@ public:
     MediaFileManagerView();
 
     int showMenu() override;
+
+    void showSuccessMessage(std::string) override;
+    bool showConfirmMenu(std::string) override;
     
     std::string displayAllMediaFile(MediaFileManager) override;
-    void displayAllMediaFileOfAudio(MediaFileManager) override;
-    void displayAllMediaFileOfVideo(MediaFileManager) override;
-
-    
-
+    std::string  displayAllMediaFileOfAudio(MediaFileManager) override;
+    std::string  displayAllMediaFileOfVideo(MediaFileManager) override;
 
 };
 

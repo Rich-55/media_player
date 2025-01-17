@@ -18,19 +18,6 @@ private:
     std::shared_ptr<MediaFile> mediaFile;
     std::shared_ptr<BaseView> mediaFileHandlerView; 
 protected:
-    bool isKeyAllowed(const std::string& key) const {
-        std::unordered_set<std::string> keyAllowed = {
-            "title",    // Title
-            "artist",   // Artist
-            "album",    // Album
-            "genre",    // Genre
-            "comment",  // Comment
-            "year",     // Year
-            "track"     // Track
-        };
-        return keyAllowed.find(key) != keyAllowed.end();
-    }
-
     bool isValidFormat(const std::string& value, const std::string& pattern) {
         try {
             std::regex regexPattern(pattern);
@@ -44,6 +31,8 @@ public:
     MediaFileController(std::shared_ptr<MediaFile> , std::shared_ptr<BaseView>);
 
     void handlerMediaFile();
+
+    //std::shared_ptr<MediaFile> getMediaFile() const;
 
     void getDetailMediaFile(std::string);
 

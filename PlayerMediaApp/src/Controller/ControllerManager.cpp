@@ -59,21 +59,27 @@ void ControllerManager::metadataFileHandler() {
         auto mediaFileHandlerView = getView("MediaFileHandlerView");
         auto mediaFileManagerView = getView("MediaFileManagerView");
 
-        mediaFileManagerController = std::make_unique<MediaFileManagerController>(
-            model.getMediaFileManager(), 
-            mediaFileManagerView, 
-            scannerController
-        );   
+
+        if (!mediaFileManagerController) {
+            mediaFileManagerController = std::make_unique<MediaFileManagerController>(
+                model.getMediaFileManager(), 
+                mediaFileManagerView, 
+                mediaFileHandlerView,
+                scannerController
+            );
+        } 
         
         fileName = mediaFileManagerController->showAllMediaFile();
         if(fileName == ""){
             return;
         }
         
-        mediaFileHandlerController = std::make_unique<MediaFileController>(
+        mediaFileHandlerController = std::make_shared<MediaFileController>(
             model.getMediaFile(fileName), 
             mediaFileHandlerView
         );
+
+        mediaFileManagerController->addMediaFileController(fileName, mediaFileHandlerController);
         
         mediaFileHandlerController->handlerMediaFile();
     } catch (const std::exception& e) {
@@ -86,20 +92,26 @@ void ControllerManager::mediaFileManager() {
     try {
         auto scanView = getView("ScanView");
         
-        scannerController = std::make_shared<MediaScannerController>(
-            model.getMediaFileManager(), 
-            model.getPlaylistManager(),
-            model.getFolderManager(), 
-            scanView
-        );
-        
+        if (!scannerController) { 
+            scannerController = std::make_shared<MediaScannerController>(
+                model.getMediaFileManager(), 
+                model.getPlaylistManager(),
+                model.getFolderManager(), 
+                scanView
+            );
+        }
 
         auto mediaFileManagerView = getView("MediaFileManagerView");
-        mediaFileManagerController = std::make_unique<MediaFileManagerController>(
-            model.getMediaFileManager(), 
-            mediaFileManagerView, 
-            scannerController
-        );
+        auto mediaFileHandlerView = getView("MediaFileHandlerView");
+
+        if (!mediaFileManagerController) {
+            mediaFileManagerController = std::make_unique<MediaFileManagerController>(
+                model.getMediaFileManager(), 
+                mediaFileManagerView, 
+                mediaFileHandlerView,
+                scannerController
+            );
+        }
         mediaFileManagerController->handleMediaFileManager();
     } catch (const std::exception& e) {
         std::cerr << "Error: " << e.what() << std::endl;

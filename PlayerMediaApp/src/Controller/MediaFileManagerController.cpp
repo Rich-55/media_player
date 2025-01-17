@@ -1,7 +1,24 @@
 #include "../../include/Controller/MediaFileManagerController.h"
 
-MediaFileManagerController::MediaFileManagerController(MediaFileManager& m, std::shared_ptr<BaseView> v, std::shared_ptr<MediaScannerController> c) 
-    : mediaManager(m), mediaFileManagerView(v), scannerController(c){}
+MediaFileManagerController::MediaFileManagerController(MediaFileManager& mediaManager, std::shared_ptr<BaseView> mediaManagerView, std::shared_ptr<BaseView> mediaFileView,std::shared_ptr<MediaScannerController> c) 
+    : mediaManager(mediaManager), mediaFileManagerView(mediaManagerView), mediaFileHandlerView(mediaFileView), scannerController(c){}
+
+void MediaFileManagerController::addMediaFileController(std::string fileName, std::shared_ptr<MediaFileController> mediaFileController)
+{
+    if(listMediaFileController.find(fileName) == listMediaFileController.end()){
+        listMediaFileController[fileName] = mediaFileController;
+    }
+    std::cerr << "Error: MediaFileController already exists.\n";
+}
+
+std::shared_ptr<MediaFileController> MediaFileManagerController::getMediaFileController(const std::string& fileName) {
+    auto currentMediaFileController = listMediaFileController.find(fileName);
+    if (currentMediaFileController == listMediaFileController.end()) {
+        std::cerr << "Error: MediaFileController not found.\n";
+        return nullptr;
+    }
+   return currentMediaFileController->second;
+}
 
 void MediaFileManagerController::addDataFolder(const std::unordered_set<std::string> &listPathName) {
     for (const auto &path : listPathName) {
@@ -31,34 +48,6 @@ void MediaFileManagerController::addDataFolder(const std::unordered_set<std::str
     }
 }
 
-void MediaFileManagerController::loadData(const std::unordered_set<std::string> &listPathName) {
-    for (const auto &path : listPathName) {
-        std::cout << "Reading file: " << path << '\n';
-
-        size_t lastSlashPos = path.find_last_of("/");
-        std::string fileName = (lastSlashPos != std::string::npos) ? path.substr(lastSlashPos + 1) : path;
-
-        size_t lastDotPos = path.find_last_of(".");
-        std::string extension = (lastDotPos != std::string::npos) ? path.substr(lastDotPos + 1) : "";
-
-        try {
-            if (extension == "mp4") {
-                if (!mediaManager.loadMediaFile(path, "Video")) {
-                    throw FileNotFoundException(fileName);
-                }
-            } else if (extension == "mp3") {
-                if (!mediaManager.loadMediaFile(path, "Audio")) {
-                    throw FileNotFoundException(fileName);
-                }
-            } else {
-                throw UnsupportedFileTypeException(fileName);
-            }
-        } catch (const MediaFileManagerException &e) {
-            std::cerr << e.what() << '\n';
-        }
-    }
-}
-
 int MediaFileManagerController::addDataFile(std::string pathName)
 {
     size_t lastSlashPos = pathName.find_last_of("/");
@@ -76,22 +65,33 @@ int MediaFileManagerController::addDataFile(std::string pathName)
     }
 }
 
-bool MediaFileManagerController::deleteData(std::string fileName) {return mediaManager.deleteMediaFile(fileName);}
+bool MediaFileManagerController::deleteData(std::string fileName) 
+{
+    if(mediaFileManagerView->showConfirmMenu("Do you want to delete this file: " + fileName + " ?")){
+        return mediaManager.deleteMediaFile(fileName);
+    }
+    return false;
+}
 
-std::unordered_set<std::string> MediaFileManagerController::getListFileAdded(){ return mediaManager.getListFileAdded();}
 
-void MediaFileManagerController::clearListFileAdded(){ mediaManager.clearListFileAdded();}
 
 std::string MediaFileManagerController::showAllMediaFile(){ return mediaFileManagerView->displayAllMediaFile(mediaManager);}
 
-void MediaFileManagerController::showAllMediaFileOfVideo(){ mediaFileManagerView->displayAllMediaFileOfVideo(mediaManager);}
+std::string MediaFileManagerController::showAllMediaFileOfAudio(){ return mediaFileManagerView->displayAllMediaFileOfAudio(mediaManager);}
 
-void MediaFileManagerController::showAllMediaFileOfAudio(){ mediaFileManagerView->displayAllMediaFileOfAudio(mediaManager);}
+std::string MediaFileManagerController::showAllMediaFileOfVideo(){ return mediaFileManagerView->displayAllMediaFileOfVideo(mediaManager);}
+
 
 void MediaFileManagerController::handleMediaFileManager() {
     int choice;
     std::string message;
     while (true) {
+        system("clear");
+        if(!message.empty()){
+            mediaFileManagerView->showSuccessMessage(message);
+            message = "";
+        }
+        
         choice = mediaFileManagerView->showMenu();
         try {
             switch (choice) {
@@ -142,11 +142,14 @@ void MediaFileManagerController::handleMediaFileManager() {
                         try {
                             std::string fileName;
                             fileName = showAllMediaFile();
-
                             if (fileName == "") {
                                 break;
                             }
-                            deleteData(fileName);
+                            if(deleteData(fileName)){
+                                message = "File " + fileName + " has been deleted.";
+                            }else{
+                                continue;
+                            }
                             break; 
                         } catch (const MediaFileManagerException &e) {
                             std::cerr << e.what() << '\n'; 
@@ -155,14 +158,48 @@ void MediaFileManagerController::handleMediaFileManager() {
                     break;
                 }
                 case SHOW_ALL_MEDIAFILE:
-                    showAllMediaFile();
+                {
+                    std::string filename;
+                    filename =  showAllMediaFile();
+                    if(filename == ""){
+                        break;
+                    }
+                    if(listMediaFileController.find(filename) == listMediaFileController.end()){
+                        std::shared_ptr<MediaFileController> mediaFileController = std::make_shared<MediaFileController>(mediaManager.getMediaFile(filename), mediaFileHandlerView);
+                        addMediaFileController(filename, mediaFileController);
+                    }
+                    listMediaFileController[filename]->handlerMediaFile();
                     break;
+                }
+                    
                 case SHOW_ALL_MEDIAFILE_AUDIO:
-                    showAllMediaFileOfAudio();
+                {
+                        std::string filename;
+                    filename = showAllMediaFileOfAudio();
+                    if(filename == ""){
+                        break;
+                    }
+                    if(listMediaFileController.find(filename) == listMediaFileController.end()){
+                        std::shared_ptr<MediaFileController> mediaFileController = std::make_shared<MediaFileController>(mediaManager.getMediaFile(filename), mediaFileHandlerView);
+                        addMediaFileController(filename, mediaFileController);
+                    }
+                    listMediaFileController[filename]->handlerMediaFile();
                     break;
+                }
                 case SHOW_ALL_MEDIAFILE_VIDEO:
-                    showAllMediaFileOfVideo();
+                {
+                    std::string filename;
+                    filename = showAllMediaFileOfVideo();
+                    if(filename == ""){
+                        break;
+                    }
+                    if(listMediaFileController.find(filename) == listMediaFileController.end()){
+                        std::shared_ptr<MediaFileController> mediaFileController = std::make_shared<MediaFileController>(mediaManager.getMediaFile(filename), mediaFileHandlerView);
+                        addMediaFileController(filename, mediaFileController);
+                    }
+                    listMediaFileController[filename]->handlerMediaFile();
                     break;
+                }
                 case EXIT_MENU_MEDIAFILE_MANAGER:
                     return;
                 default:

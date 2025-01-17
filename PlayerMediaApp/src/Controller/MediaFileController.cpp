@@ -2,11 +2,12 @@
 
 MediaFileController::MediaFileController(std::shared_ptr<MediaFile>  m, std::shared_ptr<BaseView> v) : mediaFile(m), mediaFileHandlerView(v){}
 
-void MediaFileController::getDetailMediaFile(std::string message) {
-    mediaFileHandlerView->displayDetailMediaFile(mediaFile, message);
-}
+void MediaFileController::getDetailMediaFile(std::string message) {mediaFileHandlerView->displayDetailMediaFile(mediaFile, message);}
 
-std::string MediaFileController::addMetadata() {
+//std::shared_ptr<MediaFile> MediaFileController::getMediaFile() const {return this->mediaFile;}
+
+std::string MediaFileController::addMetadata() 
+{
     std::pair<std::string, std::string> key_value;
     std::string exception;
     while(true){
@@ -46,7 +47,8 @@ std::string MediaFileController::addMetadata() {
     return "";
 }
 
-std::string MediaFileController::editMetadata() {
+std::string MediaFileController::editMetadata() 
+{
     std::pair<std::string, std::string> key_value;
     std::string exception;
     while(true){
@@ -84,7 +86,8 @@ std::string MediaFileController::editMetadata() {
     return "";
 }
 
-std::string MediaFileController::deleteMetadata() {
+std::string MediaFileController::deleteMetadata() 
+{
     std::string key;
     while(true)
     {
@@ -95,10 +98,14 @@ std::string MediaFileController::deleteMetadata() {
                 break;
             }
 
-            if(mediaFile->deleteKey(key)){
-                return "Deleted metadata [" + key + "]";
+            if(mediaFileHandlerView->showConfirmMenu("Are you sure you want to delete this metadata [" + key + "] ?")){
+                if(mediaFile->deleteKey(key)){
+                    return "Deleted metadata [" + key + "]";
+                }else{
+                    throw EditFailException();
+                }
             }else{
-                throw EditFailException();
+                continue;
             }
         } catch (const MetadataEditException& e) {
             std::cerr << "Error: " << e.what() << std::endl;
@@ -108,9 +115,11 @@ std::string MediaFileController::deleteMetadata() {
 }   
 
 void MediaFileController::handlerMediaFile()
-{   std::string message;
+{   
+    std::string message;
     while(true){
         try{
+            std::cout << "Inside MediaFileController::handlerMediaFile()\n";
             getDetailMediaFile(message);
             int choice = mediaFileHandlerView->showMenu();
             switch (choice)

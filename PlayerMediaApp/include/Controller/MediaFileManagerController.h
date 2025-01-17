@@ -5,6 +5,7 @@
 #include "../View/BaseView.h"
 #include "../View/MetadataView.h"
 #include "../Controller/MediaScannerController.h"
+#include "../Controller/MediaFileController.h"
 
 #include "../utils/MediaFileManagerException.h"
 #include "../utils/ConfigLoader.h"
@@ -14,12 +15,15 @@
 #include <cstdlib>
 #include <memory>
 #include <unordered_set>
+#include <unordered_map>
 
 class MediaFileManagerController {
 private:
     MediaFileManager& mediaManager;
     std::shared_ptr<BaseView> mediaFileManagerView; 
+    std::shared_ptr<BaseView> mediaFileHandlerView;
     std::shared_ptr<MediaScannerController> scannerController;
+    std::unordered_map<std::string, std::shared_ptr<MediaFileController>> listMediaFileController;
 protected:
     bool isValidPath(const std::string& path) {
         if (path.empty()) {
@@ -38,25 +42,24 @@ protected:
     }
 
 public:
-    MediaFileManagerController(MediaFileManager&, std::shared_ptr<BaseView>, std::shared_ptr<MediaScannerController>);
+    MediaFileManagerController(MediaFileManager&, std::shared_ptr<BaseView>, std::shared_ptr<BaseView>, std::shared_ptr<MediaScannerController>);
 
     void handleMediaFileManager();
 
-    void loadData(const std::unordered_set<std::string>&);
+    void addMediaFileController(std::string, std::shared_ptr<MediaFileController>);
+
+    std::shared_ptr<MediaFileController> getMediaFileController(const std::string& fileName);
 
     int addDataFile(std::string);
     void addDataFolder(const std::unordered_set<std::string>&);
 
     bool deleteData(std::string);
 
-    std::unordered_set<std::string> getListFileAdded();
-    void clearListFileAdded();
-
     std::string showAllMediaFile();
 
-    void showAllMediaFileOfVideo();
+    std::string showAllMediaFileOfVideo();
 
-    void showAllMediaFileOfAudio();
+    std::string showAllMediaFileOfAudio();
 
 };
 

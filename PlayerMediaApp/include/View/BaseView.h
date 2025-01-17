@@ -16,9 +16,12 @@ class BaseView{
         
         virtual int showMenu() = 0;
 
+        virtual void showSuccessMessage(std::string);
+        virtual bool showConfirmMenu(std::string);
+
         virtual std::string displayAllMediaFile(MediaFileManager);
-        virtual void displayAllMediaFileOfAudio(MediaFileManager);
-        virtual void displayAllMediaFileOfVideo(MediaFileManager);
+        virtual std::string displayAllMediaFileOfAudio(MediaFileManager);
+        virtual std::string displayAllMediaFileOfVideo(MediaFileManager);
 
         virtual void displayDetailMediaFile(std::shared_ptr<MediaFile>, std::string );
         virtual std::pair<std::string, std::string> displayMenuAddMetadata(std::shared_ptr<MediaFile>, std::string);
