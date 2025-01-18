@@ -11,17 +11,15 @@ int audio_out_channels = av_get_channel_layout_nb_channels(audio_out_channel_lay
 int audio_out_sample_rate = 44100;
 AVSampleFormat audio_out_sample_fmt = AV_SAMPLE_FMT_S16;
 
-static MediaController* instance;
 
 MediaController::MediaController(const std::vector<std::string>& files)
-    : mediaFiles(files), currentIndex(0), playing(false), paused(false), repeat(false), manualTransition(false) {
-        instance = this;
-    }
+    : mediaFiles(files), currentIndex(0), playing(false), paused(false), repeat(false) {}
+
 
 MediaController::~MediaController() {
-    instance = nullptr; 
     stopPlaybackThread();
 }
+
 
 void MediaController::setVolume(int newVolume) {
     if (newVolume < 0) newVolume = 0;
@@ -49,7 +47,6 @@ void MediaController::play() {
     stopPlaybackThread(); // Stop any existing playback thread
 
     const std::string& file = mediaFiles[currentIndex];
-    std::cout<<  "currIndex: " << currentIndex  <<std::endl;
     std::cout << "Playing: " << file << "\n";
 
     playbackThread = std::thread(&MediaController::playbackWorker, this, file);
@@ -75,6 +72,24 @@ void MediaController::resume() {
     paused = false;
     Mix_ResumeMusic();
     std::cout << "Playback resumed.\n";
+}
+
+void MediaController::playOrResume() {
+    std::unique_lock<std::recursive_mutex> lock(stateMutex);
+    if (playing) {
+        if (paused) {
+            // Resume playback if paused
+            paused = false;
+            Mix_ResumeMusic();
+            std::cout << "Playback resumed.\n";
+        } else {
+            std::cout << "Media is already playing.\n";
+        }
+    } else {
+        // Play new media if nothing is playing
+        lock.unlock(); // Unlock to avoid holding the mutex during play()
+        play();
+    }
 }
 
 void MediaController::togglePlayback() {
@@ -110,11 +125,10 @@ void MediaController::stop() {
     std::unique_lock<std::recursive_mutex> lock(stateMutex);
     playing = false;
     repeat = false; // Stop repeating as well
-    manualTransition = true; 
     lock.unlock();
 
     stopPlaybackThread();
-    // std::cout << "Playback stopped.\n";
+    std::cout << "Playback stopped.\n";
 }
 
 
@@ -163,9 +177,6 @@ void MediaController::playbackWorker(const std::string& file) {
                 std::cerr << "Unsupported file format: " << file << "\n";
                 break;
             }
-            // if (manualTransition) {
-            //     manualTransition = false; // Reset the manual transition flag
-            // }
 
         } while (repeat && playing);
 
@@ -175,44 +186,6 @@ void MediaController::playbackWorker(const std::string& file) {
 
     std::unique_lock<std::recursive_mutex> lock(stateMutex);
     playing = false;
-}
-
-// std::atomic<int> MediaController::i(0);
-// // std::mutex i_mutex;
-
-static int i = 0;
-
-void MediaController::musicFinishedCallback() {
-    if (instance) {
-        std::unique_lock<std::recursive_mutex> lock(instance->stateMutex);
-        // std::unique_lock<std::mutex> i_lock(i_mutex);
-        if (instance->manualTransition == false) {
-
-            {
-                std::unique_lock<std::recursive_mutex> lock(instance->stateMutex);
-                instance->currentIndex = (instance->currentIndex + 1) % instance->mediaFiles.size();
-            }
-        } else {
-            if (i >= 2) { 
-                i = 0;
-                {
-                    std::unique_lock<std::recursive_mutex> lock(instance->stateMutex);
-                    instance->manualTransition = false;
-                }
-            } else {
-                ++i;
-            }
-            // std::cout<< "\n count: " << i << std::endl;
-            // std::cout<< "\n mode: " << instance->manualTransition <<std::endl;
-        }
-        const std::string& file = instance->mediaFiles[instance->currentIndex];
-
-        Mix_Music* music = Mix_LoadMUS(file.c_str());
-        // std::cout<< "\n                              currIndex: " << instance->currentIndex <<std::endl;
-        // std::cout<< "\nAuto play: " << file <<std::endl;
-        Mix_VolumeMusic(volume);
-        Mix_PlayMusic(music, 1);
-    }
 }
 
 
@@ -226,10 +199,6 @@ void MediaController::playAudio(const char* filePath) {
         Mix_CloseAudio();
         throw std::runtime_error("Failed to load audio file: " + std::string(Mix_GetError()));
     }
-
-    // Mix_HookMusicFinished(nullptr);
-    
-    Mix_HookMusicFinished(MediaController::musicFinishedCallback);
 
     Mix_VolumeMusic(volume);
     Mix_PlayMusic(music, 1);

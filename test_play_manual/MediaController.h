@@ -61,11 +61,6 @@ private:
     void stopPlaybackThread();
     void playAudio(const char* filePath);
     void playVideo(const char* filePath);
-    bool manualTransition;
-    // static std::atomic<int> i;
-    Mix_Music* currentMusic;
-
-    static void musicFinishedCallback();
 };
 
 #endif
