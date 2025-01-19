@@ -21,7 +21,8 @@ class Playlist {
         bool checkMediaFile(std::string);
 
         std::vector<std::shared_ptr<MediaFile>> getListMediaFiles();
-        
+        std::vector<std::string> getListPathMediaFiles();
+
         void loadMediaFile(std::shared_ptr<MediaFile>);
         void addMediaFile(std::shared_ptr<MediaFile>);
 

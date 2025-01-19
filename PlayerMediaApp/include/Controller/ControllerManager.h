@@ -28,7 +28,7 @@ class ControllerManager{
         
         std::unique_ptr<MediaFileManagerController> mediaFileManagerController;
         std::unique_ptr<MediaPlaylistManagerController> mediaPlaylistManagerController;
-        static std::atomic<bool> isPaused;
+        std::unique_ptr<PlayerController> playerController;
     public:
         ControllerManager(ModelManager, ViewManager);
         
@@ -47,7 +47,9 @@ class ControllerManager{
 
         void playlistHandler();
 
-        void playMusicHandler();
+        std::string playMusicHandler();
+
+        std::vector<std::string> playPlaylist();
 
 };
 

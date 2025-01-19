@@ -12,7 +12,7 @@ public:
 
     int showMenu() override;
 
-    int showMenuWithPlayer(MediaFileManager, std::string) override;
+    int showMenuWithPlayer(MediaFileManager, std::shared_ptr<PlayerController>&, std::string , std::string&, std::vector<std::string>&) override;
 };
 
 #endif 

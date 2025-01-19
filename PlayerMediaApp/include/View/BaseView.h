@@ -8,6 +8,7 @@
 #include <unordered_map>
 #include "../Model/MediaFileManager.h"
 #include "../Model/PlaylistManager.h"
+#include "../Controller/PlayerController.h"
 #include "../utils/ConfigLoader.h"
 class BaseView{
     private:
@@ -19,7 +20,7 @@ class BaseView{
         virtual void showNotificationMessage(std::string, std::string);
         virtual bool showConfirmMenu(std::string);
 
-        virtual int showMenuWithPlayer(MediaFileManager, std::string);
+        virtual int showMenuWithPlayer(MediaFileManager, std::shared_ptr<PlayerController>&, std::string , std::string&, std::vector<std::string>&);
 
         virtual std::string displayAllMediaFile(MediaFileManager);
         virtual std::string displayAllMediaFileOfAudio(MediaFileManager);

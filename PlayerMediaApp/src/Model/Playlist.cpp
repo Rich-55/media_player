@@ -24,6 +24,16 @@ std::vector<std::shared_ptr<MediaFile>> Playlist::getListMediaFiles()
     return this->listMediaFiles;
 }
 
+std::vector<std::string> Playlist::getListPathMediaFiles()
+{
+    std::vector<std::string> listPathMediaFiles;
+    for(const auto &mediaFile : listMediaFiles)
+    {
+        listPathMediaFiles.push_back(mediaFile->getPath());
+    }
+    return listPathMediaFiles;
+}
+
 void Playlist::loadMediaFile(std::shared_ptr<MediaFile> file)
 {
     listMediaFiles.push_back(file);

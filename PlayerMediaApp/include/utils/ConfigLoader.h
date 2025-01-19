@@ -18,8 +18,14 @@ using namespace ftxui;
 #define PLAYLIST_HANDLER 3
 #define PLAYLIST_MANAGER 4
 #define PLAY_MUSIC 5
+#define PLAY_PLAYLIST 6
 #define EXIT_MAIN_MENU 0
-
+//Player
+#define PLAY_PAUSE -2
+#define STOP -3
+#define REPEAT -4
+#define NEXT -5
+#define PREVIOUS -6
 //Scan Menu
 #define SCAN_HOME_DIRECTORY 1
 #define SCAN_USB 2

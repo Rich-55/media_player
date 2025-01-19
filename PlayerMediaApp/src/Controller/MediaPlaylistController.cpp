@@ -4,6 +4,10 @@ MediaPlaylistController::MediaPlaylistController(MediaFileManager& mediaFileMana
 : mediaFileManager(mediaFileManager), folderManager(folderManager), playlist(playlistModel), mediaManagerView(mediaManagerView), playlistHandlerView(playlistHandlerView)
 {}
 
+std::vector<std::string> MediaPlaylistController::getListPathMediaFiles() {
+    return playlist->getListPathMediaFiles();
+}
+
 bool MediaPlaylistController::addMediaFileInPlaylist(std::string fileName) {
     std::shared_ptr<MediaFile> mediaFile = mediaFileManager.getMediaFile(fileName);
     if (playlist->checkMediaFile(mediaFile->getName())) {
