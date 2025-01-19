@@ -14,4 +14,4 @@ private:
     bool isSupportedFile(const std::string& file) const;
 };
 
-#endif // MEDIAMODEL_H
+#endif

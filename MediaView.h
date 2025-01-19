@@ -7,4 +7,4 @@ public:
     int getUserChoice() const;
 };
 
-#endif // MEDIAVIEW_H
+#endif

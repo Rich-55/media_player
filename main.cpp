@@ -49,9 +49,12 @@ int main() {
                 controller.stop();
                 break;
             case 5:
-                exit = true;
+                controller.toggleRepeat();
                 break;
             case 6:
+                exit = true;
+                break;
+            case 7:
                 int volume;
                 std::cout << "Enter volume (0-128): ";
                 std::cin >> volume;

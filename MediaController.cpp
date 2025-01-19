@@ -112,7 +112,6 @@ void MediaController::stop() {
     repeat = false; // Stop repeating as well
     manualTransition = true; 
     lock.unlock();
-
     stopPlaybackThread();
     // std::cout << "Playback stopped.\n";
 }
@@ -163,9 +162,6 @@ void MediaController::playbackWorker(const std::string& file) {
                 std::cerr << "Unsupported file format: " << file << "\n";
                 break;
             }
-            // if (manualTransition) {
-            //     manualTransition = false; // Reset the manual transition flag
-            // }
 
         } while (repeat && playing);
 
@@ -177,20 +173,17 @@ void MediaController::playbackWorker(const std::string& file) {
     playing = false;
 }
 
-// std::atomic<int> MediaController::i(0);
-// // std::mutex i_mutex;
-
 static int i = 0;
 
 void MediaController::musicFinishedCallback() {
     if (instance) {
         std::unique_lock<std::recursive_mutex> lock(instance->stateMutex);
-        // std::unique_lock<std::mutex> i_lock(i_mutex);
         if (instance->manualTransition == false) {
-
-            {
-                std::unique_lock<std::recursive_mutex> lock(instance->stateMutex);
-                instance->currentIndex = (instance->currentIndex + 1) % instance->mediaFiles.size();
+            if (!instance->repeat) {
+                {
+                    std::unique_lock<std::recursive_mutex> lock(instance->stateMutex);
+                    instance->currentIndex = (instance->currentIndex + 1) % instance->mediaFiles.size();
+                }
             }
         } else {
             if (i >= 2) { 
@@ -202,14 +195,10 @@ void MediaController::musicFinishedCallback() {
             } else {
                 ++i;
             }
-            // std::cout<< "\n count: " << i << std::endl;
-            // std::cout<< "\n mode: " << instance->manualTransition <<std::endl;
         }
         const std::string& file = instance->mediaFiles[instance->currentIndex];
 
         Mix_Music* music = Mix_LoadMUS(file.c_str());
-        // std::cout<< "\n                              currIndex: " << instance->currentIndex <<std::endl;
-        // std::cout<< "\nAuto play: " << file <<std::endl;
         Mix_VolumeMusic(volume);
         Mix_PlayMusic(music, 1);
     }
@@ -227,8 +216,7 @@ void MediaController::playAudio(const char* filePath) {
         throw std::runtime_error("Failed to load audio file: " + std::string(Mix_GetError()));
     }
 
-    // Mix_HookMusicFinished(nullptr);
-    
+    Mix_HookMusicFinished(nullptr);
     Mix_HookMusicFinished(MediaController::musicFinishedCallback);
 
     Mix_VolumeMusic(volume);
@@ -242,11 +230,9 @@ void MediaController::playAudio(const char* filePath) {
                 break;
             }
             if (paused) {
-                // SDL_Delay(10);
                 continue;
             }
         }
-        SDL_Delay(50);
     }
 
     Mix_FreeMusic(music);
@@ -464,10 +450,6 @@ void MediaController::playVideo(const char* filePath) {
 
     // Calculate frame delay
     double frameDelay = 40.0; // Default for ~25 FPS
-    // if (formatContext->streams[videoStreamIndex]->avg_frame_rate.num > 0) {
-    //     double fps = av_q2d(formatContext->streams[videoStreamIndex]->avg_frame_rate);
-    //     frameDelay = 1000.0 / fps; // Convert to milliseconds
-    // }
 
     while (av_read_frame(formatContext, &packet) >= 0 && !quit) {
         if (packet.stream_index == videoStreamIndex) {
@@ -489,19 +471,6 @@ void MediaController::playVideo(const char* filePath) {
                             SDL_Delay(static_cast<Uint32>(frameDelay * 1000));
                         }
                     }
-
-                    // if (packet.pts != AV_NOPTS_VALUE) {
-                    //     double videoPTS = av_q2d(formatContext->streams[videoStreamIndex]->time_base) * frame->best_effort_timestamp;
-
-                    //     // Use SDL_GetPerformanceCounter() for higher precision
-                    //     Uint64 currentTimeTicks = SDL_GetPerformanceCounter();
-                    //     double currentTime = static_cast<double>(currentTimeTicks) / SDL_GetPerformanceFrequency();
-
-                    //     double frameDelay = videoPTS - currentTime;
-                    //     if (frameDelay > 0) {
-                    //         SDL_Delay(static_cast<Uint32>(frameDelay * 1000));
-                    //     }
-                    // }
 
                     SDL_RenderClear(renderer);
                     SDL_RenderCopy(renderer, texture, nullptr, nullptr);
@@ -588,7 +557,3 @@ void MediaController::playVideo(const char* filePath) {
     }
     avformat_close_input(&formatContext);
 }
-
-// g++ -o med MediaModel.cpp MediaController.cpp MediaView.cpp main.cpp -std=c++20 $(pkg-config --cflags --libs libavformat libavcodec libswresample libavutil libswscale sdl2 SDL2_mixer) -g
-
-

@@ -38,14 +38,14 @@ public:
     void play();
     void pause();
     void resume();
-    bool repeat; // Indicates whether repeat mode is enabled
+    bool repeat;
     void playOrResume();
     void togglePlayback();
     void toggleRepeat();
     void stop();
     void playNext();
     void playPrevious();
-    void setVolume(int newVolume); // Added method for setting volume
+    void setVolume(int newVolume);
     void increaseVolume(int increment);
     void decreaseVolume(int decrement);
 
@@ -55,14 +55,13 @@ private:
     std::atomic<bool> playing;
     std::atomic<bool> paused;
     std::thread playbackThread;
-    std::recursive_mutex stateMutex; // Allow recursive locking
+    std::recursive_mutex stateMutex;
 
     void playbackWorker(const std::string& file);
     void stopPlaybackThread();
     void playAudio(const char* filePath);
     void playVideo(const char* filePath);
     bool manualTransition;
-    // static std::atomic<int> i;
     Mix_Music* currentMusic;
 
     static void musicFinishedCallback();
