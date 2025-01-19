@@ -3,7 +3,7 @@
 
 
 #include "../Model/MediaFileManager.h"
-#include "../Model/FolerManager.h"
+#include "../Model/FolderManager.h"
 #include "../View/BaseView.h"
 #include "../View/ScanView.h"
 
@@ -34,6 +34,7 @@ class MediaScannerController{
         void addDataFileWithFolder(std::string, std::string);
 
         void loadData();
+        void loadFolder();
         void loadMediaPlaylist();
 
         std::unordered_set<std::string> getListPaths();

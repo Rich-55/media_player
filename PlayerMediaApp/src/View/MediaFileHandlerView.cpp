@@ -2,7 +2,8 @@
 
 MediaFileHandlerView::MediaFileHandlerView(){}
 
-int MediaFileHandlerView::showMenu() {
+int MediaFileHandlerView::showMenu() 
+{
     std::vector<std::string> menu_entries = {
         "1. Add metadata",
         "2. Edit metadata",
@@ -77,15 +78,9 @@ int MediaFileHandlerView::showMenu() {
     return final_selected; 
 }
 
-void MediaFileHandlerView::showSuccessMessage(std::string message)
-{
-    BaseView::showSuccessMessage(message);
-}
+void MediaFileHandlerView::showNotificationMessage(std::string message, std::string type){BaseView::showNotificationMessage(message, type);}
 
-bool MediaFileHandlerView::showConfirmMenu(std::string message)
-{
-    return BaseView::showConfirmMenu(message);
-}
+bool MediaFileHandlerView::showConfirmMenu(std::string message){return BaseView::showConfirmMenu(message);}
 
 void MediaFileHandlerView::displayDetailMediaFile(std::shared_ptr<MediaFile> mediaFile, std::string message) {
     system("clear");
@@ -96,7 +91,8 @@ void MediaFileHandlerView::displayDetailMediaFile(std::shared_ptr<MediaFile> med
         hbox({ text("File Type: ") | bold, text(mediaFile->getType()) }),
         hbox({ text("File Size: ") | bold, text(std::to_string(mediaFile->getSize()) + " bytes") }),
         hbox({ text("File Duration: ") | bold, text(mediaFile->getDuration()) }),
-    }) | border | color(Color::Blue);
+        hbox({ text("File Date Created: ") | bold, text(mediaFile->getDateCreated()) }),
+    }) | border | color(Color::White);
 
     // Tạo giao diện hiển thị metadata
     Elements metadata_elements;
@@ -142,7 +138,8 @@ void MediaFileHandlerView::displayDetailMediaFile(std::shared_ptr<MediaFile> med
 }
 
 std::pair<std::string, std::string> MediaFileHandlerView::displayMenuAddMetadata(
-    std::shared_ptr<MediaFile> mediaFile, std::string exception) {
+    std::shared_ptr<MediaFile> mediaFile, std::string exception) 
+    {
     std::string selected_key;
     int selected_index = 0;
     std::string error_message;
@@ -305,9 +302,9 @@ std::pair<std::string, std::string> MediaFileHandlerView::displayMenuAddMetadata
     return result;  // Trả về key-value.
 }
 
-
 std::pair<std::string, std::string> MediaFileHandlerView::displayMenuEditMetadata(
-    std::shared_ptr<MediaFile> mediaFile, std::string exception) {
+    std::shared_ptr<MediaFile> mediaFile, std::string exception) 
+    {
 
     std::string selected_key;
     int selected_index = 0;
@@ -474,9 +471,8 @@ std::pair<std::string, std::string> MediaFileHandlerView::displayMenuEditMetadat
     return result;  // Trả về key-value hoặc { "0", "" }
 }
 
-
-
-std::string MediaFileHandlerView::displayMenuDeleteMetadata(std::shared_ptr<MediaFile> mediaFile) {
+std::string MediaFileHandlerView::displayMenuDeleteMetadata(std::shared_ptr<MediaFile> mediaFile) 
+{
     std::string selected_key;
     int selected_index = 0;
     std::string error_message;

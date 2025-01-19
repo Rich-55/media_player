@@ -36,10 +36,43 @@ add_executable(${PROJECT_NAME} main.cpp ${SRC_FILES})
 # Thêm đường dẫn include
 target_include_directories(${PROJECT_NAME} PRIVATE ${INCLUDE_DIR})
 
+find_package(SDL2 REQUIRED)
+target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2 SDL2::SDL2main)
+
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(AVFORMAT REQUIRED libavformat)
+pkg_check_modules(AVCODEC REQUIRED libavcodec)
+pkg_check_modules(AVUTIL REQUIRED libavutil)
+pkg_check_modules(SWSCALE REQUIRED libswscale)
+pkg_check_modules(SWRESAMPLE REQUIRED libswresample)
+
+target_include_directories(${PROJECT_NAME} PRIVATE
+  ${AVFORMAT_INCLUDE_DIRS}
+  ${AVCODEC_INCLUDE_DIRS}
+  ${AVUTIL_INCLUDE_DIRS}
+  ${SWSCALE_INCLUDE_DIRS}
+  ${SWRESAMPLE_INCLUDE_DIRS}
+)
+
+target_link_libraries(${PROJECT_NAME} PRIVATE
+  ${AVFORMAT_LIBRARIES}
+  ${AVCODEC_LIBRARIES}
+  ${AVUTIL_LIBRARIES}
+  ${SWSCALE_LIBRARIES}
+  ${SWRESAMPLE_LIBRARIES}
+)
+
 # Liên kết các thư viện cần thiết
 target_link_libraries(${PROJECT_NAME}
   PRIVATE
     tag # Thư viện libtag
+    avformat
+    avcodec
+    avutil
+    swscale
+    swresample
+    SDL2
+    SDL2_mixer
     ftxui::screen # LiênS kết FTXUI
     ftxui::dom
     ftxui::component

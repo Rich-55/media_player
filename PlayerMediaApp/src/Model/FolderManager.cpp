@@ -1,4 +1,4 @@
-#include "../../include/Model/FolerManager.h"
+#include "../../include/Model/FolderManager.h"
 
 FolderManager::FolderManager(){}
 

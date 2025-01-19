@@ -12,6 +12,7 @@
 #include "../Controller/MediaFileManagerController.h"
 #include "../Controller/MediaPlaylistManagerController.h"
 #include "../Controller/MediaPlaylistController.h"
+#include "../Controller/PlayerController.h"
 
 #include "../utils/MainMenuException.h"
 #include "../utils/ConfigLoader.h"
@@ -23,10 +24,11 @@ class ControllerManager{
         ViewManager view;
         std::shared_ptr<MediaScannerController> scannerController;
         std::shared_ptr<MediaFileController> mediaFileHandlerController;
+        std::shared_ptr<MediaPlaylistController> mediaPlaylistController;
+        
         std::unique_ptr<MediaFileManagerController> mediaFileManagerController;
-        std::unique_ptr<MediaPlaylistController> mediaPlaylistController;
         std::unique_ptr<MediaPlaylistManagerController> mediaPlaylistManagerController;
-
+        static std::atomic<bool> isPaused;
     public:
         ControllerManager(ModelManager, ViewManager);
         
@@ -44,6 +46,8 @@ class ControllerManager{
         void playlistManager();
 
         void playlistHandler();
+
+        void playMusicHandler();
 
 };
 

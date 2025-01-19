@@ -10,10 +10,9 @@
 class VideoFile : public MediaFile {
 private:
     std::map<std::string, std::string> metadataVideo;
-    const static std::unordered_set<std::string> allowedKeys;
 public:
     VideoFile();
-    VideoFile(const std::string&, const std::string&, unsigned long long,const std::string&, const std::string&);
+    VideoFile(const std::string& fileName, const std::string& pathName, unsigned long long size, const std::string& dateCreated, const std::string& duration, const std::string& fileType);
 
     // Metadata operations
     std::string getMetadata(const std::string& key) const override;

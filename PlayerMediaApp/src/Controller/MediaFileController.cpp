@@ -4,8 +4,6 @@ MediaFileController::MediaFileController(std::shared_ptr<MediaFile>  m, std::sha
 
 void MediaFileController::getDetailMediaFile(std::string message) {mediaFileHandlerView->displayDetailMediaFile(mediaFile, message);}
 
-//std::shared_ptr<MediaFile> MediaFileController::getMediaFile() const {return this->mediaFile;}
-
 std::string MediaFileController::addMetadata() 
 {
     std::pair<std::string, std::string> key_value;

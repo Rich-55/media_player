@@ -8,15 +8,13 @@
 class AudioFile : public MediaFile {
     private:
         std::map<std::string, std::string> metadataAudio; 
-        const static std::unordered_set<std::string> allowedKeys ;
     public:
         AudioFile();
-        AudioFile(const std::string& fileName, const std::string& pathName, unsigned long long size, const std::string& duration, const std::string& fileType);
+        AudioFile(const std::string& fileName, const std::string& pathName, unsigned long long size, const std::string& dateCreated, const std::string& duration, const std::string& fileType);
 
-        // Get metadata
         std::string getMetadata(const std::string& key) const;
         std::map<std::string, std::string> getAllMetadata() const override;
-        // Input file and initialize metadata
+        
         void inputMediaFile(std::string pathName, bool isSame) override;
 
         std::string getType() override;

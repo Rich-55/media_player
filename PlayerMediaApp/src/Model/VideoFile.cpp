@@ -1,32 +1,19 @@
 #include "../../include/Model/VideoFile.h"
 
-const std::unordered_set<std::string> VideoFile::allowedKeys = {
-        "title",    // Title
-        "artist",   // Artist
-        "album",    // Album
-        "genre",    // Genre
-        "comment",  // Comment
-        "year",     // Year
-        "track"     // Track
-};
-
-
 VideoFile::VideoFile() {}
 
-VideoFile::VideoFile(const std::string& fileName, const std::string& pathName, unsigned long long size, const std::string& duration, const std::string& fileType)
-    : MediaFile(fileName, pathName, size, duration, fileType) {}
+VideoFile::VideoFile(const std::string& fileName, const std::string& pathName, unsigned long long size, const std::string& dateCreated, const std::string& duration, const std::string& fileType)
+    : MediaFile(fileName, pathName, size, dateCreated, duration, fileType) {}
 
-std::string VideoFile::getMetadata(const std::string& key) const {
+std::string VideoFile::getMetadata(const std::string& key) const
+ {
     if (metadataVideo.find(key) != metadataVideo.end()) {
         return metadataVideo.at(key);
     }
     return "";
 }
 
-std::map<std::string, std::string> VideoFile::getAllMetadata() const {
-    return metadataVideo;
-}
-
+std::map<std::string, std::string> VideoFile::getAllMetadata() const {return metadataVideo;}
 
 void VideoFile::inputMediaFile(std::string pathName, bool isSame) {
     MediaFile::inputMediaFile(pathName, isSame);
@@ -106,7 +93,6 @@ bool VideoFile::addNewKey(const std::string& key, const std::string& value) {
     return check;
 }
 
-
 bool VideoFile::editKey(const std::string& key, const std::string& value) {
     bool check = false;
 
@@ -155,7 +141,6 @@ bool VideoFile::editKey(const std::string& key, const std::string& value) {
     return check;
 }
 
-
 bool VideoFile::deleteKey(const std::string& key) {
     bool check = false;
     TagLib::FileRef fileRef(this->getPath().c_str());
@@ -199,6 +184,4 @@ bool VideoFile::deleteKey(const std::string& key) {
     return check;
 }
 
-std::string VideoFile::getType() {
-    return "Video";
-}
+std::string VideoFile::getType() {return "Video";}

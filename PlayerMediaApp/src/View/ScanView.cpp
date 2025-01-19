@@ -185,8 +185,6 @@ int ScanView::showListFolder(std::vector<std::string> listFolder) {
     return final_selected; // Trả về chỉ mục thư mục được chọn hoặc -1 nếu chọn "0. Exit"
 }
 
-
-
 int ScanView::showListUSBName(std::vector<std::string> usbDevices) {
     if (usbDevices.empty()) {
         std::cout << "No USB devices found.\n";

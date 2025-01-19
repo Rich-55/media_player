@@ -2,19 +2,20 @@
 
 BaseView::BaseView(){}
         
-void BaseView::showSuccessMessage(std::string message)
+void BaseView::showNotificationMessage(std::string message, std::string type)
 {
-    system("clear");
-    auto success_message = vbox({
-        text("Success!") | bold | color(Color::Green) | center,
+    Color message_color = (type == "success") ? Color::Green : Color::Red;
+    std::string title = (type == "success") ? "Success!" : "Error!";
+
+    auto notification_message = vbox({
+        text(title) | bold | color(message_color) | center,
         separator(),
         text(message) | center,
     }) | border | center;
 
-    // Tạo màn hình và hiển thị thông báo
-    auto screen = Screen::Create(Dimension::Full(), Dimension::Fit(success_message));
-    Render(screen, success_message);
-    screen.Print(); // In giao diện ra console
+    auto screen = Screen::Create(Dimension::Full(), Dimension::Fit(notification_message));
+    Render(screen, notification_message);
+    screen.Print(); 
 }
 
 bool BaseView::showConfirmMenu(std::string message)
@@ -84,19 +85,25 @@ bool BaseView::showConfirmMenu(std::string message)
     return confirmed;
 }
 
+int BaseView::showMenuWithPlayer(MediaFileManager, std::string){return -1;}
+
 std::string BaseView::displayAllMediaFile(MediaFileManager){return "";}
-
 std::string BaseView::displayAllMediaFileOfAudio(MediaFileManager){return "";}
-
 std::string BaseView::displayAllMediaFileOfVideo(MediaFileManager){return "";}
+int BaseView::showMenuWithMediaList(MediaFileManager){return -1;}
+
 
 void BaseView::displayDetailMediaFile(std::shared_ptr<MediaFile>, std::string){}
 std::pair<std::string, std::string> BaseView::displayMenuAddMetadata(std::shared_ptr<MediaFile>, std::string){return {};}
 std::pair<std::string, std::string> BaseView::displayMenuEditMetadata(std::shared_ptr<MediaFile>, std::string){return {};}
 std::string BaseView::displayMenuDeleteMetadata(std::shared_ptr<MediaFile>){return "";}
 
-void BaseView::displayAllPlaylist(PlaylistManager){}
-void BaseView::displayAllMediaFileInPlaylist(std::shared_ptr<Playlist>){}
+std::string BaseView::displayAllPlaylist(PlaylistManager){return "";}
+std::string BaseView::displayAllMediaFileInPlaylist(std::shared_ptr<Playlist>){return "";}
+int BaseView::showMenuWithMediaList(std::shared_ptr<Playlist>){return -1;}
+std::pair<std::string, std::string> BaseView::displayAllFolder(std::pair<std::unordered_set<std::string> , std::unordered_set<std::string> >){return {};}
+
+int BaseView::showMenuWithPlaylist(std::vector<std::shared_ptr<Playlist>>){return -1;}
 
 int BaseView::showListFolder(std::vector<std::string>){return -1;}
 int BaseView::showListUSBName(std::vector<std::string>) {return -1;}

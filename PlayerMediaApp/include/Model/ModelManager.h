@@ -4,7 +4,7 @@
 #include "MediaFile.h"
 #include "MediaFileManager.h"
 #include "PlaylistManager.h"
-#include "FolerManager.h"
+#include "FolderManager.h"
 
 class ModelManager{
     private:

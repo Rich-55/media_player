@@ -19,7 +19,9 @@ public:
 
     int showMenu() override;
 
-    void showSuccessMessage(std::string) override;
+    int showMenuWithMediaList(MediaFileManager) override;
+
+    void showNotificationMessage(std::string, std::string) override;
     bool showConfirmMenu(std::string) override;
     
     std::string displayAllMediaFile(MediaFileManager) override;

@@ -11,6 +11,16 @@ std::shared_ptr<MediaFile> MediaFileManager::getMediaFile(std::string fileName)
     return nullptr;
 }
 
+std::shared_ptr<MediaFile> MediaFileManager::getMediaFileByPath(std::string pathName)
+{
+   for(std::shared_ptr<MediaFile> file : listMediaFiles){
+        if(file->getPath() == pathName){
+            return file;
+        }
+    } 
+    return nullptr;
+}
+
 bool MediaFileManager::checkFileExists(std::string fileName)
 {
     for(std::shared_ptr<MediaFile> file : listMediaFiles){
@@ -59,13 +69,11 @@ bool MediaFileManager::loadMediaFile( std::string pathName, std::string type)
         std::shared_ptr<MediaFile> mediaFile =  std::make_shared<VideoFile>();
         mediaFile->inputMediaFile(pathName, isSame);
         listMediaFiles.push_back(mediaFile);
-        std::cout << "Video \""<< mediaFile->getName() << "\" add successfully!" << std::endl;
         result = true;
     }else {
         std::shared_ptr<MediaFile> mediaFile =  std::make_shared<AudioFile>();
         mediaFile->inputMediaFile(pathName, isSame);
         listMediaFiles.push_back(mediaFile);
-        std::cout << "Audio \""<< mediaFile->getName() << "\" add successfully!" << std::endl;
         result = true;
     }
     listFileAdded.insert(fileName);

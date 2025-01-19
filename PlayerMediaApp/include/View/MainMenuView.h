@@ -11,6 +11,8 @@ public:
     MainMenuView();
 
     int showMenu() override;
+
+    int showMenuWithPlayer(MediaFileManager, std::string) override;
 };
 
 #endif 

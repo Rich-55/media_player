@@ -18,6 +18,7 @@ class MediaFileManager{
         MediaFileManager();
 
         std::shared_ptr<MediaFile> getMediaFile(std::string);
+        std::shared_ptr<MediaFile> getMediaFileByPath(std::string);
 
         bool checkFileExists(std::string);
 
@@ -26,7 +27,6 @@ class MediaFileManager{
         bool loadMediaFile(std::string, std::string);
 
         bool deleteMediaFile(std::string);
-
 
         void updateDatabase();
 

@@ -146,6 +146,52 @@ void MediaScannerController::loadData()
     }
 }
 
+void MediaScannerController::loadFolder()
+{
+    try {
+        // Load folders from database/listFolderDirectory.data
+        std::ifstream dirFile("database/listFolderDirectory.data");
+        if (!dirFile.is_open()) {
+            throw std::runtime_error("Could not open listFolderDirectory.data");
+        }
+
+        std::string folderPath;
+        while (std::getline(dirFile, folderPath)) {
+            if (folderPath.empty()) {
+                continue;
+            }
+
+            std::unordered_set<std::string> mediaFiles = scanFolder(folderPath);
+            if (!mediaFiles.empty()) {
+                folderManager.addDataFolderDirectory(folderPath, mediaFiles);
+            }
+        }
+        dirFile.close();
+
+        // Load folders from database/listFolderUSB.data
+        std::ifstream usbFile("database/listFolderUSB.data");
+        if (!usbFile.is_open()) {
+            throw std::runtime_error("Could not open listFolderUSB.data");
+        }
+
+        while (std::getline(usbFile, folderPath)) {
+            if (folderPath.empty()) {
+                continue;
+            }
+
+            std::unordered_set<std::string> mediaFiles = scanFolder(folderPath);
+            if (!mediaFiles.empty()) {
+                folderManager.addDataFolderUSB(folderPath, mediaFiles);
+            }
+        }
+        usbFile.close();
+
+    } catch (const std::exception &e) {
+        std::cerr << "Error in loadFolder: " << e.what() << std::endl;
+    }
+}
+
+
 void MediaScannerController::loadMediaPlaylist()
 {
     std::string directory = "database/playlist";
@@ -176,7 +222,6 @@ void MediaScannerController::loadMediaPlaylist()
                     }
                 }
                 inFile.close();
-                std::cout << "Loaded playlist: " << playlistName << " with media files.\n";
             } else {
                 std::cerr << "Failed to open playlist file: " << entry.path() << "\n";
             }
@@ -287,7 +332,6 @@ void MediaScannerController::scanUSBDevices() {
     }
 }
 
-
 bool MediaScannerController::checkFolderDirectory(){ return this->folderManager.getListFolderDirectory().empty();}
 
 bool MediaScannerController::checkFolderUSB(){ return this->folderManager.getListFolderUSB().empty();}
@@ -332,6 +376,7 @@ void MediaScannerController::handleScan(bool isRunning)
             }
         } else {
             loadData();
+            loadFolder();
             loadMediaPlaylist();
         }
     } catch (const ScanException &e) {

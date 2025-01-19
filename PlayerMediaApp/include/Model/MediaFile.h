@@ -10,7 +10,7 @@
 #include <taglib/tbytevector.h>
 #include <taglib/id3v2frame.h>
 #include <taglib/mp4file.h>
-
+#include <filesystem>
 #include <iostream>
 #include <string>
 #include <map>
@@ -20,6 +20,7 @@ private:
     std::string fileName;
     std::string pathName;
     unsigned long long size;
+    std::string dateCreated;
     std::string duration;
     std::string fileType;
 protected:
@@ -27,9 +28,8 @@ protected:
 public:
     // Constructor
     MediaFile();
-    MediaFile(const std::string& , const std::string& , unsigned long long, const std::string& , const std::string& );
-
-
+    MediaFile(const std::string& fileName, const std::string& pathName, unsigned long long size, 
+                const std::string& dateCreated, const std::string& duration, const std::string& fileType);
     // Virtual Destructor
     virtual ~MediaFile();
 
@@ -38,6 +38,7 @@ public:
     std::string getPath() const;
     unsigned long getSize() const;
     std::string getDuration() const;
+    std::string getDateCreated() const;
 
     virtual std::string getType();
 

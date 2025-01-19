@@ -32,8 +32,6 @@ public:
 
     void handlerMediaFile();
 
-    //std::shared_ptr<MediaFile> getMediaFile() const;
-
     void getDetailMediaFile(std::string);
 
     std::string addMetadata();

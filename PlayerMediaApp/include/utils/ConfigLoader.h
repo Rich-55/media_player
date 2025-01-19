@@ -5,7 +5,11 @@
 #include <ftxui/component/screen_interactive.hpp>  // For ScreenInteractive
 #include <ftxui/dom/elements.hpp>        // For Elements
 #include <ftxui/component/event.hpp> 
-#include <algorithm>
+#include <ftxui/screen/screen.hpp>
+
+#include <cmath>
+#include <stdexcept>
+
 
 using namespace ftxui;
 //MainMenu
@@ -13,6 +17,7 @@ using namespace ftxui;
 #define MEDIA_FILE_MANAGER 2 
 #define PLAYLIST_HANDLER 3
 #define PLAYLIST_MANAGER 4
+#define PLAY_MUSIC 5
 #define EXIT_MAIN_MENU 0
 
 //Scan Menu
@@ -37,8 +42,8 @@ using namespace ftxui;
 
 //Playlist Menu
 #define ADD_MEDIA_FILE_TO_PLAYLIST 1
-#define DELETE_MEDIA_FILE_FROM_PLAYLIST 2
-#define DISPLAY_ALL_MEDIA_FILE_FROM_PLAYLIST 3
+#define ADD_MEDIA_FILE_TO_PLAYLIST_BY_PATH 2
+#define DELETE_MEDIA_FILE_FROM_PLAYLIST 3
 #define EXIT_MENU_PLAYLIST_HANDLER 0
 
 //PlaylistManager Menu

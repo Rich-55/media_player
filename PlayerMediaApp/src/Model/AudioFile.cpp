@@ -1,20 +1,9 @@
 #include "../../include/Model/AudioFile.h"
 
-const std::unordered_set<std::string> AudioFile::allowedKeys = {
-        "title",    // Title
-        "artist",   // Artist
-        "album",    // Album
-        "genre",    // Genre
-        "comment",  // Comment
-        "year",     // Year
-        "track"     // Track
-};
-
-
 AudioFile::AudioFile() {};
 
-AudioFile::AudioFile(const std::string& fileName, const std::string& pathName, unsigned long long size, const std::string& duration, const std::string& fileType)
-    : MediaFile(fileName, pathName, size, duration, fileType) {}
+AudioFile::AudioFile(const std::string& fileName, const std::string& pathName, unsigned long long size, const std::string& dateCreated, const std::string& duration, const std::string& fileType)
+    : MediaFile(fileName, pathName, size, dateCreated, duration, fileType) {}
 
 // Lấy giá trị metadata theo key
 std::string AudioFile::getMetadata(const std::string& key) const {

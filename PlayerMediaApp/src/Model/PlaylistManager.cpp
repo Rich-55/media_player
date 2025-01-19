@@ -64,21 +64,21 @@ void PlaylistManager::addPlaylist(std::shared_ptr<Playlist> playlist) {
     }
 }
 
-void PlaylistManager::deletePlaylist(std::string name) {
+bool PlaylistManager::deletePlaylist(std::string name) {
     if (!checkPlaylistName(name)) {
         std::cerr << "Playlist does not exist.\n";
-        return;
+        return false;
     }
 
     std::string directory = "database/playlist";
-    std::string playlistFilePath = directory + "/" + name + ".pl";
+    std::string playlistFilePath = directory + "/" + name + ".playlist";
 
     if (std::filesystem::exists(playlistFilePath)) {
         if (std::filesystem::remove(playlistFilePath)) {
             std::cout << "Playlist file deleted: " << playlistFilePath << "\n";
         } else {
             std::cerr << "Failed to delete playlist file: " << playlistFilePath << "\n";
-            return;
+            return false;
         }
     } else {
         std::cerr << "Playlist file does not exist in database: " << playlistFilePath << "\n";
@@ -88,9 +88,10 @@ void PlaylistManager::deletePlaylist(std::string name) {
         if ((*it)->getName() == name) {
             listPlaylist.erase(it);
             std::cout << "Playlist deleted successfully.\n";
-            return;
+            return true;
         }
     }
+    return false;
 }
 
 

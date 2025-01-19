@@ -4,6 +4,7 @@
 
 #include "../Model/Playlist.h"
 #include "../Model/MediaFileManager.h"
+#include "../Model/FolderManager.h"
 #include "../View/PlaylistHandlerView.h"  
 
 #include "../utils/PlaylistHandlerException.h"
@@ -13,18 +14,25 @@
 class MediaPlaylistController{
     private:
         MediaFileManager& mediaFileManager;
+        FolderManager& folderManager;
         std::shared_ptr<Playlist> playlist;
+        
+        std::shared_ptr<BaseView> mediaManagerView;
         std::shared_ptr<BaseView> playlistHandlerView;
     public:
-        MediaPlaylistController(MediaFileManager& , std::shared_ptr<Playlist>, std::shared_ptr<BaseView>);
+        MediaPlaylistController(MediaFileManager&, FolderManager& , std::shared_ptr<Playlist>, std::shared_ptr<BaseView>, std::shared_ptr<BaseView>);
         
         void handlerPlaylist();
 
-        void addMediaFile(std::shared_ptr<MediaFile>);
+        bool addMediaFileInPlaylist(std::string);
 
-        void deleteMediaFile();
+        bool addMediaFileByFolder();
 
-        void displayAllMediaFiles();
+        bool deleteMediaFileInPlaylist(std::string );
+
+        void displayAllMediaFilesInPlaylist();
+
+        int displayMenuAndPlaylist();
 
 };
 
