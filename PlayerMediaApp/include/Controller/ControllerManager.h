@@ -32,8 +32,8 @@ class ControllerManager{
     public:
         ControllerManager(ModelManager, ViewManager);
         
-        std::shared_ptr<BaseView> getView(const std::string&);
-        bool getYesNoInput(const std::string&);
+        std::shared_ptr<BaseView> getView(const std::string& viewName);
+        bool getYesNoInput(const std::string& prompt);
 
         void runApp();
 

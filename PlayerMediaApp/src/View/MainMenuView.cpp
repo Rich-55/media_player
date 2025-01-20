@@ -92,19 +92,51 @@ int MainMenuView::showMenu() {
 }
 
 int MainMenuView::showMenuWithPlayer(MediaFileManager mediaFileManager, std::shared_ptr<PlayerController>& playerController, std::string typePlay, std::string& singleMedia, std::vector<std::string>& listMedia) {
-    
     static bool clear_required = true; // Đảm bảo xóa màn hình chỉ xảy ra 1 lần
+    int volume = playerController ? playerController->getVolume() : 100;
+    bool is_repeat = playerController ? playerController->isRepeat() : false;
+    bool is_pause = playerController ? playerController->isPause() : true;
+    bool is_stoped = false;
+    int selected = 0; // Chỉ số menu (0-based index)
+    const int rows_per_page = 25; // Số lượng media mỗi trang
+    const int scroll_visible_rows = 10; // Số hàng hiển thị khi cuộn
+    int current_page = 0;         // Trang hiện tại
+    int total_pages = std::ceil((double)listMedia.size() / rows_per_page);
+    int scroll_offset = 0;
+    int current_index = -1;
+    
+
+    std::string error_message;
+
+    int button_result = -1;
 
     // Xóa màn hình khi bắt đầu hiển thị
     if (clear_required) {
         system("clear");
         clear_required = false;
     }
+
     std::shared_ptr<MediaFile> media = nullptr;
-    if (!singleMedia.empty() && typePlay == "single") {
+    if (typePlay == "single" && !singleMedia.empty()) {
         media = mediaFileManager.getMediaFileByPath(singleMedia);
+        playerController->togglePlayback();
+        is_pause = playerController->isPause(); 
     }
 
+    if(typePlay == "playlist" && !listMedia.empty()) {
+        playerController->togglePlayback();
+        is_pause = playerController->isPause(); 
+        current_index = playerController->getCurrentIndex();
+    }
+
+    if (playerController) {
+    playerController->addObserver([&](int newIndex) {
+        current_index = newIndex; // Cập nhật chỉ số bài hát hiện tại
+        ScreenInteractive::Active()->PostEvent(Event::Custom); // Làm mới giao diện
+    });
+}
+
+    
     // Danh sách menu
     std::vector<std::string> menu_entries = {
         "1. MetadataFile Handler",
@@ -116,68 +148,78 @@ int MainMenuView::showMenuWithPlayer(MediaFileManager mediaFileManager, std::sha
         "0. Exit"
     };
 
-    int selected = 0; // Chỉ số menu (0-based index)
     auto menu = Menu(&menu_entries, &selected);
-    const int rows_per_page = 25; // Số lượng media mỗi trang
-    const int scroll_visible_rows = 10; // Số hàng hiển thị khi cuộn
-    int current_page = 0;         // Trang hiện tại
-    int total_pages = std::ceil((double)listMedia.size() / rows_per_page);
-    int scroll_offset = 0;
-    // Biến âm lượng
-    int volume = 50; // Giá trị mặc định của âm lượng (từ 0-100)
 
-    // Kết quả cuối cùng trả về
-    int button_result = -1;
-
-    // Tạo các nút điều khiển
     auto play_button = Button("Play", [&] {
-    if (playerController) {
-        playerController->togglePlayback();
-        ScreenInteractive::Active()->PostEvent(Event::Custom);
-    }
-});
+        if(typePlay == "noplay"){
+            error_message = "No media files to play.";
+        }else if (playerController ) {
+            playerController->togglePlayback();
+            is_pause = playerController->isPause(); 
+            is_stoped = false;
+            ScreenInteractive::Active()->PostEvent(Event::Custom);
+        }
+    });
 
-auto stop_button = Button("Stop", [&] {
-    if (playerController) {
-        playerController->stop();
-        ScreenInteractive::Active()->PostEvent(Event::Custom);
-    }
-});
+    auto stop_button = Button("Stop", [&] {
+        if(typePlay == "noplay"){
+            error_message = "No media files to play.";
+        }else if (playerController) {
+            playerController->stop();
+            is_stoped = true;
+            ScreenInteractive::Active()->PostEvent(Event::Custom);
+        }
+    });
 
-auto repeat_button = Button("Repeat", [&] {
-    if (playerController) {
-        playerController->toggleRepeat();
-        ScreenInteractive::Active()->PostEvent(Event::Custom);
-    }
-});
+    auto repeat_button = Button("Repeat", [&] {
+        if(typePlay == "noplay"){
+            error_message = "No media files to play.";
+        }else if (playerController) {
+            playerController->toggleRepeat();
+            is_repeat = playerController->isRepeat(); // Cập nhật trạng thái repeat
+            ScreenInteractive::Active()->PostEvent(Event::Custom);
+        }
+    });
 
-auto next_button = Button("Next", [&] {
-    if (playerController) {
-        playerController->playNext();
-        ScreenInteractive::Active()->PostEvent(Event::Custom);
-    }
-});
+    auto next_button = Button("Next", [&] {
+        if(typePlay == "noplay"){
+            error_message = "No media files to play.";
+        }else if (typePlay == "single" ) {
+            error_message = "Cannot use 'Next' while playing a single track!";
+        } else if (playerController) {
+            playerController->playNext();
+            error_message.clear(); // Xóa lỗi nếu có
+            ScreenInteractive::Active()->PostEvent(Event::Custom);
+        }
+    });
 
-auto previous_button = Button("Previous", [&] {
-    if (playerController) {
-        playerController->playPrevious();
-        ScreenInteractive::Active()->PostEvent(Event::Custom);
-    }
-});
+    auto previous_button = Button("Previous", [&] {
+        if(typePlay == "noplay"){
+            error_message = "No media files to play.";
+        }else if (typePlay == "single") {
+            error_message = "Cannot use 'Previous' while playing a single track!";
+        }else if (playerController) {
+            playerController->playPrevious();
+            error_message.clear(); // Xóa lỗi nếu có
+            ScreenInteractive::Active()->PostEvent(Event::Custom);
+        }
+    });
 
-auto volume_up_button = Button("+ Volume", [&] {
-    if (playerController) {
-        playerController->increaseVolume(10);
-        ScreenInteractive::Active()->PostEvent(Event::Custom);
-    }
-});
+    auto volume_up_button = Button("+ Volume", [&] {
+        if (playerController) {
+            playerController->increaseVolume(10);
+            volume = playerController->getVolume(); // Cập nhật lại volume
+            ScreenInteractive::Active()->PostEvent(Event::Custom);
+        }
+    });
 
-auto volume_down_button = Button("- Volume", [&] {
-    if (playerController) {
-        playerController->decreaseVolume(10);
-        ScreenInteractive::Active()->PostEvent(Event::Custom);
-    }
-});
+    auto volume_down_button = Button("- Volume", [&] {
+        if (playerController) {
+            playerController->decreaseVolume(10);
+            volume = playerController->getVolume(); // Cập nhật lại volume
+            ScreenInteractive::Active()->PostEvent(Event::Custom);
+        }
+    });
 
     // Tạo container cho các nút
     auto button_container = Container::Horizontal({
@@ -187,13 +229,30 @@ auto volume_down_button = Button("- Volume", [&] {
     // Renderer cho trạng thái nhạc và thông tin file nhạc
     auto media_info_renderer = Renderer([&] {
         std::vector<Element> metadata_elements;
+
+        // Lấy trạng thái nhạc (Playing hoặc Paused)
+        std::string music_status;
+        
+        if(is_pause) {
+            music_status = "Paused";
+        } else {
+            music_status = "Playing";
+        }
+
+        if(is_stoped) {
+            music_status = "Stoped";
+        }
+        
+
         if (typePlay == "noplay") {
             // Trường hợp không có bài hát nào đang phát
             return vbox({
                 text("=== Music Status ===") | bold | center,
                 text("No music is playing.") | center,
                 separator(),
-                text("Volume: " + std::to_string(volume)) | center
+                text("Volume: " + std::to_string(volume)) | center,
+                separator(),
+                text(error_message) | color(Color::Red) | center // Hiển thị lỗi
             }) | border;
         } else if (typePlay == "single" && media) {
             // Trường hợp phát một bài hát
@@ -204,15 +263,18 @@ auto volume_down_button = Button("- Volume", [&] {
             return vbox({
                 text("=== Music Status ===") | bold | center,
                 text("Currently playing: " + singleMedia) | center,
+                text("Current State: " + music_status) | center,
+                text("Repeat: " + std::string(is_repeat ? "ON" : "OFF")) | center,
                 text("Duration: " + media->getDuration()) | center,
                 separator(),
                 text("Volume: " + std::to_string(volume)) | center,
                 separator(),
                 text("Media Info:") | bold,
-                vbox(std::move(metadata_elements))
+                vbox(std::move(metadata_elements)),
+                separator(),
+                text(error_message) | color(Color::Red) | center // Hiển thị lỗi
             }) | border;
-        } else if (typePlay == "playlist" && !listMedia.empty()) {
-            // Tạo giao diện danh sách media
+        }else if (typePlay == "playlist" && !listMedia.empty()) {
             std::vector<ftxui::Element> rows;
 
             if (listMedia.empty()) {
@@ -229,28 +291,39 @@ auto volume_down_button = Button("- Volume", [&] {
                 for (int i = start_index + scroll_offset;
                     i < std::min(start_index + scroll_offset + scroll_visible_rows, end_index);
                     ++i) {
+                    bool is_current = (i == current_index); // Sử dụng `current_index` thay vì gọi hàm
                     rows.push_back(ftxui::hbox({
                         text(std::to_string(i + 1)) | size(WIDTH, EQUAL, 5) | border,
                         text(listMedia[i]) | size(WIDTH, EQUAL, 30) | border,
-                    }));
+                    }) | (is_current ? bgcolor(Color::Green) : nothing)); // Đổi màu nền nếu là bài đang phát
                 }
             }
 
             return ftxui::vbox({
-                ftxui::text("----- All Media File -----") | ftxui::bold | ftxui::center | ftxui::color(ftxui::Color::Blue),
-                ftxui::text("Page " + std::to_string(current_page + 1) + " of " + std::to_string(total_pages)) | ftxui::center,
+                text("=== Music Status ===") | bold | center,
+                text("Current State: " + music_status) | center,
+                text("Repeat: " + std::string(is_repeat ? "ON" : "OFF")) | center,
+                text("Volume: " + std::to_string(volume)) | center,
+                separator(),
+                text("Currently Playing: " + (current_index >= 0 && current_index < (int)listMedia.size() ? listMedia[current_index] : "None")) | center | color(Color::Yellow),
+                separator(),
+                text("----- All Media File -----") | ftxui::bold | ftxui::center | ftxui::color(ftxui::Color::Blue),
+                text("Page " + std::to_string(current_page + 1) + " of " + std::to_string(total_pages)) | ftxui::center,
                 ftxui::separator(),
                 ftxui::vbox(std::move(rows)) | ftxui::vscroll_indicator | ftxui::frame | ftxui::border,
+                separator(),
+                text(error_message) | color(Color::Red) | center // Hiển thị lỗi
             });
         }
-
 
         // Trường hợp không xác định
         return vbox({
             text("=== Music Status ===") | bold | center,
             text("No valid playback type.") | center,
             separator(),
-            text("Volume: " + std::to_string(volume)) | center
+            text("Volume: " + std::to_string(volume)) | center,
+            separator(),
+            text(error_message) | color(Color::Red) | center // Hiển thị lỗi
         }) | border;
     });
 
@@ -286,54 +359,52 @@ auto volume_down_button = Button("- Volume", [&] {
 
     // Xử lý sự kiện
     auto final_component = CatchEvent(main_component, [&](Event event) {
-        // Xử lý khi nhấn Enter
         if (event == Event::Return) {
-            if (selected == static_cast<int>(menu_entries.size() - 1)) { // Nếu chọn "0. Exit"
-                button_result = 0; // Trả về 0
+            if (selected == static_cast<int>(menu_entries.size() - 1)) {
+                button_result = 0;
             } else {
-                button_result = selected + 1; // Chọn mục trong menu
+                button_result = selected + 1;
             }
             screen.ExitLoopClosure()();
             return true;
         }
 
-        // Khi nhấn phím số (0-9)
         if (event.is_character() && std::isdigit(event.character()[0])) {
             int number = event.character()[0] - '0';
             if (number >= 0 && number < static_cast<int>(menu_entries.size())) {
-                button_result = number == 0 ? 0 : number; // Nếu nhấn '0', trả về 0
+                button_result = number == 0 ? 0 : number;
                 screen.ExitLoopClosure()();
                 return true;
             }
         }
 
-        // Khi di chuyển bằng phím mũi tên
         if (event == Event::ArrowUp || event == Event::ArrowDown) {
-            menu->OnEvent(event); // Di chuyển trong menu
+            menu->OnEvent(event);
             return true;
         }
 
-        // Xử lý chuột cho menu
         if (event.is_mouse() && event.mouse().button == Mouse::Left && event.mouse().motion == Mouse::Pressed) {
-            int clicked_index = event.mouse().y - 3; // Tính toán chỉ số mục được click
+            int clicked_index = event.mouse().y - 3;
             if (clicked_index >= 0 && clicked_index < static_cast<int>(menu_entries.size())) {
-                button_result = clicked_index == static_cast<int>(menu_entries.size() - 1) ? 0 : clicked_index + 1; // Nếu click vào "0. Exit", trả về 0
+                button_result = clicked_index == static_cast<int>(menu_entries.size() - 1) ? 0 : clicked_index + 1;
                 screen.ExitLoopClosure()();
                 return true;
             }
         }
+
         if (event == Event::ArrowLeft) {
             if (current_page > 0) {
                 --current_page;
-                scroll_offset = 0; // Reset offset khi chuyển trang
-            } 
+                scroll_offset = 0;
+            }
             return true;
         }
+
         if (event == Event::ArrowRight) {
             if (current_page < total_pages - 1) {
                 ++current_page;
-                scroll_offset = 0; // Reset offset khi chuyển trang
-            } 
+                scroll_offset = 0;
+            }
             return true;
         }
 
@@ -352,12 +423,10 @@ auto volume_down_button = Button("- Volume", [&] {
             return true;
         }
 
-        return false; // Không xử lý các sự kiện khác
+        return false;
     });
 
-    // Bắt đầu vòng lặp giao diện
     screen.Loop(final_component);
 
-    // Trả về lựa chọn từ menu hoặc nút
     return button_result;
 }

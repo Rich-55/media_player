@@ -5,80 +5,73 @@ PlaylistManagerView::PlaylistManagerView(){}
 void PlaylistManagerView::showNotificationMessage(std::string message, std::string type){BaseView::showNotificationMessage(message, type);}
 
 bool PlaylistManagerView::showConfirmMenu(std::string message){return BaseView::showConfirmMenu(message);}
+//not use
+int PlaylistManagerView::showMenu() {return -1;}
 
-int PlaylistManagerView::showMenu() {
-    std::vector<std::string> menu_entries = {
-        "1. Create new playlist",
-        "2. Delete playlist",
-        "3. Show all playlists",
-        "0. Exit"
+std::string PlaylistManagerView::showMenuCreatePlaylist() {
+
+    std::string input = "";
+    std::string error_message = "";
+    auto isValidName = [](const std::string& name) {
+    std::regex valid_regex("^[a-zA-Z0-9 _-]+$");
+            return std::regex_match(name, valid_regex);
     };
-
-    std::vector<int> logic_mapping = {1, 2, 3, 0}; // Liên kết mục menu với logic tương ứng
-
-    int selected = 0; // Vị trí được chọn ban đầu
-    std::string error_message; // Lưu thông báo lỗi nếu có
-    int final_selected = -1; // Kết quả trả về cuối cùng
-
-    auto menu = Menu(&menu_entries, &selected);
     auto screen = ScreenInteractive::TerminalOutput();
 
-    auto main_component = Renderer(menu, [&] {
+    auto input_box = Input(&input, "Enter playlist name...");
+
+    auto confirm_button = Button("Confirm", [&] {
+        if (input.empty()) {
+            error_message = "Error: Playlist name cannot be empty!";
+        } else if (input == "0") {
+            screen.ExitLoopClosure()();
+            input = "";
+        } else if (!isValidName(input)) {
+            error_message = "Error: Playlist name contains invalid characters!";
+        } else {
+            error_message = "";
+            screen.ExitLoopClosure()();
+        }
+    });
+
+    auto cancel_button = Button("Cancel (Return 0)", [&] {
+        input = "";
+        screen.ExitLoopClosure()();
+    });
+
+    auto layout = Renderer(Container::Vertical({
+        input_box,
+        confirm_button,
+        cancel_button,
+    }), [&] {
         return vbox({
-            text("============ Playlist Manager ===========") | bold | center,
+            text("Create New Playlist") | bold | center,
             separator(),
-            menu->Render() | border, // Hiển thị menu
+            text("Enter the name of your playlist or press '0' to cancel.") | center,
+            text("Note: Only letters, numbers, spaces, underscores, and dashes are allowed.") | dim | center,
             separator(),
-            text("Use UP/DOWN keys, numbers (0-9), or click to navigate. Press ENTER to select.") | dim | center,
+            hbox({
+                text("Playlist Name: "),
+                input_box->Render(),
+            }) | center,
             separator(),
-            text(error_message) | color(Color::Red) | center // Hiển thị lỗi nếu có
+            hbox({
+                confirm_button->Render(),
+                text(" "),
+                cancel_button->Render(),
+            }) | center,
+            separator(),
+            text(error_message) | color(Color::Red) | center,
         });
     });
 
-    main_component = CatchEvent(main_component, [&](Event event) {
-        if (event == Event::Return) {
-            final_selected = logic_mapping[selected]; // Gán giá trị mục được chọn
-            screen.ExitLoopClosure()(); // Thoát khỏi giao diện
-            return true;
-        }
+    screen.Loop(layout);
 
-        if (event.is_character() && std::isdigit(event.character()[0])) {
-            int number = event.character()[0] - '0'; // Lấy số từ ký tự
-            auto it = std::find(logic_mapping.begin(), logic_mapping.end(), number);
-            if (it != logic_mapping.end()) {
-                final_selected = number; // Gán kết quả theo số được nhập
-                screen.ExitLoopClosure()(); // Thoát khỏi giao diện
-                return true;
-            } else {
-                error_message = "Invalid input: number not in menu!"; // Số nhập không hợp lệ
-                return true;
-            }
-        }
-
-        if (event.is_mouse() && event.mouse().button == Mouse::Left && event.mouse().motion == Mouse::Pressed) {
-            int clicked_index = event.mouse().y - 3; // Căn chỉnh nếu cần
-            if (clicked_index >= 0 && clicked_index < (int)menu_entries.size()) {
-                final_selected = logic_mapping[clicked_index]; // Gán kết quả theo mục nhấn chuột
-                screen.ExitLoopClosure()(); // Thoát khỏi giao diện
-                return true;
-            } else {
-                error_message = "Invalid click: out of menu range!"; // Click ngoài menu
-                return true;
-            }
-        }
-
-        if (event == Event::ArrowUp || event == Event::ArrowDown) {
-            menu->OnEvent(event); // Xử lý sự kiện mũi tên
-            return true;
-        }
-
-        return false; // Không xử lý sự kiện khác
-    });
-
-    screen.Loop(main_component);
-
-    return final_selected; // Trả về giá trị mục được chọn
+    return input;
 }
+
+
+
 
 int PlaylistManagerView::showMenuWithPlaylist(std::vector<std::shared_ptr<Playlist>> listPlaylist)
 {

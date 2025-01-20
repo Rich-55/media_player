@@ -17,7 +17,6 @@ void BaseView::showNotificationMessage(std::string message, std::string type)
     Render(screen, notification_message);
     screen.Print(); 
 }
-
 bool BaseView::showConfirmMenu(std::string message)
 {
     // Chỉ mục được chọn
@@ -87,24 +86,27 @@ bool BaseView::showConfirmMenu(std::string message)
 
 int BaseView::showMenuWithPlayer(MediaFileManager, std::shared_ptr<PlayerController>&, std::string , std::string&, std::vector<std::string>&){return -999;}
 
+//view for media file manager
 std::string BaseView::displayAllMediaFile(MediaFileManager){return "";}
 std::string BaseView::displayAllMediaFileOfAudio(MediaFileManager){return "";}
 std::string BaseView::displayAllMediaFileOfVideo(MediaFileManager){return "";}
 int BaseView::showMenuWithMediaList(MediaFileManager){return -1;}
 
-
+//view for metadata file
 void BaseView::displayDetailMediaFile(std::shared_ptr<MediaFile>, std::string){}
 std::pair<std::string, std::string> BaseView::displayMenuAddMetadata(std::shared_ptr<MediaFile>, std::string){return {};}
 std::pair<std::string, std::string> BaseView::displayMenuEditMetadata(std::shared_ptr<MediaFile>, std::string){return {};}
 std::string BaseView::displayMenuDeleteMetadata(std::shared_ptr<MediaFile>){return "";}
-
-std::string BaseView::displayAllPlaylist(PlaylistManager){return "";}
+//view for playlist handler
 std::string BaseView::displayAllMediaFileInPlaylist(std::shared_ptr<Playlist>){return "";}
 int BaseView::showMenuWithMediaList(std::shared_ptr<Playlist>){return -1;}
 std::pair<std::string, std::string> BaseView::displayAllFolder(std::pair<std::unordered_set<std::string> , std::unordered_set<std::string> >){return {};}
-
+//view for playlist manager
 int BaseView::showMenuWithPlaylist(std::vector<std::shared_ptr<Playlist>>){return -1;}
+std::string BaseView::showMenuCreatePlaylist(){return "";}
+std::string BaseView::displayAllPlaylist(PlaylistManager){return "";}
 
+//view for scan manager
 int BaseView::showListFolder(std::vector<std::string>){return -1;}
 int BaseView::showListUSBName(std::vector<std::string>) {return -1;}
 void BaseView::setListPathNameIsAdded(std::unordered_set<std::string>){}

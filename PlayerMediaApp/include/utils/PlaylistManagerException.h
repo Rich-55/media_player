@@ -4,6 +4,9 @@
 #include <exception>
 #include <string>
 #include <limits>
+#include <regex>
+
+
 
 class PlaylistManagerException : public std::exception {
 public:

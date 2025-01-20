@@ -9,7 +9,7 @@
 
 #include <cmath>
 #include <stdexcept>
-
+#include <regex>
 
 using namespace ftxui;
 //MainMenu
@@ -19,6 +19,7 @@ using namespace ftxui;
 #define PLAYLIST_MANAGER 4
 #define PLAY_MUSIC 5
 #define PLAY_PLAYLIST 6
+#define PLAY_VIDEO 7
 #define EXIT_MAIN_MENU 0
 //Player
 #define PLAY_PAUSE -2

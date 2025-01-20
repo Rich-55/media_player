@@ -18,7 +18,7 @@ PlayerController::PlayerController(const std::vector<std::string>& files)
       currentIndex(0), 
       playing(false), 
       paused(false), 
-      manualTransition(false), // Đặt `manualTransition` trước `repeat`
+      manualTransition(false),
       repeat(false) 
 {
     instance = this;
@@ -29,12 +29,26 @@ PlayerController::~PlayerController() {
     stopPlaybackThread();
 }
 
+void PlayerController::addObserver(std::function<void(int)> observer) {
+    observers.push_back(observer);
+}
+
+void PlayerController::notifyObservers() {
+    for (auto& observer : observers) {
+        observer(currentIndex); // Gửi chỉ số hiện tại đến tất cả các Observer
+    }
+}
+
+size_t PlayerController::getCurrentIndex() {
+    std::unique_lock<std::recursive_mutex> lock(stateMutex);
+    return currentIndex;
+}
+
 void PlayerController::setVolume(int newVolume) {
     if (newVolume < 0) newVolume = 0;
     if (newVolume > MIX_MAX_VOLUME) newVolume = MIX_MAX_VOLUME;
     volume = newVolume;
     Mix_VolumeMusic(volume);  // Apply the volume change to the music playback
-    std::cout << "Volume set to: " << volume << "\n";
 }
 
 void PlayerController::increaseVolume(int increment) {
@@ -45,6 +59,13 @@ void PlayerController::decreaseVolume(int decrement) {
     setVolume(volume - decrement);
 }
 
+int PlayerController::getVolume() {
+    return volume;
+}
+
+bool PlayerController::isRepeat() {
+    return repeat;
+}
 
 void PlayerController::play() {
     
@@ -56,10 +77,13 @@ void PlayerController::play() {
     stopPlaybackThread(); // Stop any existing playback thread
 
     const std::string& file = mediaFiles[currentIndex];
-    std::cout<<  "currIndex: " << currentIndex  <<std::endl;
-    std::cout << "Playing: " << file << "\n";
 
     playbackThread = std::thread(&PlayerController::playbackWorker, this, file);
+}
+
+bool PlayerController::isPlaying() {
+    std::unique_lock<std::recursive_mutex> lock(stateMutex);
+    return playing;
 }
 
 
@@ -71,8 +95,12 @@ void PlayerController::pause() {
     }
     paused = true;
     Mix_PauseMusic();
-    std::cout << "Playback paused.\n";
 }
+
+bool PlayerController::isPause() {
+    std::unique_lock<std::recursive_mutex> lock(stateMutex);
+    return paused;
+}   
 
 void PlayerController::resume() {
     std::unique_lock<std::recursive_mutex> lock(stateMutex);
@@ -82,7 +110,6 @@ void PlayerController::resume() {
     }
     paused = false;
     Mix_ResumeMusic();
-    std::cout << "Playback resumed.\n";
 }
 
 void PlayerController::togglePlayback() {
@@ -93,12 +120,10 @@ void PlayerController::togglePlayback() {
             // Resume playback if paused
             paused = false;
             Mix_ResumeMusic();
-            std::cout << "Playback resumed.\n";
         } else {
             // Pause playback if currently playing
             paused = true;
             Mix_PauseMusic();
-            std::cout << "Playback paused.\n";
         }
     } else {
         // Start playing new media if nothing is playing
@@ -110,7 +135,6 @@ void PlayerController::togglePlayback() {
 void PlayerController::toggleRepeat() {
     std::unique_lock<std::recursive_mutex> lock(stateMutex);
     repeat = !repeat;
-    std::cout << "Repeat mode " << (repeat ? "enabled" : "disabled") << ".\n";
 }
 
 
@@ -121,7 +145,6 @@ void PlayerController::stop() {
     manualTransition = true; 
     lock.unlock();
     stopPlaybackThread();
-    // std::cout << "Playback stopped.\n";
 }
 
 
@@ -130,6 +153,7 @@ void PlayerController::playNext() {
     {
         std::unique_lock<std::recursive_mutex> lock(stateMutex);
         currentIndex = (currentIndex + 1) % mediaFiles.size();
+        instance->notifyObservers();
     }
     play();
 }
@@ -139,6 +163,7 @@ void PlayerController::playPrevious() {
     {
         std::unique_lock<std::recursive_mutex> lock(stateMutex);
         currentIndex = (currentIndex == 0) ? mediaFiles.size() - 1 : currentIndex - 1;
+        instance->notifyObservers();
     }
     play();
 }
@@ -181,36 +206,87 @@ void PlayerController::playbackWorker(const std::string& file) {
     playing = false;
 }
 
-static int i = 0;
+static int indexPlay = 0; // Ensure i persists across calls
 
 void PlayerController::musicFinishedCallback() {
-    if (instance) {
-        std::unique_lock<std::recursive_mutex> lock(instance->stateMutex);
-        if (instance->manualTransition == false) {
-            if (!instance->repeat) {
-                {
-                    std::unique_lock<std::recursive_mutex> lock(instance->stateMutex);
-                    instance->currentIndex = (instance->currentIndex + 1) % instance->mediaFiles.size();
-                }
-            }
-        } else {
-            if (i >= 2) { 
-                i = 0;
-                {
-                    std::unique_lock<std::recursive_mutex> lock(instance->stateMutex);
-                    instance->manualTransition = false;
-                }
-            } else {
-                ++i;
-            }
-        }
-        const std::string& file = instance->mediaFiles[instance->currentIndex];
 
+    if (instance) {
+
+        std::unique_lock<std::recursive_mutex> lock(instance->stateMutex);
+ 
+        if (instance->manualTransition == false) {
+
+            if (!instance->repeat) {
+
+                // Increment index and check if it has reached the end
+
+                {
+
+                    std::unique_lock<std::recursive_mutex> lock(instance->stateMutex);
+
+                    instance->currentIndex++;
+
+                    if (instance->currentIndex >= instance->mediaFiles.size()) {
+
+                        // Index has reached the end
+
+
+                        Mix_HaltMusic(); // Call Mix_HaltMusic to stop the music
+
+                        instance->currentIndex = 0; // Reset index if necessary
+                        instance->notifyObservers();
+
+                        return; // Exit the function as no further playback is needed
+
+                    }
+
+                }
+                        instance->notifyObservers();
+            }
+
+        } else {
+
+
+            if (indexPlay >= 2) {
+
+                indexPlay = 0;
+
+                {
+
+                    std::unique_lock<std::recursive_mutex> lock(instance->stateMutex);
+
+                    instance->manualTransition = false;
+
+                }
+
+            } else {
+
+                ++indexPlay;
+
+            }
+
+        }
+ 
+        const std::string& file = instance->mediaFiles[instance->currentIndex];
+ 
         Mix_Music* music = Mix_LoadMUS(file.c_str());
-        Mix_VolumeMusic(volume);
-        Mix_PlayMusic(music, 1);
+
+        if (music) {
+
+            Mix_VolumeMusic(volume);
+
+            Mix_PlayMusic(music, 1);
+
+        } else {
+
+            std::cerr << "Failed to load music file: " << file << std::endl;
+
+        }
+
     }
+
 }
+
 
 
 void PlayerController::playAudio(const char* filePath) {

@@ -191,7 +191,6 @@ void MediaScannerController::loadFolder()
     }
 }
 
-
 void MediaScannerController::loadMediaPlaylist()
 {
     std::string directory = "database/playlist";
@@ -257,7 +256,6 @@ void MediaScannerController::scanHomeDirectory()
             return;
         }
         std::string selected_folder = folders[choice];
-        std::cout << "Scanning home directory: " << selected_folder << std::endl;
         std::vector<std::string> media_files = list_media_files(selected_folder);
         
         if(folderManager.getFolderDirectory(selected_folder) != "Folder not found."){
@@ -313,9 +311,15 @@ void MediaScannerController::scanUSBDevices() {
             return;
         }
         std::string selected_folder = folders[choiceFolder];
-        std::cout << "Scanning folder: " << selected_folder << std::endl;
 
         std::vector<std::string> files_in_folder = list_media_files(selected_folder);
+
+        if(folderManager.getFolderUSB(selected_folder) != "Folder not found."){
+            folderManager.updateFolderUSB(selected_folder);
+        }else{
+            folderManager.saveFolderUSB(selected_folder);
+        }
+        
         for (const auto &file : files_in_folder) {
             listPathToAdd.insert(file);
             listPaths.insert(file);

@@ -40,25 +40,36 @@ class PlayerController {
         std::atomic<bool> paused;
         std::thread playbackThread;
         std::recursive_mutex stateMutex;
-
         void playbackWorker(const std::string& file);
         void stopPlaybackThread();
         void playAudio(const char* filePath);
         void playVideo(const char* filePath);
         bool manualTransition;
+        bool repeat;
         Mix_Music* currentMusic;
-
+        std::vector<std::function<void(int)>> observers;
         static void musicFinishedCallback();
     public:
         PlayerController(const std::vector<std::string>& files);
         ~PlayerController();
+        
+        void addObserver(std::function<void(int)> observer);
+        void notifyObservers();
+
+        size_t getCurrentIndex();
+
         void play();
+        bool isPlaying();
+
         void pause();
+        bool isPause();
+
         void resume();
-        bool repeat;
-        void playOrResume();
         void togglePlayback();
+
         void toggleRepeat();
+        bool isRepeat();
+
         void stop();
         void playNext();
         void playPrevious();
@@ -66,6 +77,8 @@ class PlayerController {
         void increaseVolume(int increment);
         void decreaseVolume(int decrement);
 
+        int getVolume();
+        
 
 };
 
