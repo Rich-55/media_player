@@ -29,6 +29,20 @@ int main() {
     MediaController controller(mediaFiles);
     MediaView view;
 
+
+
+    /* Add this part to observer duration */
+
+    controller.addObserver([&]() {
+    int duration = controller.getPlayingDuration();
+    std::cout << "Current file duration (sec): " << duration << std::endl;
+    });
+
+
+
+
+
+
     bool exit = false;
     while (!exit) {
         view.displayMenu();
@@ -63,6 +77,8 @@ int main() {
             default:
                 std::cerr << "Invalid choice. Please try again.\n";
         }
+        // int time = controller.getPlayingDuration();
+        // std::cout<< "Duration (sec): " << time << std::endl;
     }
     return 0;
 }

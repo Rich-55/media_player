@@ -39,7 +39,6 @@ void MediaController::decreaseVolume(int decrement) {
     setVolume(volume - decrement);
 }
 
-
 void MediaController::play() {
     if (mediaFiles.empty()) {
         std::cerr << "No media files to play.\n";
@@ -51,6 +50,9 @@ void MediaController::play() {
     const std::string& file = mediaFiles[currentIndex];
     std::cout<<  "currIndex: " << currentIndex  <<std::endl;
     std::cout << "Playing: " << file << "\n";
+
+    /* add this*/
+    this->setCurrentPlayingIndex(currentIndex);
 
     playbackThread = std::thread(&MediaController::playbackWorker, this, file);
 }
@@ -105,7 +107,6 @@ void MediaController::toggleRepeat() {
     std::cout << "Repeat mode " << (repeat ? "enabled" : "disabled") << ".\n";
 }
 
-
 void MediaController::stop() {
     std::unique_lock<std::recursive_mutex> lock(stateMutex);
     playing = false;
@@ -116,12 +117,14 @@ void MediaController::stop() {
     // std::cout << "Playback stopped.\n";
 }
 
-
 void MediaController::playNext() {
     stop();
     {
         std::unique_lock<std::recursive_mutex> lock(stateMutex);
         currentIndex = (currentIndex + 1) % mediaFiles.size();
+
+        /* add this*/
+        this->setCurrentPlayingIndex(currentIndex);
     }
     play();
 }
@@ -131,6 +134,9 @@ void MediaController::playPrevious() {
     {
         std::unique_lock<std::recursive_mutex> lock(stateMutex);
         currentIndex = (currentIndex == 0) ? mediaFiles.size() - 1 : currentIndex - 1;
+
+        /* add this*/
+        this->setCurrentPlayingIndex(currentIndex);
     }
     play();
 }
@@ -144,6 +150,68 @@ void MediaController::stopPlaybackThread() {
         playbackThread.join();
     }
 }
+
+
+
+
+
+
+
+
+/* added methods for Duration */
+
+
+int MediaController::calculateDuration(const std::string& filePath) {
+    TagLib::File *file = nullptr;
+
+    if (filePath.ends_with(".mp3")) {
+        file = new TagLib::MPEG::File(filePath.c_str());
+    } else if (filePath.ends_with(".mp4")) {
+        file = new TagLib::MP4::File(filePath.c_str());
+    } else {
+        std::cerr << "Unsupported file format: " << filePath << "\n";
+        return -1;
+    }
+
+    if (file && file->audioProperties()) {
+        TagLib::AudioProperties *properties = file->audioProperties();
+        int duration = properties->length(); // Duration in seconds
+        delete file; // Cleanup before returning
+        return duration;
+    } else {
+        std::cerr << "Could not retrieve audio properties for file: " << filePath << std::endl;
+    }
+    delete file;
+    return -1;
+}
+
+
+int MediaController::getPlayingDuration() {
+    if (currentIndex >= mediaFiles.size()) {
+    std::cerr << "Invalid index!" << std::endl;
+    return -1;
+    }
+
+    const std::string& filePath = mediaFiles[currentIndex];
+
+    // Check if the duration is already cached
+    if (durationCache.find(filePath) != durationCache.end()) {
+        std::cout << "Fetching duration from cache for file: " << filePath << std::endl; // Comment out this part when merge
+        return durationCache[filePath];
+    }
+
+    // Calculate the duration if not cached (simulated)
+    int duration = calculateDuration(filePath);
+    durationCache[filePath] = duration; // Cache the duration
+    return duration;
+}
+
+
+
+
+
+
+
 
 void MediaController::playbackWorker(const std::string& file) {
     try {
@@ -180,13 +248,28 @@ void MediaController::musicFinishedCallback() {
         std::unique_lock<std::recursive_mutex> lock(instance->stateMutex);
         if (instance->manualTransition == false) {
             if (!instance->repeat) {
+                // Increment index and check if it has reached the end
                 {
                     std::unique_lock<std::recursive_mutex> lock(instance->stateMutex);
-                    instance->currentIndex = (instance->currentIndex + 1) % instance->mediaFiles.size();
+                    instance->currentIndex++;
+
+                    /* add this*/
+                    instance->setCurrentPlayingIndex(instance->currentIndex);
+
+                    if (instance->currentIndex >= instance->mediaFiles.size()) {
+                        std::cout << "reach end" << std::endl;
+                        Mix_HaltMusic();
+                        instance->currentIndex = 0;
+
+                        /* add this*/
+                        instance->setCurrentPlayingIndex(instance->currentIndex);
+                        return;
+                    }
                 }
             }
         } else {
-            if (i >= 2) { 
+            static int i = 0; // Ensure i persists across calls
+            if (i >= 2) {
                 i = 0;
                 {
                     std::unique_lock<std::recursive_mutex> lock(instance->stateMutex);
@@ -196,14 +279,18 @@ void MediaController::musicFinishedCallback() {
                 ++i;
             }
         }
+
         const std::string& file = instance->mediaFiles[instance->currentIndex];
 
         Mix_Music* music = Mix_LoadMUS(file.c_str());
-        Mix_VolumeMusic(volume);
-        Mix_PlayMusic(music, 1);
+        if (music) {
+            Mix_VolumeMusic(volume);
+            Mix_PlayMusic(music, 1);
+        } else {
+            std::cerr << "Failed to load music file: " << file << std::endl;
+        }
     }
 }
-
 
 void MediaController::playAudio(const char* filePath) {
     if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
@@ -216,7 +303,8 @@ void MediaController::playAudio(const char* filePath) {
         throw std::runtime_error("Failed to load audio file: " + std::string(Mix_GetError()));
     }
 
-    Mix_HookMusicFinished(nullptr);
+    // Mix_HookMusicFinished(nullptr);
+    
     Mix_HookMusicFinished(MediaController::musicFinishedCallback);
 
     Mix_VolumeMusic(volume);
@@ -230,16 +318,17 @@ void MediaController::playAudio(const char* filePath) {
                 break;
             }
             if (paused) {
+                // SDL_Delay(10);
                 continue;
             }
         }
+        SDL_Delay(50);
     }
 
     Mix_FreeMusic(music);
     Mix_CloseAudio();
 }
 
-// Audio callback function for SDL
 void audioCallback(void* userdata, Uint8* stream, int len) {
     AVCodecContext* audioCodecContext = (AVCodecContext*)userdata;
     int16_t* out_stream = (int16_t*)stream;
@@ -450,6 +539,10 @@ void MediaController::playVideo(const char* filePath) {
 
     // Calculate frame delay
     double frameDelay = 40.0; // Default for ~25 FPS
+    // if (formatContext->streams[videoStreamIndex]->avg_frame_rate.num > 0) {
+    //     double fps = av_q2d(formatContext->streams[videoStreamIndex]->avg_frame_rate);
+    //     frameDelay = 1000.0 / fps; // Convert to milliseconds
+    // }
 
     while (av_read_frame(formatContext, &packet) >= 0 && !quit) {
         if (packet.stream_index == videoStreamIndex) {
@@ -471,6 +564,19 @@ void MediaController::playVideo(const char* filePath) {
                             SDL_Delay(static_cast<Uint32>(frameDelay * 1000));
                         }
                     }
+
+                    // if (packet.pts != AV_NOPTS_VALUE) {
+                    //     double videoPTS = av_q2d(formatContext->streams[videoStreamIndex]->time_base) * frame->best_effort_timestamp;
+
+                    //     // Use SDL_GetPerformanceCounter() for higher precision
+                    //     Uint64 currentTimeTicks = SDL_GetPerformanceCounter();
+                    //     double currentTime = static_cast<double>(currentTimeTicks) / SDL_GetPerformanceFrequency();
+
+                    //     double frameDelay = videoPTS - currentTime;
+                    //     if (frameDelay > 0) {
+                    //         SDL_Delay(static_cast<Uint32>(frameDelay * 1000));
+                    //     }
+                    // }
 
                     SDL_RenderClear(renderer);
                     SDL_RenderCopy(renderer, texture, nullptr, nullptr);
@@ -557,3 +663,5 @@ void MediaController::playVideo(const char* filePath) {
     }
     avformat_close_input(&formatContext);
 }
+
+
