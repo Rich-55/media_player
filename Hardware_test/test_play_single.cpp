@@ -13,6 +13,19 @@ void displayMenu() {
     std::cout << "Enter your choice: ";
 }
 
+// void handleMessage(const char* buffer) {
+//     if (buffer[0] == '1') {
+//         mediaController.togglePlayback();  // Play/Pause/Resume
+//     } else if (buffer[0] == '2') {
+//         mediaController.stop();  // Stop
+//     } else if (buffer[0] == 'V') {
+//         int volume = atoi(&buffer[1]);  // Extract volume value
+//         mediaController.setVolume(volume);
+//     } else {
+//         std::cerr << "Unknown command: " << buffer << "\n";
+//     }
+// }
+
 int main() {
     const std::string filePath = "song.mp3";
     std::vector<std::string> mediaFiles = {filePath};

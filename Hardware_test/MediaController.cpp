@@ -19,7 +19,6 @@ MediaController::~MediaController() {
     stopPlaybackThread();
 }
 
-
 void MediaController::setVolume(int newVolume) {
     if (newVolume < 0) newVolume = 0;
     if (newVolume > MIX_MAX_VOLUME) newVolume = MIX_MAX_VOLUME;
@@ -114,6 +113,12 @@ void MediaController::togglePlayback() {
 }
 
 void MediaController::stop() {
+    std::unique_lock<std::recursive_mutex> lock(stateMutex);
+    playing = false;
+    paused = false;
+    lock.unlock();
+
+    Mix_HaltMusic(); // Stop the looping music
     stopPlaybackThread();
     std::cout << "Playback stopped.\n";
 }
