@@ -84,7 +84,7 @@ bool BaseView::showConfirmMenu(std::string message)
     return confirmed;
 }
 
-int BaseView::showMenuWithPlayer(MediaFileManager, std::shared_ptr<PlayerController>&, std::string , std::string&, std::vector<std::string>&){return -999;}
+int BaseView::showMenuWithPlayer(MediaFileManager, std::shared_ptr<PlayerController>&, std::string , std::string&){return -999;}
 
 //view for media file manager
 std::string BaseView::displayAllMediaFile(MediaFileManager){return "";}

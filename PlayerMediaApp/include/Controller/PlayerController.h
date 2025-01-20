@@ -47,16 +47,22 @@ class PlayerController {
         bool manualTransition;
         bool repeat;
         Mix_Music* currentMusic;
-        std::vector<std::function<void(int)>> observers;
+        //observers
+        std::vector<std::function<void(int)>> observersIndex;
         static void musicFinishedCallback();
+        
+
     public:
+        
         PlayerController(const std::vector<std::string>& files);
         ~PlayerController();
         
-        void addObserver(std::function<void(int)> observer);
-        void notifyObservers();
+        void addObserverIndex(std::function<void(int)> index);
+        void notifyObserversIndex();
 
         size_t getCurrentIndex();
+        std::vector<std::string> getMediaFiles();
+        static std::string currentPlayingFile;
 
         void play();
         bool isPlaying();

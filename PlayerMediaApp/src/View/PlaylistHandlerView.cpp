@@ -13,7 +13,7 @@ int PlaylistHandlerView::showMenuWithMediaList(std::shared_ptr<Playlist> playlis
         "1. Add MediaFile",
         "2. Add MediaFile By Folder",
         "3. Delete MediaFile",
-        "0. Exit"
+        "0. Back to main menu"
     };
 
     std::vector<int> logic_mapping = {1, 2, 3, 0}; // Liên kết mục menu với logic tương ứng
@@ -38,6 +38,8 @@ int PlaylistHandlerView::showMenuWithMediaList(std::shared_ptr<Playlist> playlis
             // Tiêu đề bảng
             rows.push_back(ftxui::hbox({
                 ftxui::text("No") | ftxui::bold | ftxui::size(ftxui::WIDTH, ftxui::EQUAL, 5) | ftxui::border,
+                ftxui::text("File Name") | ftxui::bold | ftxui::size(ftxui::WIDTH, ftxui::EQUAL, 25) | ftxui::border,
+                ftxui::text("File Type") | ftxui::bold | ftxui::size(ftxui::WIDTH, ftxui::EQUAL, 10) | ftxui::border,
                 ftxui::text("Title") | ftxui::bold | ftxui::size(ftxui::WIDTH, ftxui::EQUAL, 20) | ftxui::border,
                 ftxui::text("Album") | ftxui::bold | ftxui::size(ftxui::WIDTH, ftxui::EQUAL, 20) | ftxui::border,
                 ftxui::text("Artist") | ftxui::bold | ftxui::size(ftxui::WIDTH, ftxui::EQUAL, 20) | ftxui::border,
@@ -55,6 +57,8 @@ int PlaylistHandlerView::showMenuWithMediaList(std::shared_ptr<Playlist> playlis
                 auto mediaFile = playlist->getListMediaFiles()[i];
                 rows.push_back(ftxui::hbox({
                     ftxui::text(std::to_string(i + 1)) | ftxui::size(ftxui::WIDTH, ftxui::EQUAL, 5) | ftxui::border,
+                    ftxui::text(mediaFile->getName()) | ftxui::size(ftxui::WIDTH, ftxui::EQUAL, 25) | ftxui::border,
+                    ftxui::text(mediaFile->getType()) | ftxui::size(ftxui::WIDTH, ftxui::EQUAL, 10) | ftxui::border,
                     ftxui::text(mediaFile->getMetadata("title")) | ftxui::size(ftxui::WIDTH, ftxui::EQUAL, 20) | ftxui::border,
                     ftxui::text(mediaFile->getMetadata("album")) | ftxui::size(ftxui::WIDTH, ftxui::EQUAL, 20) | ftxui::border,
                     ftxui::text(mediaFile->getMetadata("artist")) | ftxui::size(ftxui::WIDTH, ftxui::EQUAL, 20) | ftxui::border,

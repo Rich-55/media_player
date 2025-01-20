@@ -14,7 +14,6 @@ std::string VideoFile::getMetadata(const std::string& key) const
 }
 
 std::map<std::string, std::string> VideoFile::getAllMetadata() const {return metadataVideo;}
-
 void VideoFile::inputMediaFile(std::string pathName, bool isSame) {
     MediaFile::inputMediaFile(pathName, isSame);
 
@@ -31,15 +30,40 @@ void VideoFile::inputMediaFile(std::string pathName, bool isSame) {
     metadataVideo["artist"] = tag->artist().to8Bit(true).empty() ? "Unknown" : tag->artist().to8Bit(true);
     metadataVideo["year"] = tag->year() == 0 ? "Unknown" : std::to_string(tag->year());
     metadataVideo["comment"] = tag->comment().to8Bit(true).empty() ? "Unknown" : tag->comment().to8Bit(true);
+    
     TagLib::AudioProperties* audioProperties = file.audioProperties();
     if (audioProperties) {
         metadataVideo["bitrate"] = std::to_string(audioProperties->bitrate());
-        metadataVideo["resolution"] = "1920x1080"; 
-        metadataVideo["codec"] = "H.264";        
     }
+
+    AVFormatContext* formatContext = nullptr;
+    if (avformat_open_input(&formatContext, pathName.c_str(), nullptr, nullptr) != 0) {
+        return;
+    }
+
+    if (avformat_find_stream_info(formatContext, nullptr) < 0) {
+        avformat_close_input(&formatContext);
+        return;
+    }
+
+    for (unsigned int i = 0; i < formatContext->nb_streams; i++) {
+        AVStream* stream = formatContext->streams[i];
+        if (stream->codecpar->codec_type == AVMEDIA_TYPE_VIDEO) {
+            int width = stream->codecpar->width;
+            int height = stream->codecpar->height;
+            const char* codecName = avcodec_get_name(stream->codecpar->codec_id);
+
+            metadataVideo["resolution"] = std::to_string(width) + "x" + std::to_string(height);
+            metadataVideo["codec"] = codecName ? codecName : "Unknown";
+            break; 
+        }
+    }
+
+    avformat_close_input(&formatContext);
 
     setType("Video");
 }
+
 
 bool VideoFile::addNewKey(const std::string& key, const std::string& value) {
     bool check = false;

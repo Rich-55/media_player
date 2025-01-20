@@ -25,10 +25,11 @@ class ControllerManager{
         std::shared_ptr<MediaScannerController> scannerController;
         std::shared_ptr<MediaFileController> mediaFileHandlerController;
         std::shared_ptr<MediaPlaylistController> mediaPlaylistController;
-        
+        std::shared_ptr<PlayerController> playerController;
+
         std::unique_ptr<MediaFileManagerController> mediaFileManagerController;
         std::unique_ptr<MediaPlaylistManagerController> mediaPlaylistManagerController;
-        std::unique_ptr<PlayerController> playerController;
+        
     public:
         ControllerManager(ModelManager, ViewManager);
         
@@ -39,17 +40,19 @@ class ControllerManager{
 
         void ScanData();
 
+        std::string mediaFileHandler();
+
         void mediaFileManager();
 
-        void metadataFileHandler();
+        void playlistHandler();
 
         void playlistManager();
-
-        void playlistHandler();
 
         std::string playMusicHandler();
 
         std::vector<std::string> playPlaylist();
+
+        std::string playVideoHandler();
 
 };
 

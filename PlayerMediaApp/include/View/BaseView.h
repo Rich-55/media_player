@@ -20,7 +20,7 @@ class BaseView{
         virtual void showNotificationMessage(std::string, std::string);
         virtual bool showConfirmMenu(std::string);
 
-        virtual int showMenuWithPlayer(MediaFileManager, std::shared_ptr<PlayerController>&, std::string , std::string&, std::vector<std::string>&);
+        virtual int showMenuWithPlayer(MediaFileManager, std::shared_ptr<PlayerController>&, std::string, std::string&);
         //view for media file manager
         virtual std::string displayAllMediaFile(MediaFileManager);
         virtual std::string displayAllMediaFileOfAudio(MediaFileManager);

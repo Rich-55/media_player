@@ -1,7 +1,7 @@
 #include "../../include/Controller/ControllerManager.h"
 
 ControllerManager::ControllerManager(ModelManager m, ViewManager v) 
-    : model(m), view(v), scannerController(nullptr), mediaFileHandlerController(nullptr), mediaPlaylistController(nullptr), mediaFileManagerController(nullptr), mediaPlaylistManagerController(nullptr), playerController(nullptr) 
+    : model(m), view(v), scannerController(nullptr), mediaFileHandlerController(nullptr), mediaPlaylistController(nullptr), playerController(nullptr), mediaFileManagerController(nullptr), mediaPlaylistManagerController(nullptr) 
 {
 
 }
@@ -14,25 +14,6 @@ std::shared_ptr<BaseView> ControllerManager::getView(const std::string& viewName
     return viewPtr;
 }
 
-bool ControllerManager::getYesNoInput(const std::string& prompt) {
-    std::string choice;
-    while (true) {
-        std::cout << prompt;
-        std::cin >> choice;
-
-        if (std::cin.fail()) {
-            std::cin.clear();
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            throw std::runtime_error("Invalid input. Please enter Y/y or N/n.");
-            continue;
-        }
-
-        if (choice == "Y" || choice == "y") return true;
-        if (choice == "N" || choice == "n") return false;
-
-        throw std::runtime_error("Invalid input. Please enter Y/y or N/n.");
-    }
-}
 
 // ScanData function: Scan data from the folder in directory or USB
 void ControllerManager::ScanData() {
@@ -53,12 +34,10 @@ void ControllerManager::ScanData() {
     }
 }
 
-// MetadataFileHandler function: Handle metadata file (add, delete, edit)
-void ControllerManager::metadataFileHandler() {
+// Media File Handler function: Handle metadata file (add, delete, edit)
+std::string ControllerManager::mediaFileHandler() {
     try {
-
         std::string fileName;
-
         auto mediaFileHandlerView = getView("MediaFileHandlerView");
         auto mediaFileManagerView = getView("MediaFileManagerView");
 
@@ -73,9 +52,14 @@ void ControllerManager::metadataFileHandler() {
         
         fileName = mediaFileManagerController->showAllMediaFile();
         if(fileName == ""){
-            return;
+            return "exit";
         }
-        
+
+
+        if(model.getMediaFileManager().getMediaFileByPath(PlayerController::currentPlayingFile)){
+            return "File is running, can't edit";
+        }
+
         mediaFileHandlerController = std::make_shared<MediaFileController>(
             model.getMediaFile(fileName), 
             mediaFileHandlerView
@@ -85,8 +69,9 @@ void ControllerManager::metadataFileHandler() {
         
         mediaFileHandlerController->handlerMediaFile();
     } catch (const std::exception& e) {
-        std::cerr << "Error: " << e.what() << std::endl;
+        return e.what();
     }
+    return "";
 }
 
 // MediaFileManager function: Handle media file (add, delete, edit, view)
@@ -163,6 +148,15 @@ void ControllerManager::playlistHandler() {
             );
         }
 
+        if (!model.getPlaylistManager().checkPlaylist()) {
+            std::string name;
+            name = playlistManagerView->showMenuCreatePlaylist();
+            if(name == ""){
+                return;
+            }
+            mediaPlaylistManagerController->createPlaylist(name);
+        }
+
         playlistName = mediaPlaylistManagerController->displayAllPlaylist();
 
         if (playlistName == "") {
@@ -227,15 +221,14 @@ std::string ControllerManager::playMusicHandler() {
         fileName = mediaFileManagerView->displayAllMediaFileOfAudio(model.getMediaFileManager());
 
         if (fileName.empty()) {
-            return "";
+            return "exit";
         }
 
         std::string filePath = model.getMediaFileManager().getMediaFile(fileName)->getPath();
 
         return filePath;
     } catch (const std::exception& e) {
-        std::cerr << "Exception caught: " << e.what() << '\n';
-        return "";
+        return e.what();
     }
 }
 
@@ -258,14 +251,10 @@ std::vector<std::string> ControllerManager::playPlaylist() {
     }
     
     if (!model.getPlaylistManager().checkPlaylist()) {
-        if (!getYesNoInput("No playlists found. Do you want to create a new playlist? (Y/N): ")) {
-            return {};
-        }
         std::string name;
-        std::cout << "Enter the name of the playlist (type '0' to cancel): ";
-        std::getline(std::cin, name); 
-        if(name == "0"){
-            return {};
+        name = playlistManagerView->showMenuCreatePlaylist();
+        if(name == ""){
+            return {"exit"};
         }
         mediaPlaylistManagerController->createPlaylist(name);
     }
@@ -273,7 +262,7 @@ std::vector<std::string> ControllerManager::playPlaylist() {
     playlistName = mediaPlaylistManagerController->displayAllPlaylist();
 
     if (playlistName == "") {
-        return {};
+        return {"exit"};
     }
 
     mediaPlaylistController = std::make_shared<MediaPlaylistController>(
@@ -288,28 +277,55 @@ std::vector<std::string> ControllerManager::playPlaylist() {
     return mediaPlaylistController->getListPathMediaFiles();
 }
 
+std::string ControllerManager::playVideoHandler() {
+    try {
+        auto mediaFileManagerView = getView("MediaFileManagerView");
+        std::string fileName;
+
+        fileName = mediaFileManagerView->displayAllMediaFileOfVideo(model.getMediaFileManager());
+
+        if (fileName.empty()) {
+            return "exit";
+        }
+
+        std::string filePath = model.getMediaFileManager().getMediaFile(fileName)->getPath();
+
+        return filePath;
+    } catch (const std::exception& e) {
+        return e.what();
+    }
+}
+
 void ControllerManager::runApp() {
     if(model.getFolderManager().getListFolderDirectory().empty()  && model.getFolderManager().getListFolderUSB().empty()){return;}
     auto mainMenuView = getView("MainMenuView");
     std::string typePlay = "noplay"; 
     std::string media;
     std::vector<std::string> listMedia;
-    std::shared_ptr<PlayerController> playerController; 
     int choice;
-
+    std::string error;
     while (true) {
         try {
             choice = mainMenuView->showMenuWithPlayer(
                 model.getMediaFileManager(),
                 playerController,
                 typePlay,
-                media,
-                listMedia
+                error
             );
+
             switch (choice) {
                 case METADATA_FILE_HANDLER:
-                    metadataFileHandler();
+                {
+                    std::string checkError;
+                    checkError = mediaFileHandler();
+                    if(checkError == "exit"){
+                        break;
+                    }
+                    if(checkError == "File is running, can't edit"){
+                        error = checkError;
+                    }
                     break;
+                }
                 case MEDIA_FILE_MANAGER:
                     mediaFileManager();
                     break;
@@ -322,21 +338,47 @@ void ControllerManager::runApp() {
                 case PLAY_MUSIC:
                 {
                     media = playMusicHandler(); 
+                    if(media == "exit"){
+                        break;
+                    }
                     if (!media.empty()) {
                         typePlay = "single"; 
-                        std::vector<std::string> singleMedia = { media };
-                        playerController = std::make_shared<PlayerController>(singleMedia); // Tạo player controller
+                        std::vector<std::string> singleMedia;
+                        singleMedia.push_back(media);
+                        playerController = nullptr;
+                        playerController = std::make_shared<PlayerController>(singleMedia); 
+                        playerController->play();
                     }
                     break;
                 }
                 case PLAY_PLAYLIST:
                 {
-                    listMedia = playPlaylist(); 
+                    listMedia = playPlaylist();
+                    if(listMedia.size() == 1 && listMedia[0] == "exit"){
+                        break;
+                    }
                     if (!listMedia.empty()) {
                         typePlay = "playlist"; 
+                        playerController = nullptr;
                         playerController = std::make_shared<PlayerController>(listMedia); 
+                        playerController->play();
                     }else{
-                        typePlay = "noplay";
+                        error = "No media files to play.";
+                    }
+                    break;
+                }
+                case PLAY_VIDEO:
+                {
+                    media = playVideoHandler(); 
+                    if(media == "exit"){
+                        break;
+                    }
+                    if (!media.empty()) {
+                        typePlay = "single"; 
+                        std::vector<std::string> singleMedia;
+                        singleMedia.push_back(media);
+                        playerController = std::make_shared<PlayerController>(singleMedia); 
+                        playerController->play();
                     }
                     break;
                 }
@@ -346,7 +388,7 @@ void ControllerManager::runApp() {
                     throw InvalidChoiceException();
             }
         } catch (const std::exception& e) {
-            std::cerr << "Error: " << e.what() << std::endl;
+            error =  e.what();
         }
     }
 }

@@ -12,7 +12,7 @@ int audio_out_sample_rate = 44100;
 AVSampleFormat audio_out_sample_fmt = AV_SAMPLE_FMT_S16;
 
 static PlayerController* instance;
-
+std::string PlayerController::currentPlayingFile = "";
 PlayerController::PlayerController(const std::vector<std::string>& files) 
     : mediaFiles(files), 
       currentIndex(0), 
@@ -28,20 +28,25 @@ PlayerController::~PlayerController() {
     instance = nullptr; 
     stopPlaybackThread();
 }
-
-void PlayerController::addObserver(std::function<void(int)> observer) {
-    observers.push_back(observer);
+//index of song
+void PlayerController::addObserverIndex(std::function<void(int)> observerIndex) {
+    observersIndex.push_back(observerIndex);
 }
 
-void PlayerController::notifyObservers() {
-    for (auto& observer : observers) {
-        observer(currentIndex); // Gửi chỉ số hiện tại đến tất cả các Observer
+void PlayerController::notifyObserversIndex() {
+    for (auto& observer : observersIndex) {
+        observer(currentIndex); 
     }
 }
+
 
 size_t PlayerController::getCurrentIndex() {
     std::unique_lock<std::recursive_mutex> lock(stateMutex);
     return currentIndex;
+}
+
+std::vector<std::string> PlayerController::getMediaFiles() {
+    return mediaFiles;
 }
 
 void PlayerController::setVolume(int newVolume) {
@@ -153,7 +158,7 @@ void PlayerController::playNext() {
     {
         std::unique_lock<std::recursive_mutex> lock(stateMutex);
         currentIndex = (currentIndex + 1) % mediaFiles.size();
-        instance->notifyObservers();
+        instance->notifyObserversIndex();
     }
     play();
 }
@@ -163,7 +168,7 @@ void PlayerController::playPrevious() {
     {
         std::unique_lock<std::recursive_mutex> lock(stateMutex);
         currentIndex = (currentIndex == 0) ? mediaFiles.size() - 1 : currentIndex - 1;
-        instance->notifyObservers();
+        instance->notifyObserversIndex();
     }
     play();
 }
@@ -181,6 +186,7 @@ void PlayerController::stopPlaybackThread() {
 void PlayerController::playbackWorker(const std::string& file) {
     try {
         do {
+            currentPlayingFile = file;
             {
                 std::unique_lock<std::recursive_mutex> lock(stateMutex);
                 playing = true;
@@ -204,6 +210,7 @@ void PlayerController::playbackWorker(const std::string& file) {
 
     std::unique_lock<std::recursive_mutex> lock(stateMutex);
     playing = false;
+    currentPlayingFile = "";
 }
 
 static int indexPlay = 0; // Ensure i persists across calls
@@ -234,14 +241,14 @@ void PlayerController::musicFinishedCallback() {
                         Mix_HaltMusic(); // Call Mix_HaltMusic to stop the music
 
                         instance->currentIndex = 0; // Reset index if necessary
-                        instance->notifyObservers();
+                        instance->notifyObserversIndex();
 
                         return; // Exit the function as no further playback is needed
 
                     }
 
                 }
-                        instance->notifyObservers();
+                        instance->notifyObserversIndex();
             }
 
         } else {
@@ -403,9 +410,11 @@ void audioCallback(void* userdata, Uint8* stream, int len) {
 
         // Copy data to SDL's audio buffer
         int amount = std::min((int)(audioBufferSize - audioBufferIndex), len_in_samples * (int)sizeof(int16_t));
-        memcpy(out_stream, (uint8_t*)audioBuffer + audioBufferIndex, amount);
+        for (size_t i = 0; i < amount / sizeof(int16_t); ++i) {
+            ((int16_t*)stream)[i] = ((int16_t*)(audioBuffer + audioBufferIndex))[i] * volume / MIX_MAX_VOLUME;
+        }
         len_in_samples -= amount / sizeof(int16_t);
-        out_stream += amount / sizeof(int16_t);
+        stream += amount;
         audioBufferIndex += amount;
     }
 }

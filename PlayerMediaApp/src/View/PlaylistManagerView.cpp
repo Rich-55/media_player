@@ -70,9 +70,6 @@ std::string PlaylistManagerView::showMenuCreatePlaylist() {
     return input;
 }
 
-
-
-
 int PlaylistManagerView::showMenuWithPlaylist(std::vector<std::shared_ptr<Playlist>> listPlaylist)
 {
     
@@ -80,7 +77,7 @@ int PlaylistManagerView::showMenuWithPlaylist(std::vector<std::shared_ptr<Playli
         "1. Create new playlist",
         "2. Delete playlist",
         "3. Show all playlists",
-        "0. Exit"
+        "0. Back to main menu"
     };
     std::vector<int> logic_mapping = {1, 2, 3, 0}; // Liên kết mục menu với logic tương ứng
     int selected = 0; // Vị trí được chọn ban đầu
@@ -99,7 +96,7 @@ int PlaylistManagerView::showMenuWithPlaylist(std::vector<std::shared_ptr<Playli
 
         // Kiểm tra nếu playlist rỗng
         if (listPlaylist.empty()) {
-            rows.push_back(ftxui::text("No media files in the playlist.") | ftxui::bold | ftxui::center);
+            rows.push_back(ftxui::text("No playlist.") | ftxui::bold | ftxui::center);
         } else {
             // Tiêu đề bảng
             rows.push_back(

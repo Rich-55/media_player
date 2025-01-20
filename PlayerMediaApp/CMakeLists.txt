@@ -26,7 +26,10 @@ set(SRC_DIR ${CMAKE_SOURCE_DIR}/src)
 file(GLOB_RECURSE SRC_FILES
     ${SRC_DIR}/*.cpp
 )
-
+include_directories(
+    /usr/include
+    /usr/local/include
+)
 # Đặt thư mục đầu ra của tệp thực thi
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR})
 
@@ -46,6 +49,13 @@ pkg_check_modules(AVUTIL REQUIRED libavutil)
 pkg_check_modules(SWSCALE REQUIRED libswscale)
 pkg_check_modules(SWRESAMPLE REQUIRED libswresample)
 
+# Tìm thư viện FFmpeg
+find_library(AVFORMAT_LIB avformat REQUIRED)
+find_library(AVCODEC_LIB avcodec REQUIRED)
+find_library(AVUTIL_LIB avutil REQUIRED)
+find_library(SWSCALE_LIB swscale REQUIRED)
+find_library(SWRESAMPLE_LIB swresample REQUIRED)
+
 target_include_directories(${PROJECT_NAME} PRIVATE
   ${AVFORMAT_INCLUDE_DIRS}
   ${AVCODEC_INCLUDE_DIRS}
@@ -62,6 +72,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
   ${SWRESAMPLE_LIBRARIES}
 )
 
+message(STATUS "AVFormat libraries: ${AVFORMAT_LIBRARIES}")
 # Liên kết các thư viện cần thiết
 target_link_libraries(${PROJECT_NAME}
   PRIVATE
