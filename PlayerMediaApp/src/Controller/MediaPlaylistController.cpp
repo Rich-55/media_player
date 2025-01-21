@@ -8,6 +8,10 @@ std::vector<std::string> MediaPlaylistController::getListPathMediaFiles() {
     return playlist->getListPathMediaFiles();
 }
 
+void MediaPlaylistController::setNamePlaylist(std::string name) {
+    playlist->setName(name);
+}
+
 bool MediaPlaylistController::addMediaFileInPlaylist(std::string fileName) {
     std::shared_ptr<MediaFile> mediaFile = mediaFileManager.getMediaFile(fileName);
     if (playlist->checkMediaFile(mediaFile->getName())) {
@@ -105,9 +109,9 @@ void MediaPlaylistController::displayAllMediaFilesInPlaylist()
     playlistHandlerView->displayAllMediaFileInPlaylist(playlist);
 }
 
-int MediaPlaylistController::displayMenuAndPlaylist()
+int MediaPlaylistController::showMenuWithMediaListInPlaylist()
 {
-    return playlistHandlerView->showMenuWithMediaList(playlist);
+    return playlistHandlerView->showMenuWithMediaListInPlaylist(playlist);
 }
 
 void MediaPlaylistController::handlerPlaylist() {
@@ -128,7 +132,7 @@ void MediaPlaylistController::handlerPlaylist() {
                 error = "";
             }
             
-            choice = displayMenuAndPlaylist();
+            choice = showMenuWithMediaListInPlaylist();
            
             switch (choice) {
             case ADD_MEDIA_FILE_TO_PLAYLIST:
@@ -137,7 +141,7 @@ void MediaPlaylistController::handlerPlaylist() {
 
                 fileName = mediaManagerView->displayAllMediaFile(mediaFileManager);
 
-                if(fileName == ""){
+                if(fileName == "exit"){
                     break;
                 }
 
@@ -162,7 +166,7 @@ void MediaPlaylistController::handlerPlaylist() {
             {   while(true){
                     std::string fileName;
                     fileName = playlistHandlerView->displayAllMediaFileInPlaylist(playlist);
-                    if(fileName == ""){
+                    if(fileName == "exit"){
                         break;
                     }
                     if(deleteMediaFileInPlaylist(fileName)){
@@ -174,6 +178,16 @@ void MediaPlaylistController::handlerPlaylist() {
                 }
             }   
                 break;
+            case RENAME_PLAYLIST:
+            {
+                std::string newPlaylistName = playlistHandlerView->showMenuCreatePlaylist();
+                if (newPlaylistName == "exit") {
+                    break;
+                }
+                playlist->setName(newPlaylistName);
+                message = "Playlist has been renamed to " + newPlaylistName;
+                break;
+            }
             case EXIT_MENU_PLAYLIST_HANDLER:
                 return;
             default:

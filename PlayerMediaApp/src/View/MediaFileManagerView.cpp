@@ -209,7 +209,7 @@ std::string MediaFileManagerView::displayAllMediaFile(MediaFileManager MediaFile
             });
 
             screen.Loop(component);
-            return "";
+            return "exit";
         }
 
 
@@ -393,14 +393,14 @@ if (event.is_character()) {
 
 if (event == Event::Backspace && !input_buffer.empty()) {
     input_buffer.pop_back();
-    hovered_index = -1; // Vô hiệu hóa trạng thái hover khi nhập
+    hovered_index = -1;
     return true;
 }
 
 if (event.mouse().button == Mouse::Left) {
     if (is_exit_hovered) {
         hovered_index = -1;
-        result_filename = "";
+        result_filename = "exit"; // Trả về "exit" khi nhấn vào nút Exit
         screen.ExitLoopClosure()();
         return true;
     }
@@ -416,7 +416,7 @@ if (event.mouse().button == Mouse::Left) {
 if (event == Event::Return) {
     if (!input_buffer.empty()) {
         if (input_buffer == "0") {
-            result_filename = "";
+            result_filename = "exit";
             screen.ExitLoopClosure()();
             return true;
         }
@@ -490,7 +490,7 @@ std::string MediaFileManagerView::displayAllMediaFileOfAudio(MediaFileManager Me
             });
 
             screen.Loop(component);
-            return "";
+            return "exit";
         }
 
 
@@ -681,7 +681,7 @@ if (event == Event::Backspace && !input_buffer.empty()) {
 if (event.mouse().button == Mouse::Left) {
     if (is_exit_hovered) {
         hovered_index = -1;
-        result_filename = "";
+        result_filename = "exit"; // Trả về "exit" khi nhấn vào nút Exit
         screen.ExitLoopClosure()();
         return true;
     }
@@ -771,7 +771,7 @@ std::string MediaFileManagerView::displayAllMediaFileOfVideo(MediaFileManager Me
             });
 
             screen.Loop(component);
-            return "";
+            return "exit";
         }
 
 
@@ -962,7 +962,7 @@ if (event == Event::Backspace && !input_buffer.empty()) {
 if (event.mouse().button == Mouse::Left) {
     if (is_exit_hovered) {
         hovered_index = -1;
-        result_filename = "";
+        result_filename = "exit"; // Trả về "exit" khi nhấn vào nút Exit
         screen.ExitLoopClosure()();
         return true;
     }

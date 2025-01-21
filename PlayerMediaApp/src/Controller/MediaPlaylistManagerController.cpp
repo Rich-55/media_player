@@ -91,18 +91,14 @@ void MediaPlaylistManagerController::handlerPlaylistManager() {
             case CREATE_PLAYLIST:
             {   
                     std::string name;
-                    std::cout << "Enter the name of the playlist (type '0' to cancel): ";
-                    std::getline(std::cin, name); 
-                    if (name == "0") {
+                    name = playlistManagerView->showMenuCreatePlaylist();
+                    if (name == "exit") {
                         break;
                     }
-                    message = createPlaylist(name);
-                    if(message == "OK"){
-                        message = "Playlist" + name +" created successfully.";
+                    if(createPlaylist(name) == "OK"){
+                        message = "Playlist " + name + " created successfully.";
                     }else{
-                        error = message;
-                        message = "";
-                        continue;
+                        error = "Error: Playlist " + name + " already exists.";
                     }
                 
                 break;
@@ -112,7 +108,7 @@ void MediaPlaylistManagerController::handlerPlaylistManager() {
                 while(true){
                     std::string playlistName;
                     playlistName = displayAllPlaylist();
-                    if (playlistName == "") {
+                    if (playlistName == "exit") {
                         break;
                     }
                     if(deletePlaylist(playlistName)){
@@ -128,7 +124,7 @@ void MediaPlaylistManagerController::handlerPlaylistManager() {
             {
                 std::string playlistName;
                 playlistName = displayAllPlaylist();
-                if (playlistName == "") {
+                if (playlistName == "exit") {
                     break;
                 }
                 if(listMediaPlaylistController.find(playlistName) == listMediaPlaylistController.end()){

@@ -51,14 +51,15 @@ std::string ControllerManager::mediaFileHandler() {
         } 
         
         fileName = mediaFileManagerController->showAllMediaFile();
-        if(fileName == ""){
+        std::cout << "File name: " << fileName << std::endl;
+        if(fileName == "exit"){
             return "exit";
         }
 
-
-        if(model.getMediaFileManager().getMediaFileByPath(PlayerController::currentPlayingFile)){
+        if (PlayerController::currentPlayingFile == model.getMediaFileManager().getMediaFile(fileName)->getPath()) {
             return "File is running, can't edit";
         }
+
 
         mediaFileHandlerController = std::make_shared<MediaFileController>(
             model.getMediaFile(fileName), 
@@ -151,7 +152,7 @@ void ControllerManager::playlistHandler() {
         if (!model.getPlaylistManager().checkPlaylist()) {
             std::string name;
             name = playlistManagerView->showMenuCreatePlaylist();
-            if(name == ""){
+            if(name == "exit"){
                 return;
             }
             mediaPlaylistManagerController->createPlaylist(name);
@@ -159,7 +160,7 @@ void ControllerManager::playlistHandler() {
 
         playlistName = mediaPlaylistManagerController->displayAllPlaylist();
 
-        if (playlistName == "") {
+        if (playlistName == "exit") {
             return;
         }
 
@@ -200,7 +201,7 @@ void ControllerManager::playlistManager() {
         if (!model.getPlaylistManager().checkPlaylist()) {
             std::string name;
             name = playlistManagerView->showMenuCreatePlaylist();
-            if(name == ""){
+            if(name == "exit"){
                 return;
             }
             mediaPlaylistManagerController->createPlaylist(name);
@@ -220,7 +221,7 @@ std::string ControllerManager::playMusicHandler() {
 
         fileName = mediaFileManagerView->displayAllMediaFileOfAudio(model.getMediaFileManager());
 
-        if (fileName.empty()) {
+        if (fileName == "exit") {
             return "exit";
         }
 
@@ -253,7 +254,7 @@ std::vector<std::string> ControllerManager::playPlaylist() {
     if (!model.getPlaylistManager().checkPlaylist()) {
         std::string name;
         name = playlistManagerView->showMenuCreatePlaylist();
-        if(name == ""){
+        if(name == "exit"){
             return {"exit"};
         }
         mediaPlaylistManagerController->createPlaylist(name);
@@ -261,7 +262,7 @@ std::vector<std::string> ControllerManager::playPlaylist() {
 
     playlistName = mediaPlaylistManagerController->displayAllPlaylist();
 
-    if (playlistName == "") {
+    if (playlistName == "exit") {
         return {"exit"};
     }
 
@@ -345,7 +346,10 @@ void ControllerManager::runApp() {
                         typePlay = "single"; 
                         std::vector<std::string> singleMedia;
                         singleMedia.push_back(media);
-                        playerController = nullptr;
+                        if(playerController){
+                            playerController->stop();
+                            playerController = nullptr;
+                        }
                         playerController = std::make_shared<PlayerController>(singleMedia); 
                         playerController->play();
                     }
@@ -359,7 +363,10 @@ void ControllerManager::runApp() {
                     }
                     if (!listMedia.empty()) {
                         typePlay = "playlist"; 
-                        playerController = nullptr;
+                        if(playerController){
+                            playerController->stop();
+                            playerController = nullptr;
+                        }
                         playerController = std::make_shared<PlayerController>(listMedia); 
                         playerController->play();
                     }else{
@@ -377,6 +384,10 @@ void ControllerManager::runApp() {
                         typePlay = "single"; 
                         std::vector<std::string> singleMedia;
                         singleMedia.push_back(media);
+                        if(playerController){
+                            playerController->stop();
+                            playerController = nullptr;
+                        }
                         playerController = std::make_shared<PlayerController>(singleMedia); 
                         playerController->play();
                     }

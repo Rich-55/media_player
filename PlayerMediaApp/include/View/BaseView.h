@@ -33,7 +33,7 @@ class BaseView{
         virtual std::string displayMenuDeleteMetadata(std::shared_ptr<MediaFile> );
         //view for playlist handler
         virtual std::string displayAllMediaFileInPlaylist(std::shared_ptr<Playlist>);
-        virtual int showMenuWithMediaList(std::shared_ptr<Playlist>);
+        virtual int showMenuWithMediaListInPlaylist(std::shared_ptr<Playlist>);
         virtual std::pair<std::string, std::string> displayAllFolder(std::pair<std::unordered_set<std::string> , std::unordered_set<std::string> >);
         //view for playlist manager
         virtual std::string displayAllPlaylist(PlaylistManager);

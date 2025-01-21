@@ -7,6 +7,11 @@ std::string Playlist::getName() const
     return this->name;
 }
 
+void Playlist::setName(std::string name)
+{
+    this->name = name;
+}
+
 bool Playlist::checkMediaFile(std::string file)
 {
     for(const auto &mediaFile : listMediaFiles)

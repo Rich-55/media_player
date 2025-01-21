@@ -51,6 +51,13 @@ class PlayerController {
         std::vector<std::function<void(int)>> observersIndex;
         static void musicFinishedCallback();
         
+        std::atomic<int> currentDuration; // Thời gian đang chạy (tính bằng giây)
+        std::atomic<bool> durationRunning; // Trạng thái chạy của bộ đếm
+        std::thread durationThread; // Luồng để đếm thời gian
+
+        void startDuration(); // Bắt đầu đếm thời gian
+        void stopDuration();  // Dừng đếm thời gian và reset
+        void resetDuration(); // Reset về 0
 
     public:
         
@@ -85,7 +92,7 @@ class PlayerController {
 
         int getVolume();
         
-
+        int getDuration();
 };
 
 #endif

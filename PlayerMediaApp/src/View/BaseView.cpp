@@ -2,11 +2,13 @@
 
 BaseView::BaseView(){}
         
-void BaseView::showNotificationMessage(std::string message, std::string type)
-{
+void BaseView::showNotificationMessage(std::string message, std::string type) {
+
+    // Determine the color and title based on the type
     Color message_color = (type == "success") ? Color::Green : Color::Red;
     std::string title = (type == "success") ? "Success!" : "Error!";
 
+    // Create the notification message
     auto notification_message = vbox({
         text(title) | bold | color(message_color) | center,
         separator(),
@@ -15,8 +17,16 @@ void BaseView::showNotificationMessage(std::string message, std::string type)
 
     auto screen = Screen::Create(Dimension::Full(), Dimension::Fit(notification_message));
     Render(screen, notification_message);
-    screen.Print(); 
+    screen.Print(); // Print the notification
+
+    // Wait for 5 seconds
+    std::this_thread::sleep_for(std::chrono::seconds(2));
+
+    // Clear the screen
+    screen.Clear();
+    std::cout << "\033[2J\033[H"; // ANSI escape codes to clear terminal
 }
+
 bool BaseView::showConfirmMenu(std::string message)
 {
     // Chỉ mục được chọn
@@ -99,7 +109,7 @@ std::pair<std::string, std::string> BaseView::displayMenuEditMetadata(std::share
 std::string BaseView::displayMenuDeleteMetadata(std::shared_ptr<MediaFile>){return "";}
 //view for playlist handler
 std::string BaseView::displayAllMediaFileInPlaylist(std::shared_ptr<Playlist>){return "";}
-int BaseView::showMenuWithMediaList(std::shared_ptr<Playlist>){return -1;}
+int BaseView::showMenuWithMediaListInPlaylist(std::shared_ptr<Playlist>){return -1;}
 std::pair<std::string, std::string> BaseView::displayAllFolder(std::pair<std::unordered_set<std::string> , std::unordered_set<std::string> >){return {};}
 //view for playlist manager
 int BaseView::showMenuWithPlaylist(std::vector<std::shared_ptr<Playlist>>){return -1;}

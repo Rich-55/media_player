@@ -8,15 +8,79 @@ int PlaylistHandlerView::showMenu() {return -1;}
 
 bool PlaylistHandlerView::showConfirmMenu(std::string message){return BaseView::showConfirmMenu(message);}
 
-int PlaylistHandlerView::showMenuWithMediaList(std::shared_ptr<Playlist> playlist) {
+std::string PlaylistHandlerView::showMenuCreatePlaylist() {
+
+    std::string input = "";
+    std::string error_message = "";
+    auto isValidName = [](const std::string& name) {
+    std::regex valid_regex("^[a-zA-Z0-9 _-]+$");
+            return std::regex_match(name, valid_regex);
+    };
+    auto screen = ScreenInteractive::TerminalOutput();
+
+    auto input_box = Input(&input, "Enter playlist name...");
+
+    auto confirm_button = Button("Confirm", [&] {
+        if (input.empty()) {
+            error_message = "Error: Playlist name cannot be empty!";
+        } else if (input == "0") {
+            screen.ExitLoopClosure()();
+            input = "exit";
+        } else if (!isValidName(input)) {
+            error_message = "Error: Playlist name contains invalid characters!";
+        } else {
+            error_message = "";
+            screen.ExitLoopClosure()();
+        }
+    });
+
+    auto cancel_button = Button("Cancel (Return 0)", [&] {
+        input = "exit";
+        screen.ExitLoopClosure()();
+    });
+
+    auto layout = Renderer(Container::Vertical({
+        input_box,
+        confirm_button,
+        cancel_button,
+    }), [&] {
+        return vbox({
+            text("Create New Playlist") | bold | center,
+            separator(),
+            text("Enter the name of your playlist or press '0' to cancel.") | center,
+            text("Note: Only letters, numbers, spaces, underscores, and dashes are allowed.") | dim | center,
+            separator(),
+            hbox({
+                text("Playlist Name: "),
+                input_box->Render(),
+            }) | center,
+            separator(),
+            hbox({
+                confirm_button->Render(),
+                text(" "),
+                cancel_button->Render(),
+            }) | center,
+            separator(),
+            text(error_message) | color(Color::Red) | center,
+        });
+    });
+
+    screen.Loop(layout);
+
+    return input;
+}
+
+
+int PlaylistHandlerView::showMenuWithMediaListInPlaylist(std::shared_ptr<Playlist> playlist) {
     std::vector<std::string> menu_entries = {
         "1. Add MediaFile",
         "2. Add MediaFile By Folder",
         "3. Delete MediaFile",
+        "4. Rename Playlist",
         "0. Back to main menu"
     };
 
-    std::vector<int> logic_mapping = {1, 2, 3, 0}; // Liên kết mục menu với logic tương ứng
+    std::vector<int> logic_mapping = {1, 2, 3, 4, 0}; // Liên kết mục menu với logic tương ứng
     int selected = 0; // Vị trí được chọn ban đầu
     std::string error_message; // Lưu thông báo lỗi nếu có
     int final_selected = -1; // Kết quả trả về cuối cùng
@@ -92,7 +156,6 @@ int PlaylistHandlerView::showMenuWithMediaList(std::shared_ptr<Playlist> playlis
 
     auto screen = ScreenInteractive::TerminalOutput();
     main_component = CatchEvent(main_component, [&](Event event) {
-        // Xử lý chọn menu chính bằng phím Enter
         if (event == Event::Return) {
             final_selected = logic_mapping[selected];
             screen.ExitLoopClosure()();
@@ -180,8 +243,7 @@ int PlaylistHandlerView::showMenuWithMediaList(std::shared_ptr<Playlist> playlis
 }
 
 std::string PlaylistHandlerView::displayAllMediaFileInPlaylist(std::shared_ptr<Playlist> playlist) {
-   system("clear");
-
+    system("clear");
     try {
 
         auto media_files = playlist->getListMediaFiles();

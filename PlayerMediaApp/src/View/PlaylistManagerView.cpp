@@ -25,7 +25,7 @@ std::string PlaylistManagerView::showMenuCreatePlaylist() {
             error_message = "Error: Playlist name cannot be empty!";
         } else if (input == "0") {
             screen.ExitLoopClosure()();
-            input = "";
+            input = "exit";
         } else if (!isValidName(input)) {
             error_message = "Error: Playlist name contains invalid characters!";
         } else {
@@ -35,7 +35,7 @@ std::string PlaylistManagerView::showMenuCreatePlaylist() {
     });
 
     auto cancel_button = Button("Cancel (Return 0)", [&] {
-        input = "";
+        input = "exit";
         screen.ExitLoopClosure()();
     });
 
@@ -438,7 +438,7 @@ if (event == Event::Backspace && !input_buffer.empty()) {
 if (event.mouse().button == Mouse::Left) {
     if (is_exit_hovered) {
         hovered_index = -1;
-        result_filename = "";
+        result_filename = "exit";
         screen.ExitLoopClosure()();
         return true;
     }
@@ -454,7 +454,7 @@ if (event.mouse().button == Mouse::Left) {
 if (event == Event::Return) {
     if (!input_buffer.empty()) {
         if (input_buffer == "0") {
-            result_filename = "";
+            result_filename = "exit";
             screen.ExitLoopClosure()();
             return true;
         }

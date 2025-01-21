@@ -10,7 +10,8 @@
 #include <cmath>
 #include <stdexcept>
 #include <regex>
-
+#include <thread>
+#include <chrono>
 using namespace ftxui;
 //MainMenu
 #define METADATA_FILE_HANDLER 1
@@ -51,6 +52,7 @@ using namespace ftxui;
 #define ADD_MEDIA_FILE_TO_PLAYLIST 1
 #define ADD_MEDIA_FILE_TO_PLAYLIST_BY_PATH 2
 #define DELETE_MEDIA_FILE_FROM_PLAYLIST 3
+#define RENAME_PLAYLIST 4
 #define EXIT_MENU_PLAYLIST_HANDLER 0
 
 //PlaylistManager Menu

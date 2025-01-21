@@ -17,6 +17,7 @@ class Playlist {
         Playlist(std::string);
 
         std::string getName() const;
+        void setName(std::string);
 
         bool checkMediaFile(std::string);
 

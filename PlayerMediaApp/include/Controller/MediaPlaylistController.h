@@ -24,6 +24,8 @@ class MediaPlaylistController{
         
         void handlerPlaylist();
 
+        void setNamePlaylist(std::string);
+
         std::vector<std::string> getListPathMediaFiles();
 
         bool addMediaFileInPlaylist(std::string);
@@ -34,7 +36,7 @@ class MediaPlaylistController{
 
         void displayAllMediaFilesInPlaylist();
 
-        int displayMenuAndPlaylist();
+        int showMenuWithMediaListInPlaylist();
 
 };
 

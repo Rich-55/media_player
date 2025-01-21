@@ -143,7 +143,7 @@ void MediaFileManagerController::handleMediaFileManager() {
                      while (true) {
                         std::string fileName;
                         fileName = showAllMediaFile();
-                        if (fileName == "") {
+                        if (fileName == "exit") {
                             break;
                         }
                         if(deleteData(fileName)){
@@ -159,7 +159,7 @@ void MediaFileManagerController::handleMediaFileManager() {
                 {
                     std::string filename;
                     filename =  showAllMediaFile();
-                    if(filename == ""){
+                    if(filename == "exit"){
                         break;
                     }
                     if(listMediaFileController.find(filename) == listMediaFileController.end()){
@@ -173,7 +173,7 @@ void MediaFileManagerController::handleMediaFileManager() {
                 {
                     std::string filename;
                     filename = showAllMediaFileOfAudio();
-                    if(filename == ""){
+                    if(filename == "exit"){
                         break;
                     }
                     if(listMediaFileController.find(filename) == listMediaFileController.end()){
@@ -187,7 +187,7 @@ void MediaFileManagerController::handleMediaFileManager() {
                 {
                     std::string filename;
                     filename = showAllMediaFileOfVideo();
-                    if(filename == ""){
+                    if(filename == "exit"){
                         break;
                     }
                     if(listMediaFileController.find(filename) == listMediaFileController.end()){

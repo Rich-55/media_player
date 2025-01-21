@@ -1,6 +1,6 @@
 #include "../../include/Controller/PlayerController.h"
 
-int volume = MIX_MAX_VOLUME; 
+int volume = 100; 
 // A simple audio packet queue
 std::queue<AVPacket*> audioQueue;
 std::mutex audioQueueMutex;
@@ -13,19 +13,15 @@ AVSampleFormat audio_out_sample_fmt = AV_SAMPLE_FMT_S16;
 
 static PlayerController* instance;
 std::string PlayerController::currentPlayingFile = "";
-PlayerController::PlayerController(const std::vector<std::string>& files) 
-    : mediaFiles(files), 
-      currentIndex(0), 
-      playing(false), 
-      paused(false), 
-      manualTransition(false),
-      repeat(false) 
-{
+PlayerController::PlayerController(const std::vector<std::string>& files)
+    : mediaFiles(files), currentIndex(0), playing(false), paused(false), 
+      manualTransition(false), repeat(false), currentDuration(0), durationRunning(false) {
     instance = this;
 }
 
 PlayerController::~PlayerController() {
     instance = nullptr; 
+    stopDuration(); 
     stopPlaybackThread();
 }
 //index of song
@@ -39,7 +35,6 @@ void PlayerController::notifyObserversIndex() {
     }
 }
 
-
 size_t PlayerController::getCurrentIndex() {
     std::unique_lock<std::recursive_mutex> lock(stateMutex);
     return currentIndex;
@@ -48,12 +43,40 @@ size_t PlayerController::getCurrentIndex() {
 std::vector<std::string> PlayerController::getMediaFiles() {
     return mediaFiles;
 }
+void PlayerController::startDuration() {
+    stopDuration(); // Dừng nếu đã có luồng trước đó
+    durationRunning = true;
+    durationThread = std::thread([this]() {
+        while (durationRunning) {
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+            if (durationRunning && !paused) {
+                ++currentDuration; // Tăng thời gian khi đang chạy
+            }
+        }
+    });
+}
+
+void PlayerController::stopDuration() {
+    durationRunning = false;
+    if (durationThread.joinable()) {
+        durationThread.join();
+    }
+}
+
+void PlayerController::resetDuration() {
+    stopDuration();
+    currentDuration = 0;
+}
+
+int PlayerController::getDuration() {
+    return currentDuration.load();
+}
 
 void PlayerController::setVolume(int newVolume) {
     if (newVolume < 0) newVolume = 0;
-    if (newVolume > MIX_MAX_VOLUME) newVolume = MIX_MAX_VOLUME;
+    if (newVolume > 100) newVolume = 100;
     volume = newVolume;
-    Mix_VolumeMusic(volume);  // Apply the volume change to the music playback
+    Mix_VolumeMusic(volume * MIX_MAX_VOLUME / 100); 
 }
 
 void PlayerController::increaseVolume(int increment) {
@@ -80,8 +103,10 @@ void PlayerController::play() {
     }
 
     stopPlaybackThread(); // Stop any existing playback thread
-
+    resetDuration(); // Reset thời gian khi bắt đầu phát
+    startDuration(); // Bắt đầu đếm thời gian
     const std::string& file = mediaFiles[currentIndex];
+    currentPlayingFile = file; 
 
     playbackThread = std::thread(&PlayerController::playbackWorker, this, file);
 }
@@ -114,12 +139,13 @@ void PlayerController::resume() {
         return;
     }
     paused = false;
+    currentPlayingFile = mediaFiles[currentIndex];
     Mix_ResumeMusic();
 }
 
 void PlayerController::togglePlayback() {
     std::unique_lock<std::recursive_mutex> lock(stateMutex);
-
+    currentPlayingFile = mediaFiles[currentIndex]; 
     if (playing) {
         if (paused) {
             // Resume playback if paused
@@ -144,9 +170,14 @@ void PlayerController::toggleRepeat() {
 
 
 void PlayerController::stop() {
+    stopDuration(); // Dừng đếm thời gian
+    resetDuration(); // Reset thời gian
     std::unique_lock<std::recursive_mutex> lock(stateMutex);
+
     playing = false;
     repeat = false; // Stop repeating as well
+    paused = false;
+    currentPlayingFile = "";
     manualTransition = true; 
     lock.unlock();
     stopPlaybackThread();
@@ -210,6 +241,8 @@ void PlayerController::playbackWorker(const std::string& file) {
 
     std::unique_lock<std::recursive_mutex> lock(stateMutex);
     playing = false;
+    stopDuration(); // Dừng đếm thời gian
+    resetDuration(); 
     currentPlayingFile = "";
 }
 
@@ -242,13 +275,16 @@ void PlayerController::musicFinishedCallback() {
 
                         instance->currentIndex = 0; // Reset index if necessary
                         instance->notifyObserversIndex();
-
+                        instance->stopDuration(); // Dừng đếm thời gian
+                        instance->resetDuration();
                         return; // Exit the function as no further playback is needed
 
                     }
 
                 }
-                        instance->notifyObserversIndex();
+                    instance->notifyObserversIndex();
+                    instance->stopDuration(); // Dừng đếm thời gian
+                    instance->resetDuration(); // Reset thời gian
             }
 
         } else {
