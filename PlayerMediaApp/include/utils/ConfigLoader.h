@@ -6,13 +6,17 @@
 #include <ftxui/dom/elements.hpp>        // For Elements
 #include <ftxui/component/event.hpp> 
 #include <ftxui/screen/screen.hpp>
+#include <boost/asio.hpp>
 
 #include <cmath>
 #include <stdexcept>
 #include <regex>
 #include <thread>
 #include <chrono>
+
 using namespace ftxui;
+namespace asio = boost::asio;
+
 //MainMenu
 #define METADATA_FILE_HANDLER 1
 #define MEDIA_FILE_MANAGER 2 

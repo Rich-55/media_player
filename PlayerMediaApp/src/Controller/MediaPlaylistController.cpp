@@ -25,7 +25,6 @@ bool MediaPlaylistController::addMediaFileByFolder()
 {
     bool check = false;
 
-    // Lấy danh sách folder từ Directory và USB
     std::unordered_set<std::string> listFolderOfDirectory = folderManager.getListFolderDirectory();
     std::unordered_set<std::string> listFolderOfUSB = folderManager.getListFolderUSB();
 
@@ -33,27 +32,23 @@ bool MediaPlaylistController::addMediaFileByFolder()
     listFolder.first = listFolderOfDirectory;
     listFolder.second = listFolderOfUSB;
 
-    // Hiển thị tất cả folder cho người dùng chọn
     std::pair<std::string, std::string> choice = playlistHandlerView->displayAllFolder(listFolder);
 
     if (choice.first.empty() || choice.second.empty()) {
         return false;
     }
 
-    // Kiểm tra loại folder (Directory hoặc USB)
     if (choice.first == "Directory") {
         std::unordered_set<std::string> listPathDirectory = folderManager.getListPathDirectory(choice.second);
 
         for (const auto &list : listPathDirectory) {
             std::shared_ptr<MediaFile> mediaFile = mediaFileManager.getMediaFileByPath(list);
 
-            // Kiểm tra nếu con trỏ mediaFile là nullptr
             if (!mediaFile) {
                 std::cerr << "Warning: Media file not found for path: " << list << std::endl;
                 continue;
             }
 
-            // Kiểm tra nếu file đã tồn tại trong playlist
             if (playlist->checkMediaFile(mediaFile->getName())) {
                 continue;
             }
@@ -67,13 +62,11 @@ bool MediaPlaylistController::addMediaFileByFolder()
         for (const auto &list : listPathUSB) {
             std::shared_ptr<MediaFile> mediaFile = mediaFileManager.getMediaFileByPath(list);
 
-            // Kiểm tra nếu con trỏ mediaFile là nullptr
             if (!mediaFile) {
                 std::cerr << "Warning: Media file not found for path: " << list << std::endl;
                 continue;
             }
 
-            // Kiểm tra nếu file đã tồn tại trong playlist
             if (playlist->checkMediaFile(mediaFile->getName())) {
                 continue;
             }

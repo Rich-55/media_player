@@ -143,7 +143,7 @@ int PlaylistHandlerView::showMenuWithMediaListInPlaylist(std::shared_ptr<Playlis
     auto menu = Menu(&menu_entries, &selected);
     auto main_component = Renderer(menu, [&]() {
         return ftxui::vbox({
-            ftxui::text("============ Playlist Manager ===========") | ftxui::bold | ftxui::center,
+            ftxui::text("============ Playlist Handler ===========") | ftxui::bold | ftxui::center,
             ftxui::separator(),
             menu->Render() | ftxui::border,
             ftxui::separator(),

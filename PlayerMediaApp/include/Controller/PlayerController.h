@@ -49,6 +49,8 @@ class PlayerController {
         Mix_Music* currentMusic;
         //observers
         std::vector<std::function<void(int)>> observersIndex;
+        std::vector<std::function<void()>> observersState;
+
         static void musicFinishedCallback();
         
         std::atomic<int> currentDuration; // Thời gian đang chạy (tính bằng giây)
@@ -67,6 +69,8 @@ class PlayerController {
         void addObserverIndex(std::function<void(int)> index);
         void notifyObserversIndex();
 
+        void addObserverState(std::function<void()> observer);
+        void notifyObserversState(); 
         size_t getCurrentIndex();
         std::vector<std::string> getMediaFiles();
         static std::string currentPlayingFile;

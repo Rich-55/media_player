@@ -29,12 +29,16 @@ class ControllerManager{
 
         std::unique_ptr<MediaFileManagerController> mediaFileManagerController;
         std::unique_ptr<MediaPlaylistManagerController> mediaPlaylistManagerController;
-        
+        asio::io_context io_context;                      // Quản lý IO cho UART
+        std::unique_ptr<asio::serial_port> serial_port;   // Serial port cho UART
+        std::thread uartThread;    
     public:
         ControllerManager(ModelManager, ViewManager);
         
         std::shared_ptr<BaseView> getView(const std::string& viewName);
-        bool getYesNoInput(const std::string& prompt);
+        
+        void setUpUART(const std::string& port, unsigned int baud_rate);
+        void stopUART();
 
         void runApp();
 

@@ -52,6 +52,13 @@ int MainMenuView::showMenuWithPlayer(MediaFileManager mediaFileManager, std::sha
             current_index = newIndex;
             ScreenInteractive::Active()->PostEvent(Event::Custom); 
         });
+        static bool observer_added = false; // Đảm bảo chỉ thêm observer một lần
+        if (!observer_added) {
+            playerController->addObserverState([&] {
+                ScreenInteractive::Active()->PostEvent(Event::Custom); // Làm mới UI khi trạng thái thay đổi
+            });
+            observer_added = true;
+        }
     }
     
     std::shared_ptr<MediaFile> media = nullptr;
@@ -162,16 +169,15 @@ int MainMenuView::showMenuWithPlayer(MediaFileManager mediaFileManager, std::sha
         // Lấy trạng thái nhạc (Playing hoặc Paused)
         std::string music_status;
         
-        if(is_pause) {
-            music_status = "Paused";
+        if (playerController) {
+            if (playerController->isPlaying()) {
+                music_status = playerController->isPause() ? "Paused" : "Playing";
+            } else {
+                music_status = "Stopped";
+            }
         } else {
-            music_status = "Playing";
+            music_status = "No PlayerController";
         }
-
-        if(is_stoped) {
-            music_status = "Stoped";
-        }
-
         std::string duration = std::to_string(playerController ? playerController->getDuration() : 0) + "s";
 
         

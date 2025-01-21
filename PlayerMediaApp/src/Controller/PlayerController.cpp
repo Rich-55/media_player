@@ -40,6 +40,18 @@ size_t PlayerController::getCurrentIndex() {
     return currentIndex;
 }
 
+
+void PlayerController::addObserverState(std::function<void()> observer)
+{
+    observersState.push_back(observer);
+}
+void PlayerController::notifyObserversState()
+{
+    for (auto& observer : observersState) {
+        observer();
+    }
+}
+
 std::vector<std::string> PlayerController::getMediaFiles() {
     return mediaFiles;
 }
@@ -107,7 +119,7 @@ void PlayerController::play() {
     startDuration(); // Bắt đầu đếm thời gian
     const std::string& file = mediaFiles[currentIndex];
     currentPlayingFile = file; 
-
+    notifyObserversState();
     playbackThread = std::thread(&PlayerController::playbackWorker, this, file);
 }
 
@@ -125,6 +137,8 @@ void PlayerController::pause() {
     }
     paused = true;
     Mix_PauseMusic();
+    notifyObserversState();
+
 }
 
 bool PlayerController::isPause() {
@@ -161,6 +175,7 @@ void PlayerController::togglePlayback() {
         lock.unlock(); // Unlock before calling play() to avoid deadlocks
         play();
     }
+    notifyObserversState();
 }
 
 void PlayerController::toggleRepeat() {
@@ -275,16 +290,17 @@ void PlayerController::musicFinishedCallback() {
 
                         instance->currentIndex = 0; // Reset index if necessary
                         instance->notifyObserversIndex();
-                        instance->stopDuration(); // Dừng đếm thời gian
+    
                         instance->resetDuration();
+                        instance->startDuration();
                         return; // Exit the function as no further playback is needed
 
                     }
 
                 }
                     instance->notifyObserversIndex();
-                    instance->stopDuration(); // Dừng đếm thời gian
-                    instance->resetDuration(); // Reset thời gian
+                    instance->resetDuration();
+                    instance->startDuration();
             }
 
         } else {
