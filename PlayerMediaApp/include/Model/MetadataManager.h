@@ -1,4 +1,0 @@
-#ifndef METADATA_MANAGER_H
-#define METADATA_MANAGER_H
-
-#endif

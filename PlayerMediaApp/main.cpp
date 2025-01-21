@@ -1,6 +1,15 @@
-#include <iostream>
+#include "include/Model/ModelManager.h"
+#include "include/View/ViewManager.h"
+#include "include/Controller/ControllerManager.h"
+#include "include/Controller/PlayerController.h"
+#include <thread>
 
 int main() {
-    std::cout << "Media Player Entry Point" << std::endl;
+    ModelManager model;
+    ViewManager view;
+    ControllerManager controller(model, view);
+    controller.ScanData();
+    controller.runApp();
+
     return 0;
 }

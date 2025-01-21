@@ -1,4 +1,0 @@
-#ifndef DEVICE_CONTROLLER_H
-#define DEVICE_CONTROLLER_H
-
-#endif
