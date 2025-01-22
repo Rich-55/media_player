@@ -11,7 +11,7 @@ class UartView : public BaseView{
 
         int showMenu() override { return -1; }
 
-        std::pair<std::string, unsigned int> getPortAndBaudRate(std::vector<std::string>, std::vector<std::string>) override;
+        std::pair<std::string, unsigned int> getPortAndBaudRate(std::vector<std::string> portList, std::vector<std::string> baudRateOptions) override;
 };
 
 #endif

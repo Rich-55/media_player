@@ -24,7 +24,7 @@ class MediaScannerController{
         std::unordered_set<std::string> listPathsAdded;
     public:
         
-        MediaScannerController(MediaFileManager& m, PlaylistManager& p, FolderManager& f,std::shared_ptr<BaseView> v);
+        MediaScannerController(MediaFileManager& mediaFileManager, PlaylistManager& playlistManager, FolderManager& folderManager,std::shared_ptr<BaseView> scanView);
 
         void handleScan(bool isRunning);
 

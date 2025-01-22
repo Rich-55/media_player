@@ -40,7 +40,7 @@ class ControllerManager{
         
         void runApp();
 
-        void runUart();
+        bool checkUart();
 
         void ScanData();
 

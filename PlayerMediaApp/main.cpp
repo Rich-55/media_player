@@ -10,7 +10,9 @@ int main() {
     
     ControllerManager controller(model, view, uartManager);
 
-    controller.runUart();
+    // if(!controller.checkUart()){
+    //     return 0;
+    // }
     controller.ScanData();
     controller.runApp();
 

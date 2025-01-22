@@ -12,7 +12,7 @@ std::shared_ptr<BaseView> ControllerManager::getView(const std::string& viewName
     return viewPtr;
 }
 /// @brief Run UART function
-void ControllerManager::runUart()
+bool ControllerManager::checkUart()
 {
     auto uartView = getView("UartView");
     std::vector<std::string> portList = uartManager->getPortList();
@@ -27,7 +27,7 @@ void ControllerManager::runUart()
         baudRate = portAndBaudRate.second;
         std::cout << "Port: " << port << ", Baud Rate: " << baudRate << std::endl;
         if(port == "exit"){
-            return;
+            return false;
         }
         if (!uartManager->checkPortConnection(port, baudRate)) {
             std::cout << "Failed to connect to port " << port << ".\n";
@@ -38,9 +38,8 @@ void ControllerManager::runUart()
         }
 
     }
-
+    return true;
 }
-
 
 /// @brief ScanData function: Scan data from the folder in directory or USB
 void ControllerManager::ScanData() 
@@ -339,7 +338,7 @@ void ControllerManager::runApp() {
         return;
     }
     
-   uartManager->runMediaUart(playerController);
+    //uartManager->runMediaUart(playerController);
 
     auto mainMenuView = getView("MainMenuView");
     std::string typePlay = "noplay"; 
