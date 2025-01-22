@@ -6,6 +6,34 @@ UARTManager::~UARTManager() {
     stopUART();
 }
 
+bool UARTManager::isConnectionActive() const {
+    if (serial_port && serial_port->is_open()) {
+        return true;
+    } else {
+        std::cerr << "UART connection is not active.\n";
+        return false;
+    }
+}
+
+bool UARTManager::checkPortConnection(const std::string& port, unsigned int baud_rate) {
+    try {
+        asio::io_context temp_io_context; 
+        asio::serial_port temp_serial_port(temp_io_context);
+
+        temp_serial_port.open(port);
+        temp_serial_port.set_option(asio::serial_port_base::baud_rate(baud_rate));
+
+        if (temp_serial_port.is_open()) {
+            temp_serial_port.close(); 
+            return true;
+        }
+    } catch (const std::exception& e) {
+        std::cerr << "Error checking port connection: " << e.what() << '\n';
+    }
+
+    return false; 
+}
+
 void UARTManager::asyncHandleUart(asio::serial_port& serial, std::shared_ptr<PlayerController>& playerController) {
     auto buffer = std::make_shared<asio::streambuf>();
 

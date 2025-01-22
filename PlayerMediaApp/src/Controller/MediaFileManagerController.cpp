@@ -128,8 +128,12 @@ void MediaFileManagerController::handleMediaFileManager()
                             int result = addDataFile(pathFile);
                             if (result == -1) {
                                 throw UnsupportedFileTypeException(pathFile);
-                            } 
-                            message = "File " + pathFile + " has been added.";
+                            }
+                            if(result == 0){
+                                throw FileAlreadyExistsException(pathFile);
+                            }else{
+                                 message = "File " + pathFile + " has been added.";
+                            }
                             break;
                         } catch (const MediaFileManagerException &e) {
                             error =  e.what();

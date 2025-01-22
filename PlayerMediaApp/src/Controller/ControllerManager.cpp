@@ -1,7 +1,7 @@
 #include "../../include/Controller/ControllerManager.h"
 
-ControllerManager::ControllerManager(ModelManager m, ViewManager v) 
-    : model(m), view(v), scannerController(nullptr), mediaFileHandlerController(nullptr), mediaPlaylistController(nullptr), playerController(nullptr), mediaFileManagerController(nullptr), mediaPlaylistManagerController(nullptr) 
+ControllerManager::ControllerManager(ModelManager model, ViewManager view, std::shared_ptr<UARTManager>  uart) 
+    : model(model), view(view), uartManager(uart), scannerController(nullptr), mediaFileHandlerController(nullptr), mediaPlaylistController(nullptr), playerController(nullptr), mediaFileManagerController(nullptr), mediaPlaylistManagerController(nullptr) 
 {}
 
 std::shared_ptr<BaseView> ControllerManager::getView(const std::string& viewName) {
@@ -310,7 +310,7 @@ void ControllerManager::runApp() {
         return;
     }
     
-    uartManager.setUpUART("/dev/ttyACM0", 115200, playerController);
+   uartManager->setUpUART("/dev/ttyACM0", 115200, playerController);
 
     auto mainMenuView = getView("MainMenuView");
     std::string typePlay = "noplay"; 
@@ -429,7 +429,7 @@ void ControllerManager::runApp() {
                         playerController->stop();
                         playerController = nullptr;
                     }
-                    uartManager.stopUART();
+                    uartManager->stopUART();
                     return; 
                 default:
                     throw InvalidChoiceException();

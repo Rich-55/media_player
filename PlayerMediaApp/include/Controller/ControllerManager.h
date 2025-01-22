@@ -23,6 +23,8 @@ class ControllerManager{
     private:
         ModelManager model;
         ViewManager view;
+        std::shared_ptr<UARTManager> uartManager;
+
         std::shared_ptr<MediaScannerController> scannerController;
         std::shared_ptr<MediaFileController> mediaFileHandlerController;
         std::shared_ptr<MediaPlaylistController> mediaPlaylistController;
@@ -30,9 +32,9 @@ class ControllerManager{
 
         std::unique_ptr<MediaFileManagerController> mediaFileManagerController;
         std::unique_ptr<MediaPlaylistManagerController> mediaPlaylistManagerController;
-        UARTManager uartManager;
+        
     public:
-        ControllerManager(ModelManager, ViewManager);
+        ControllerManager(ModelManager, ViewManager, std::shared_ptr<UARTManager>);
         
         std::shared_ptr<BaseView> getView(const std::string& viewName);
         
