@@ -11,7 +11,8 @@ public:
 
     int showMenu() override;
 
-    int showMenuWithPlayer(MediaFileManager, std::shared_ptr<PlayerController>&, std::string, std::string&) override;
+    int showMenuWithPlayer(MediaFileManager mediaFileManager, std::shared_ptr<PlayerController>& playerController, 
+    std::string typePlay, std::string& error) override;
 };
 
 #endif 

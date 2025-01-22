@@ -20,19 +20,19 @@ class MediaPlaylistController{
         std::shared_ptr<BaseView> mediaManagerView;
         std::shared_ptr<BaseView> playlistHandlerView;
     public:
-        MediaPlaylistController(MediaFileManager&, FolderManager& , std::shared_ptr<Playlist>, std::shared_ptr<BaseView>, std::shared_ptr<BaseView>);
+        MediaPlaylistController(MediaFileManager& mediaFileManager, FolderManager& folderManager, std::shared_ptr<Playlist> playlistModel, std::shared_ptr<BaseView> mediaManagerView, std::shared_ptr<BaseView> playlistHandlerView);
         
         void handlerPlaylist();
 
-        void setNamePlaylist(std::string);
+        void setNamePlaylist(std::string name);
 
         std::vector<std::string> getListPathMediaFiles();
 
-        bool addMediaFileInPlaylist(std::string);
+        bool addMediaFileInPlaylist(std::string fileName);
 
         bool addMediaFileByFolder();
 
-        bool deleteMediaFileInPlaylist(std::string );
+        bool deleteMediaFileInPlaylist(std::string fileName);
 
         void displayAllMediaFilesInPlaylist();
 

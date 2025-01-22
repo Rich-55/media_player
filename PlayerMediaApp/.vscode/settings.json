@@ -84,7 +84,8 @@
         "coroutine": "cpp",
         "source_location": "cpp",
         "future": "cpp",
-        "typeindex": "cpp"
+        "typeindex": "cpp",
+        "span": "cpp"
     },
     "C_Cpp.errorSquiggles": "enabled"
 }

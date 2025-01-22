@@ -35,18 +35,18 @@ protected:
     }
 
 public:
-    MediaFileManagerController(MediaFileManager&, std::shared_ptr<BaseView>, std::shared_ptr<BaseView>, std::shared_ptr<MediaScannerController>);
+    MediaFileManagerController(MediaFileManager& mediaManager, std::shared_ptr<BaseView> mediaManagerView, std::shared_ptr<BaseView> mediaFileView,std::shared_ptr<MediaScannerController> c);
 
     void handleMediaFileManager();
 
-    void addMediaFileController(std::string, std::shared_ptr<MediaFileController>);
+    void addMediaFileController(std::string fileName, std::shared_ptr<MediaFileController> mediaFileController);
 
     std::shared_ptr<MediaFileController> getMediaFileController(const std::string& fileName);
 
-    int addDataFile(std::string);
-    void addDataFolder(const std::unordered_set<std::string>&);
+    int addDataFile(std::string pathName);
+    void addDataFolder(const std::unordered_set<std::string> &listPathName);
 
-    bool deleteData(std::string);
+    bool deleteData(std::string fileName);
 
     std::string showAllMediaFile();
 

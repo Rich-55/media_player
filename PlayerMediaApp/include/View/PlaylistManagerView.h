@@ -10,12 +10,12 @@ class PlaylistManagerView : public BaseView {
         
         int showMenu() override;
 
-        int showMenuWithPlaylist(std::vector<std::shared_ptr<Playlist>>) override;
-        bool showConfirmMenu(std::string) override;
-        void showNotificationMessage(std::string, std::string) override;
+        int showMenuWithPlaylist(std::vector<std::shared_ptr<Playlist>> listPlaylist) override;
+        bool showConfirmMenu(std::string message) override;
+        void showNotificationMessage(std::string message, std::string type) override;
         std::string showMenuCreatePlaylist() override;
 
-        std::string displayAllPlaylist(PlaylistManager) override;
+        std::string displayAllPlaylist(PlaylistManager playlistManager) override;
 };
 
 
