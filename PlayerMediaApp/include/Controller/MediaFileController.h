@@ -4,14 +4,9 @@
 
 #include "../Model/MediaFile.h"
 #include "../View/BaseView.h"
-#include "../View/MetadataView.h"
 
 #include "../utils/MetadataEditException.h"
 #include "../utils/ConfigLoader.h"
-
-#include <memory>
-#include <unordered_set>
-#include <regex>
 
 class MediaFileController {
 private:

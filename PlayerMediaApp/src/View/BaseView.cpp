@@ -4,11 +4,9 @@ BaseView::BaseView(){}
         
 void BaseView::showNotificationMessage(std::string message, std::string type) {
 
-    // Determine the color and title based on the type
     Color message_color = (type == "success") ? Color::Green : Color::Red;
     std::string title = (type == "success") ? "Success!" : "Error!";
 
-    // Create the notification message
     auto notification_message = vbox({
         text(title) | bold | color(message_color) | center,
         separator(),
@@ -17,29 +15,24 @@ void BaseView::showNotificationMessage(std::string message, std::string type) {
 
     auto screen = Screen::Create(Dimension::Full(), Dimension::Fit(notification_message));
     Render(screen, notification_message);
-    screen.Print(); // Print the notification
+    screen.Print();
 
-    // Wait for 5 seconds
     std::this_thread::sleep_for(std::chrono::seconds(2));
 
-    // Clear the screen
     screen.Clear();
-    std::cout << "\033[2J\033[H"; // ANSI escape codes to clear terminal
+    std::cout << "\033[2J\033[H"; 
 }
 
 bool BaseView::showConfirmMenu(std::string message)
 {
-    // Chỉ mục được chọn
     int selected_index = 0;
     bool confirmed = false;
 
-    // Tùy chọn "Yes" và "No"
     std::vector<std::string> options = {"Yes", "No"};
     auto menu = Menu(&options, &selected_index);
 
     auto screen = ScreenInteractive::TerminalOutput();
 
-    // Tạo giao diện xác nhận
     auto main_component = Renderer(menu, [&] {
         return vbox({
             text("Confirm Action") | bold | center,
@@ -52,30 +45,26 @@ bool BaseView::showConfirmMenu(std::string message)
         });
     });
 
-    // Xử lý sự kiện
     main_component = CatchEvent(main_component, [&](Event event) {
         if (event == Event::Return) {
-            // Xác nhận lựa chọn
-            confirmed = (selected_index == 0); // Yes -> true, No -> false
+            confirmed = (selected_index == 0); 
             screen.ExitLoopClosure()();
             return true;
         }
 
         if (event.is_mouse() && event.mouse().button == Mouse::Left && event.mouse().motion == Mouse::Pressed) {
-            // Tính toán vùng menu dựa trên dòng nơi menu bắt đầu hiển thị
-            int menu_start_y = 5;  // Số dòng từ đầu giao diện đến menu
-            int menu_height = options.size();  // Số mục trong menu
+            int menu_start_y = 5;  
+            int menu_height = options.size(); 
 
-            int clicked_index = event.mouse().y - menu_start_y;  // Tính chỉ mục được click
+            int clicked_index = event.mouse().y - menu_start_y;  
 
-            // Debug để kiểm tra tọa độ chuột
+           
             std::cout << "Mouse clicked at: (" << event.mouse().x << ", " << event.mouse().y << ")\n";
             std::cout << "Menu start y: " << menu_start_y << ", clicked index: " << clicked_index << "\n";
 
-            // Kiểm tra nếu click trong phạm vi menu
             if (clicked_index >= 0 && clicked_index < menu_height) {
                 selected_index = clicked_index;
-                confirmed = (selected_index == 0); // Yes -> true, No -> false
+                confirmed = (selected_index == 0); 
                 screen.ExitLoopClosure()();
                 return true;
             }
@@ -121,7 +110,5 @@ int BaseView::showListFolder(std::vector<std::string>){return -1;}
 int BaseView::showListUSBName(std::vector<std::string>) {return -1;}
 void BaseView::setListPathNameIsAdded(std::unordered_set<std::string>){}
 void BaseView::showFileAdded(){}
-
-
 
 BaseView::~BaseView(){}

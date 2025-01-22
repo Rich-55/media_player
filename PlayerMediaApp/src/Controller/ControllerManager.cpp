@@ -2,9 +2,7 @@
 
 ControllerManager::ControllerManager(ModelManager m, ViewManager v) 
     : model(m), view(v), scannerController(nullptr), mediaFileHandlerController(nullptr), mediaPlaylistController(nullptr), playerController(nullptr), mediaFileManagerController(nullptr), mediaPlaylistManagerController(nullptr) 
-{
-
-}
+{}
 
 std::shared_ptr<BaseView> ControllerManager::getView(const std::string& viewName) {
     auto viewPtr = view.getView(viewName);
@@ -16,7 +14,8 @@ std::shared_ptr<BaseView> ControllerManager::getView(const std::string& viewName
 
 
 // ScanData function: Scan data from the folder in directory or USB
-void ControllerManager::ScanData() {
+void ControllerManager::ScanData() 
+{
     try {
         auto scanView = getView("ScanView");
 
@@ -37,6 +36,7 @@ void ControllerManager::ScanData() {
 // Media File Handler function: Handle metadata file (add, delete, edit)
 std::string ControllerManager::mediaFileHandler() {
     try {
+        
         std::string fileName;
         auto mediaFileHandlerView = getView("MediaFileHandlerView");
         auto mediaFileManagerView = getView("MediaFileManagerView");
@@ -51,7 +51,7 @@ std::string ControllerManager::mediaFileHandler() {
         } 
         
         fileName = mediaFileManagerController->showAllMediaFile();
-        std::cout << "File name: " << fileName << std::endl;
+
         if(fileName == "exit"){
             return "exit";
         }
@@ -76,7 +76,8 @@ std::string ControllerManager::mediaFileHandler() {
 }
 
 // MediaFileManager function: Handle media file (add, delete, edit, view)
-void ControllerManager::mediaFileManager() {
+void ControllerManager::mediaFileManager()
+{
     try {
         auto scanView = getView("ScanView");
         
@@ -107,7 +108,8 @@ void ControllerManager::mediaFileManager() {
 }
 
 // PlaylistHandler function: Handle playlist (add media, delete media, view)
-void ControllerManager::playlistHandler() {
+void ControllerManager::playlistHandler() 
+{
     try {
         std::string playlistName;
 
@@ -181,7 +183,8 @@ void ControllerManager::playlistHandler() {
 }
 
 // PlaylistManager function: Handle playlist (create, delete, view)
-void ControllerManager::playlistManager() {
+void ControllerManager::playlistManager() 
+{
     try {
         auto playlistManagerView = getView("PlaylistManagerView");
         auto playlistHandlerView = getView("PlaylistHandlerView");
@@ -214,7 +217,8 @@ void ControllerManager::playlistManager() {
 }
 
 // PlayMusicHandler function: Play single music
-std::string ControllerManager::playMusicHandler() {
+std::string ControllerManager::playMusicHandler()
+{
     try {
         auto mediaFileManagerView = getView("MediaFileManagerView");
         std::string fileName;
@@ -234,7 +238,8 @@ std::string ControllerManager::playMusicHandler() {
 }
 
 // PlayPlaylist function: Play playlist
-std::vector<std::string> ControllerManager::playPlaylist() {
+std::vector<std::string> ControllerManager::playPlaylist() 
+{
     std::string playlistName;
     auto playlistManagerView = getView("PlaylistManagerView");
     auto playlistHandlerView = getView("PlaylistHandlerView");
@@ -278,7 +283,8 @@ std::vector<std::string> ControllerManager::playPlaylist() {
     return mediaPlaylistController->getListPathMediaFiles();
 }
 
-std::string ControllerManager::playVideoHandler() {
+std::string ControllerManager::playVideoHandler() 
+{
     try {
         auto mediaFileManagerView = getView("MediaFileManagerView");
         std::string fileName;
@@ -297,98 +303,14 @@ std::string ControllerManager::playVideoHandler() {
     }
 }
 
-void asyncHandleUart(asio::serial_port& serial, std::shared_ptr<PlayerController>& playerController) {
-    auto buffer = std::make_shared<asio::streambuf>();
-
-    asio::async_read_until(serial, *buffer, '\n',
-        [buffer, &serial, &playerController](const boost::system::error_code& error, std::size_t bytes_transferred) {
-            (void)bytes_transferred; 
-            if (!error) {
-                std::istream input_stream(buffer.get());
-                std::string received_data;
-                std::getline(input_stream, received_data);
-
-                if (playerController) {
-                    if (received_data == "play") {
-                        playerController->togglePlayback();
-                    } else if (received_data == "pause") {
-                        playerController->togglePlayback();
-                    } else if (received_data == "SW3") {
-                        playerController->stop();
-                    } else if (received_data == "next") {
-                        playerController->playNext();
-                    } else if (received_data == "previous") {
-                        playerController->playPrevious();
-                    } else {
-                        try {
-                            int volume = std::stoi(received_data);
-                            std::cout << "Volume: " << volume << std::endl;
-                            playerController->setVolume(volume);
-                        } catch (...) {
-                        }
-                    }
-                } else {
-                }
-
-                asyncHandleUart(serial, playerController);
-            } else {
-                std::cerr << "UART read error: " << error.message() << std::endl;
-            }
-        }
-    );
-}
-
-void ControllerManager::stopUART() {
-    try {
-        if (serial_port) {
-            serial_port->close();
-        }
-        io_context.stop();
-        if (uartThread.joinable()) {
-            uartThread.join();
-        }
-        std::cout << "UART stopped successfully.\n";
-    } catch (const std::exception& e) {
-        std::cerr << "Error stopping UART: " << e.what() << std::endl;
-    }
-}
-
-void ControllerManager::setUpUART(const std::string& port, unsigned int baud_rate) {
-    try {
-        // Khởi tạo serial_port
-        serial_port = std::make_unique<asio::serial_port>(io_context, port);
-        serial_port->set_option(asio::serial_port_base::baud_rate(baud_rate));
-        serial_port->set_option(asio::serial_port_base::character_size(8));
-        serial_port->set_option(asio::serial_port_base::parity(asio::serial_port_base::parity::none));
-        serial_port->set_option(asio::serial_port_base::stop_bits(asio::serial_port_base::stop_bits::one));
-        serial_port->set_option(asio::serial_port_base::flow_control(asio::serial_port_base::flow_control::none));
-
-        // Đăng ký xử lý UART
-        asyncHandleUart(*serial_port, playerController);
-
-        // Chạy io_context trên một luồng riêng
-        uartThread = std::thread([this]() {
-            try {
-                io_context.run();
-            } catch (const std::exception& e) {
-                std::cerr << "UART thread error: " << e.what() << std::endl;
-            }
-        });
-
-        std::cout << "UART setup completed on port " << port << " with baud rate " << baud_rate << ".\n";
-    } catch (const std::exception& e) {
-        std::cerr << "Failed to set up UART: " << e.what() << std::endl;
-    }
-}
-
-
 
 void ControllerManager::runApp() {
     if (model.getFolderManager().getListFolderDirectory().empty() &&
         model.getFolderManager().getListFolderUSB().empty()) {
         return;
     }
-    setUpUART("/dev/ttyACM1", 115200);
+    
+    uartManager.setUpUART("/dev/ttyACM0", 115200, playerController);
 
     auto mainMenuView = getView("MainMenuView");
     std::string typePlay = "noplay"; 
@@ -399,7 +321,9 @@ void ControllerManager::runApp() {
 
     while (true) {
         try {
-            // Hiển thị menu chính
+            if(playerController){
+                playerController->setNotificationsEnabled(true);
+            }
             choice = mainMenuView->showMenuWithPlayer(
                 model.getMediaFileManager(),
                 playerController,
@@ -409,6 +333,9 @@ void ControllerManager::runApp() {
 
             switch (choice) {
                 case METADATA_FILE_HANDLER: {
+                    if(playerController){
+                        playerController->setNotificationsEnabled(false);
+                    }
                     std::string checkError = mediaFileHandler();
                     if (checkError == "exit") {
                         break;
@@ -419,15 +346,27 @@ void ControllerManager::runApp() {
                     break;
                 }
                 case MEDIA_FILE_MANAGER:
+                if(playerController){
+                        playerController->setNotificationsEnabled(false);
+                    }
                     mediaFileManager();
                     break;
                 case PLAYLIST_MANAGER:
+                if(playerController){
+                        playerController->setNotificationsEnabled(false);
+                    }
                     playlistManager();
                     break;
                 case PLAYLIST_HANDLER:
+                if(playerController){
+                        playerController->setNotificationsEnabled(false);
+                    }
                     playlistHandler();
                     break;
                 case PLAY_MUSIC: {
+                    if(playerController){
+                        playerController->setNotificationsEnabled(false);
+                    }
                     media = playMusicHandler(); 
                     if (media == "exit") {
                         break;
@@ -445,6 +384,9 @@ void ControllerManager::runApp() {
                     break;
                 }
                 case PLAY_PLAYLIST: {
+                    if(playerController){
+                        playerController->setNotificationsEnabled(false);
+                    }
                     listMedia = playPlaylist();
                     if (listMedia.size() == 1 && listMedia[0] == "exit") {
                         break;
@@ -463,6 +405,9 @@ void ControllerManager::runApp() {
                     break;
                 }
                 case PLAY_VIDEO: {
+                    if(playerController){
+                        playerController->setNotificationsEnabled(false);
+                    }
                     media = playVideoHandler(); 
                     if (media == "exit") {
                         break;
@@ -484,7 +429,7 @@ void ControllerManager::runApp() {
                         playerController->stop();
                         playerController = nullptr;
                     }
-                    stopUART();
+                    uartManager.stopUART();
                     return; 
                 default:
                     throw InvalidChoiceException();

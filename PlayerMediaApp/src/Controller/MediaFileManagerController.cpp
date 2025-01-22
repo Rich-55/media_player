@@ -1,17 +1,18 @@
 #include "../../include/Controller/MediaFileManagerController.h"
 
 MediaFileManagerController::MediaFileManagerController(MediaFileManager& mediaManager, std::shared_ptr<BaseView> mediaManagerView, std::shared_ptr<BaseView> mediaFileView,std::shared_ptr<MediaScannerController> c) 
-    : mediaManager(mediaManager), mediaFileManagerView(mediaManagerView), mediaFileHandlerView(mediaFileView), scannerController(c){}
+    : mediaManager(mediaManager), mediaFileManagerView(mediaManagerView), mediaFileHandlerView(mediaFileView), scannerController(c)
+{}
 
 void MediaFileManagerController::addMediaFileController(std::string fileName, std::shared_ptr<MediaFileController> mediaFileController)
 {
     if(listMediaFileController.find(fileName) == listMediaFileController.end()){
         listMediaFileController[fileName] = mediaFileController;
     }
-    std::cerr << "Error: MediaFileController already exists.\n";
 }
 
-std::shared_ptr<MediaFileController> MediaFileManagerController::getMediaFileController(const std::string& fileName) {
+std::shared_ptr<MediaFileController> MediaFileManagerController::getMediaFileController(const std::string& fileName) 
+{
     auto currentMediaFileController = listMediaFileController.find(fileName);
     if (currentMediaFileController == listMediaFileController.end()) {
         std::cerr << "Error: MediaFileController not found.\n";
@@ -20,9 +21,9 @@ std::shared_ptr<MediaFileController> MediaFileManagerController::getMediaFileCon
    return currentMediaFileController->second;
 }
 
-void MediaFileManagerController::addDataFolder(const std::unordered_set<std::string> &listPathName) {
+void MediaFileManagerController::addDataFolder(const std::unordered_set<std::string> &listPathName) 
+{
     for (const auto &path : listPathName) {
-        std::cout << "Reading file: " << path << '\n';
 
         size_t lastSlashPos = path.find_last_of("/");
         std::string fileName = (lastSlashPos != std::string::npos) ? path.substr(lastSlashPos + 1) : path;
@@ -80,10 +81,12 @@ std::string MediaFileManagerController::showAllMediaFileOfAudio(){ return mediaF
 std::string MediaFileManagerController::showAllMediaFileOfVideo(){ return mediaFileManagerView->displayAllMediaFileOfVideo(mediaManager);}
 
 
-void MediaFileManagerController::handleMediaFileManager() {
+void MediaFileManagerController::handleMediaFileManager()
+{
     int choice;
     std::string message;
     std::string error;
+    
     while (true) {
         system("clear");
         if(!message.empty()){
@@ -125,9 +128,7 @@ void MediaFileManagerController::handleMediaFileManager() {
                             int result = addDataFile(pathFile);
                             if (result == -1) {
                                 throw UnsupportedFileTypeException(pathFile);
-                            } else {
-                               throw FileAlreadyExistsException(pathFile);
-                            }
+                            } 
                             message = "File " + pathFile + " has been added.";
                             break;
                         } catch (const MediaFileManagerException &e) {

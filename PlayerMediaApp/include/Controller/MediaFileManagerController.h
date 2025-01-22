@@ -3,19 +3,12 @@
 
 #include "../Model/MediaFileManager.h"
 #include "../View/BaseView.h"
-#include "../View/MetadataView.h"
-#include "../Controller/MediaScannerController.h"
-#include "../Controller/MediaFileController.h"
+#include "MediaScannerController.h"
+#include "MediaFileController.h"
 
 #include "../utils/MediaFileManagerException.h"
 #include "../utils/ConfigLoader.h"
 
-#include <dirent.h>
-#include <sys/stat.h>
-#include <cstdlib>
-#include <memory>
-#include <unordered_set>
-#include <unordered_map>
 
 class MediaFileManagerController {
 private:

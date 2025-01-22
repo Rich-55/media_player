@@ -2,15 +2,9 @@
 
 Playlist::Playlist(std::string name) : name(name) {}
 
-std::string Playlist::getName() const
-{
-    return this->name;
-}
+std::string Playlist::getName() const{ return this->name;}
 
-void Playlist::setName(std::string name)
-{
-    this->name = name;
-}
+void Playlist::setName(std::string name){ this->name = name;}
 
 bool Playlist::checkMediaFile(std::string file)
 {
@@ -24,10 +18,7 @@ bool Playlist::checkMediaFile(std::string file)
     return false;
 }
 
-std::vector<std::shared_ptr<MediaFile>> Playlist::getListMediaFiles()
-{
-    return this->listMediaFiles;
-}
+std::vector<std::shared_ptr<MediaFile>> Playlist::getListMediaFiles(){ return this->listMediaFiles;}
 
 std::vector<std::string> Playlist::getListPathMediaFiles()
 {
@@ -39,10 +30,7 @@ std::vector<std::string> Playlist::getListPathMediaFiles()
     return listPathMediaFiles;
 }
 
-void Playlist::loadMediaFile(std::shared_ptr<MediaFile> file)
-{
-    listMediaFiles.push_back(file);
-}
+void Playlist::loadMediaFile(std::shared_ptr<MediaFile> file){ listMediaFiles.push_back(file);}
 
 void Playlist::addMediaFile(std::shared_ptr<MediaFile> file) 
 {   
@@ -85,7 +73,8 @@ void Playlist::addMediaFile(std::shared_ptr<MediaFile> file)
     }
 }
 
-void Playlist::deleteMediaFile(std::string fileName) {
+void Playlist::deleteMediaFile(std::string fileName) 
+{
 
     std::shared_ptr<MediaFile> targetMedia = nullptr;
     for (const auto& mediaFile : listMediaFiles) {
@@ -137,6 +126,5 @@ void Playlist::deleteMediaFile(std::string fileName) {
         std::cerr << "Failed to write to playlist file: " << playlistFilePath << "\n";
     }
 }
-
 
 Playlist::~Playlist() {}

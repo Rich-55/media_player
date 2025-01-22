@@ -1,9 +1,7 @@
 #ifndef AUDIO_FILE_H
 #define AUDIO_FILE_H
 
-#include "MediaFile.h"
-#include <map>
-#include <unordered_set>    
+#include "MediaFile.h"   
 
 class AudioFile : public MediaFile {
     private:
@@ -12,7 +10,7 @@ class AudioFile : public MediaFile {
         AudioFile();
         AudioFile(const std::string& fileName, const std::string& pathName, unsigned long long size, const std::string& dateCreated, const std::string& duration, const std::string& fileType);
 
-        std::string getMetadata(const std::string& key) const;
+        std::string getMetadata(const std::string& key) const override;
         std::map<std::string, std::string> getAllMetadata() const override;
         
         void inputMediaFile(std::string pathName, bool isSame) override;

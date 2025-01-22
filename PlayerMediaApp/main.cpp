@@ -2,12 +2,12 @@
 #include "include/View/ViewManager.h"
 #include "include/Controller/ControllerManager.h"
 #include "include/Controller/PlayerController.h"
-#include <thread>
 
 int main() {
     ModelManager model;
     ViewManager view;
     ControllerManager controller(model, view);
+    
     controller.ScanData();
     controller.runApp();
 

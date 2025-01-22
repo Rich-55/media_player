@@ -10,40 +10,38 @@ int MainMenuView::showMenu() {return -1;}
 int MainMenuView::showMenuWithPlayer(MediaFileManager mediaFileManager, std::shared_ptr<PlayerController>& playerController, 
     std::string typePlay, std::string& error) {
     
-    static bool clear_required = true; // Đảm bảo xóa màn hình chỉ xảy ra 1 lần
+    static bool clear_required = true;
     int volume = playerController ? playerController->getVolume() : 100;
     bool is_repeat = playerController ? playerController->isRepeat() : false;
     bool is_pause = playerController ? playerController->isPause() : true;
     bool is_stoped = false;
-    int selected = 0; // Chỉ số menu (0-based index)
+    int selected = 0; 
 
-    const int rows_per_page = 25; // Số lượng media mỗi trang
-    const int scroll_visible_rows = 8; // Số hàng hiển thị khi cuộn
-    int current_page = 0;         // Trang hiện tại
+    const int rows_per_page = 25; 
+    const int scroll_visible_rows = 8; 
+    int current_page = 0;        
     int total_pages = playerController ? std::ceil((double)playerController->getMediaFiles().size() / rows_per_page) : 1;
     int scroll_offset = 0;
     int current_index = -1;
-
+    std::string duration = std::to_string(playerController ? playerController->getDuration() : 0) + "s";      
     int button_result = -1;
     std::string error_message;
 
 
     if (!error.empty()) {
-        error_message = error; // Lưu thông báo lỗi
-        error = ""; // Xóa lỗi gốc để tránh lặp lại
+        error_message = error; 
+        error = ""; 
         
-        // Tạo luồng riêng để tự động xóa lỗi sau 5 giây
         std::thread([&] {
-            std::this_thread::sleep_for(std::chrono::seconds(5)); // Đợi 5 giây
-            error_message = ""; // Xóa lỗi sau 5 giây
-            ScreenInteractive::Active()->PostEvent(Event::Custom); // Làm mới giao diện
-        }).detach(); // Tách luồng để không chặn giao diện
+            std::this_thread::sleep_for(std::chrono::seconds(2));
+            error_message = ""; 
+            ScreenInteractive::Active()->PostEvent(Event::Custom); 
+        }).detach(); 
     }
         
 
-    // Xóa màn hình khi bắt đầu hiển thị
     if (clear_required) {
-        system("clear");
+       system("clear");
         clear_required = false;
     }
 
@@ -52,13 +50,21 @@ int MainMenuView::showMenuWithPlayer(MediaFileManager mediaFileManager, std::sha
             current_index = newIndex;
             ScreenInteractive::Active()->PostEvent(Event::Custom); 
         });
-        static bool observer_added = false; // Đảm bảo chỉ thêm observer một lần
-        if (!observer_added) {
+       
             playerController->addObserverState([&] {
-                ScreenInteractive::Active()->PostEvent(Event::Custom); // Làm mới UI khi trạng thái thay đổi
+                ScreenInteractive::Active()->PostEvent(Event::Custom); 
             });
-            observer_added = true;
-        }
+        
+        
+            playerController->addObserverVolume([&] {
+                ScreenInteractive::Active()->PostEvent(Event::Custom);
+            });
+
+            playerController->addObserverDuration([&](int newDuration) {
+                duration = std::to_string(newDuration) + "s";
+                ScreenInteractive::Active()->PostEvent(Event::Custom);
+            });
+        
     }
     
     std::shared_ptr<MediaFile> media = nullptr;
@@ -72,7 +78,6 @@ int MainMenuView::showMenuWithPlayer(MediaFileManager mediaFileManager, std::sha
     }
 
 
-    // Danh sách menu
     std::vector<std::string> menu_entries = {
         "1. MetadataFile Handler",
         "2. MediaFile Manager",
@@ -112,7 +117,7 @@ int MainMenuView::showMenuWithPlayer(MediaFileManager mediaFileManager, std::sha
             error_message = "No media files to play.";
         }else if (playerController) {
             playerController->toggleRepeat();
-            is_repeat = playerController->isRepeat(); // Cập nhật trạng thái repeat
+            is_repeat = playerController->isRepeat(); 
             ScreenInteractive::Active()->PostEvent(Event::Custom);
         }
     });
@@ -124,7 +129,7 @@ int MainMenuView::showMenuWithPlayer(MediaFileManager mediaFileManager, std::sha
             error_message = "Cannot use 'Next' while playing a single track!";
         } else if (playerController) {
             playerController->playNext();
-            error_message.clear(); // Xóa lỗi nếu có
+            error_message.clear(); 
             ScreenInteractive::Active()->PostEvent(Event::Custom);
         }
     });
@@ -136,7 +141,7 @@ int MainMenuView::showMenuWithPlayer(MediaFileManager mediaFileManager, std::sha
             error_message = "Cannot use 'Previous' while playing a single track!";
         }else if (playerController) {
             playerController->playPrevious();
-            error_message.clear(); // Xóa lỗi nếu có
+            error_message.clear();
             ScreenInteractive::Active()->PostEvent(Event::Custom);
         }
     });
@@ -144,7 +149,6 @@ int MainMenuView::showMenuWithPlayer(MediaFileManager mediaFileManager, std::sha
     auto volume_up_button = Button("+ Volume", [&] {
         if (playerController) {
             playerController->increaseVolume(10);
-            volume = playerController->getVolume(); // Cập nhật lại volume
             ScreenInteractive::Active()->PostEvent(Event::Custom);
         }
     });
@@ -152,21 +156,17 @@ int MainMenuView::showMenuWithPlayer(MediaFileManager mediaFileManager, std::sha
     auto volume_down_button = Button("- Volume", [&] {
         if (playerController) {
             playerController->decreaseVolume(10);
-            volume = playerController->getVolume(); // Cập nhật lại volume
             ScreenInteractive::Active()->PostEvent(Event::Custom);
         }
     });
 
-    // Tạo container cho các nút
     auto button_container = Container::Horizontal({
         play_button, stop_button, repeat_button, next_button, previous_button, volume_up_button, volume_down_button
     });
 
-    // Renderer cho trạng thái nhạc và thông tin file nhạc
     auto media_info_renderer = Renderer([&] {
         std::vector<Element> metadata_elements;
 
-        // Lấy trạng thái nhạc (Playing hoặc Paused)
         std::string music_status;
         
         if (playerController) {
@@ -178,17 +178,17 @@ int MainMenuView::showMenuWithPlayer(MediaFileManager mediaFileManager, std::sha
         } else {
             music_status = "No PlayerController";
         }
-        std::string duration = std::to_string(playerController ? playerController->getDuration() : 0) + "s";
-
+        
+        std::string volume_display = std::to_string(playerController ? playerController->getVolume() : 100) + "%";
         
         if (typePlay == "noplay") {
             return vbox({
                 text("=== Music Status ===") | bold | center,
                 text("No music is playing.") | center,
                 separator(),
-                text("Volume: " + std::to_string(volume)) | center,
+                text("Volume: " + volume_display) | center,
                 separator(),
-                text(error_message) | color(Color::Red) | center // Hiển thị lỗi
+                text(error_message) | color(Color::Red) | center
             }) | border;
         } else if (typePlay == "single" && media) {
             for (const auto& [key, value] : media->getAllMetadata()) {
@@ -202,12 +202,12 @@ int MainMenuView::showMenuWithPlayer(MediaFileManager mediaFileManager, std::sha
                 text("Repeat: " + std::string(is_repeat ? "ON" : "OFF")) | center,
                 text("Duration: " + duration + "/" + media->getDuration()) | center,
                 separator(),
-                text("Volume: " + std::to_string(volume)) | center,
+                text("Volume: " + volume_display) | center,
                 separator(),
                 text("Media Info:") | bold,
                 vbox(std::move(metadata_elements)),
                 separator(),
-                text(error_message) | color(Color::Red) | center // Hiển thị lỗi
+                text(error_message) | color(Color::Red) | center 
             }) | border;
         }else if (typePlay == "playlist") {
             std::vector<ftxui::Element> rows;
@@ -223,12 +223,12 @@ int MainMenuView::showMenuWithPlayer(MediaFileManager mediaFileManager, std::sha
                 for (int i = start_index + scroll_offset;
                     i < std::min(start_index + scroll_offset + scroll_visible_rows, end_index);
                     ++i) {
-                    bool is_current = (i == current_index); // Sử dụng `current_index` thay vì gọi hàm
+                    bool is_current = (i == current_index); 
                     rows.push_back(ftxui::hbox({
                         text(std::to_string(i + 1)) | size(WIDTH, EQUAL, 5) | border,
                         text(playerController->getMediaFiles()[i]) | size(WIDTH, EQUAL, 120) | border,
                         text(mediaFileManager.getMediaFileByPath(playerController->getMediaFiles()[i])->getDuration()) | size(WIDTH, EQUAL, 20) | border,
-                    }) | (is_current ? bgcolor(Color::Green) : nothing)); // Đổi màu nền nếu là bài đang phát
+                    }) | (is_current ? bgcolor(Color::Green) : nothing)); 
                 }
             
 
@@ -236,9 +236,9 @@ int MainMenuView::showMenuWithPlayer(MediaFileManager mediaFileManager, std::sha
                 text("=== Music Status ===") | bold | center,
                 text("Current State: " + music_status) | center,
                 text("Repeat: " + std::string(is_repeat ? "ON" : "OFF")) | center,
-                text("Volume: " + std::to_string(volume)) | center,
+                text("Volume: " + volume_display) | center,
                 separator(),
-                text("Currently Playing: " + (current_index >= 0 && current_index < (int)playerController->getMediaFiles().size() ? playerController->getMediaFiles()[current_index] : "None")) | center | color(Color::Yellow),
+                text("Currently Playing: " + std::to_string(current_index + 1) + ". "+ (current_index >= 0 && current_index < (int)playerController->getMediaFiles().size() ? playerController->getMediaFiles()[current_index] : "None")) | center | color(Color::Yellow),
                 text("Duration: " + duration + "/" + mediaFileManager.getMediaFileByPath(playerController->getMediaFiles()[current_index])->getDuration()) | center,
                 separator(),
                 text("----- All Media File -----") | ftxui::bold | ftxui::center | ftxui::color(ftxui::Color::Blue),
@@ -246,22 +246,20 @@ int MainMenuView::showMenuWithPlayer(MediaFileManager mediaFileManager, std::sha
                 ftxui::separator(),
                 ftxui::vbox(std::move(rows)) | ftxui::vscroll_indicator | ftxui::frame | ftxui::border,
                 separator(),
-                text(error_message) | color(Color::Red) | center // Hiển thị lỗi
+                text(error_message) | color(Color::Red) | center
             });
         }
 
-        // Trường hợp không xác định
         return vbox({
             text("=== Music Status ===") | bold | center,
             text("No valid playback type.") | center,
             separator(),
             text("Volume: " + std::to_string(volume)) | center,
             separator(),
-            text(error_message) | color(Color::Red) | center // Hiển thị lỗi
+            text(error_message) | color(Color::Red) | center 
         }) | border;
     });
 
-    // Layout tổng thể
     auto layout = Container::Vertical({
         menu,
         button_container,
@@ -291,7 +289,6 @@ int MainMenuView::showMenuWithPlayer(MediaFileManager mediaFileManager, std::sha
     system("clear");
     auto screen = ScreenInteractive::TerminalOutput();
 
-    // Xử lý sự kiện
     auto final_component = CatchEvent(main_component, [&](Event event) {
         if (event == Event::Return) {
             if (selected == static_cast<int>(menu_entries.size() - 1)) {

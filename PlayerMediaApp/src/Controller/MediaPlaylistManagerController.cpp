@@ -1,6 +1,7 @@
 #include "../../include/Controller/MediaPlaylistManagerController.h"
 MediaPlaylistManagerController::MediaPlaylistManagerController(PlaylistManager& playlistModel, MediaFileManager& mediafileManager, FolderManager& folderManager, std::shared_ptr<BaseView> mediaManagerView, std::shared_ptr<BaseView> playlistManagerView, std::shared_ptr<BaseView> playlistHandlerView) 
-    : playlistManager(playlistModel), mediaFileManager(mediafileManager), folderManager(folderManager), mediaManagerView(mediaManagerView), playlistManagerView(playlistManagerView), playlistHandlerView(playlistHandlerView){}
+    : playlistManager(playlistModel), mediaFileManager(mediafileManager), folderManager(folderManager), mediaManagerView(mediaManagerView), playlistManagerView(playlistManagerView), playlistHandlerView(playlistHandlerView)
+{}
 
 void MediaPlaylistManagerController::addMediaPlaylistController(std::string playlistName, std::shared_ptr<MediaPlaylistController> mediaPlaylistController) 
 {
@@ -68,9 +69,11 @@ bool MediaPlaylistManagerController::deletePlaylist(std::string playlistName)
 std::string MediaPlaylistManagerController::displayAllPlaylist(){return playlistManagerView->displayAllPlaylist(playlistManager);}
 
 void MediaPlaylistManagerController::handlerPlaylistManager() {
+
     int choice;
     std::string message;
     std::string error;
+    
     while (true) {
         system("clear");
         try {

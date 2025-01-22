@@ -14,6 +14,7 @@ std::string VideoFile::getMetadata(const std::string& key) const
 }
 
 std::map<std::string, std::string> VideoFile::getAllMetadata() const {return metadataVideo;}
+
 void VideoFile::inputMediaFile(std::string pathName, bool isSame) {
     MediaFile::inputMediaFile(pathName, isSame);
 
@@ -65,7 +66,8 @@ void VideoFile::inputMediaFile(std::string pathName, bool isSame) {
 }
 
 
-bool VideoFile::addNewKey(const std::string& key, const std::string& value) {
+bool VideoFile::addNewKey(const std::string& key, const std::string& value)
+{
     bool check = false;
     if (metadataVideo.find(key) != metadataVideo.end()) {
         return check;
@@ -117,7 +119,8 @@ bool VideoFile::addNewKey(const std::string& key, const std::string& value) {
     return check;
 }
 
-bool VideoFile::editKey(const std::string& key, const std::string& value) {
+bool VideoFile::editKey(const std::string& key, const std::string& value) 
+{
     bool check = false;
 
     TagLib::FileRef fileRef(this->getPath().c_str());
@@ -165,7 +168,8 @@ bool VideoFile::editKey(const std::string& key, const std::string& value) {
     return check;
 }
 
-bool VideoFile::deleteKey(const std::string& key) {
+bool VideoFile::deleteKey(const std::string& key) 
+{
     bool check = false;
     TagLib::FileRef fileRef(this->getPath().c_str());
     if (!fileRef.isNull() && fileRef.tag()) {

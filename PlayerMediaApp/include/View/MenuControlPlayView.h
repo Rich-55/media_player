@@ -1,4 +1,0 @@
-#ifndef MENU_CONTROL_PLAY_VIEW_H
-#define MENU_CONTROL_PLAY_VIEW_H
-
-#endif

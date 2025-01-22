@@ -1,13 +1,6 @@
 #ifndef VIDEOFILE_H
 #define VIDEOFILE_H
 
-#include <iostream>
-#include <string>
-#include <map>
-#include <unordered_set>
-extern "C" {
-#include <libavformat/avformat.h>
-}
 #include "MediaFile.h"
 
 class VideoFile : public MediaFile {

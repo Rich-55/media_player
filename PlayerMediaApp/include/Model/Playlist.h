@@ -1,13 +1,7 @@
 #ifndef PLAYLIST_H
 #define PLAYLIST_H
 
-#include<iostream>
-#include<string>
-#include<memory>
-#include<vector>
-#include <fstream>
-#include <filesystem>
-#include "../Model/MediaFile.h"
+#include "MediaFile.h"
 
 class Playlist {
     private:

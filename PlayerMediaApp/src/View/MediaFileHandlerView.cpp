@@ -94,7 +94,6 @@ void MediaFileHandlerView::displayDetailMediaFile(std::shared_ptr<MediaFile> med
         hbox({ text("File Date Created: ") | bold, text(mediaFile->getDateCreated()) }),
     }) | border | color(Color::White);
 
-    // Tạo giao diện hiển thị metadata
     Elements metadata_elements;
     for (const auto& [key, value] : mediaFile->getAllMetadata()) {
         metadata_elements.push_back(hbox({ text(key + ": ") | bold, text(value) }));
@@ -102,12 +101,10 @@ void MediaFileHandlerView::displayDetailMediaFile(std::shared_ptr<MediaFile> med
 
     auto metadata_info = vbox(std::move(metadata_elements)) | border | color(Color::Green);
 
-    // Header cho metadata
     auto metadata_header = hbox({
         text((mediaFile->getType() == "Audio") ? "Audio Metadata:" : "Video Metadata:") | bold | color(Color::Yellow)
     });
 
-    // Thêm message nếu không rỗng
     Elements layout_elements = {
         text("Media File Details") | bold | center | color(Color::Cyan),
         separator(),
@@ -122,19 +119,16 @@ void MediaFileHandlerView::displayDetailMediaFile(std::shared_ptr<MediaFile> med
         layout_elements.push_back(text(message) | bold | hcenter | color(Color::Green));
     }
 
-    // Tạo layout tổng hợp
     auto layout = vbox(std::move(layout_elements)) | border;
 
-    // Căn giữa toàn bộ box
     auto centered_layout = vbox({
         hbox({ filler(), layout | hcenter, filler() }),
         filler(),
     }) | vcenter;
 
-    // Vẽ giao diện và hiển thị
     auto screen = Screen::Create(Dimension::Full(), Dimension::Fit(centered_layout));
     Render(screen, centered_layout);
-    screen.Print(); // In giao diện ra console
+    screen.Print(); 
 }
 
 std::pair<std::string, std::string> MediaFileHandlerView::displayMenuAddMetadata(
@@ -150,12 +144,12 @@ std::pair<std::string, std::string> MediaFileHandlerView::displayMenuAddMetadata
     }
 
     std::vector<std::string> keys = {
-        "title", "artist", "album", "genre", "comment", "year", "track", "Exit"};  // Thêm Exit
+        "title", "artist", "album", "genre", "comment", "year", "track", "Exit"}; 
 
     auto menu = Menu(&keys, &selected_index);
     auto screen = ScreenInteractive::TerminalOutput();
 
-    std::pair<std::string, std::string> result;  // Lưu trữ kết quả trả về.
+    std::pair<std::string, std::string> result;  
 
     auto main_component = Renderer(menu, [&] {
         return vbox({
@@ -177,7 +171,6 @@ std::pair<std::string, std::string> MediaFileHandlerView::displayMenuAddMetadata
         if (selected_index >= 0 && selected_index < (int)keys.size()) {
             selected_key = keys[selected_index];
 
-            // Nếu chọn "Exit", trả về { "0", "" }
             if (selected_key == "Exit") {
                 result = std::make_pair("0", "");
                 screen.ExitLoopClosure()();
@@ -190,7 +183,6 @@ std::pair<std::string, std::string> MediaFileHandlerView::displayMenuAddMetadata
             } else {
                 error_message.clear();
 
-                // Bắt đầu nhập giá trị
                 std::string value;
                 auto input_component = Renderer([&] {
                     return vbox({
@@ -206,8 +198,8 @@ std::pair<std::string, std::string> MediaFileHandlerView::displayMenuAddMetadata
                 screen.Loop(CatchEvent(input_component, [&](Event event) {
                     if (event == Event::Return) {
                         if (!value.empty()) {
-                            result = std::make_pair(selected_key, value);  // Lưu key-value
-                            screen.ExitLoopClosure()();  // Thoát khỏi vòng lặp nhập giá trị
+                            result = std::make_pair(selected_key, value);
+                            screen.ExitLoopClosure()();  
                             return true;
                         } else {
                             error_message = "Error: Value cannot be empty.";
@@ -219,7 +211,7 @@ std::pair<std::string, std::string> MediaFileHandlerView::displayMenuAddMetadata
                     }
                     return false;
                 }));
-                screen.ExitLoopClosure()();  // Thoát vòng lặp chính sau khi nhập xong
+                screen.ExitLoopClosure()();  
                 return true;
             }
         }
@@ -234,7 +226,6 @@ std::pair<std::string, std::string> MediaFileHandlerView::displayMenuAddMetadata
             selected_index = clicked_index;
             selected_key = keys[selected_index];
 
-            // Nếu chọn "Exit", trả về { "0", "" }
             if (selected_key == "Exit") {
                 result = std::make_pair("0", "");
                 screen.ExitLoopClosure()();
@@ -247,7 +238,6 @@ std::pair<std::string, std::string> MediaFileHandlerView::displayMenuAddMetadata
             } else {
                 error_message.clear();
 
-                // Bắt đầu nhập giá trị
                 std::string value;
                 auto input_component = Renderer([&] {
                     return vbox({
@@ -263,8 +253,8 @@ std::pair<std::string, std::string> MediaFileHandlerView::displayMenuAddMetadata
                 screen.Loop(CatchEvent(input_component, [&](Event event) {
                     if (event == Event::Return) {
                         if (!value.empty()) {
-                            result = std::make_pair(selected_key, value);  // Lưu key-value
-                            screen.ExitLoopClosure()();  // Thoát khỏi vòng lặp nhập giá trị
+                            result = std::make_pair(selected_key, value); 
+                            screen.ExitLoopClosure()();  
                             return true;
                         } else {
                             error_message = "Error: Value cannot be empty.";
@@ -276,7 +266,7 @@ std::pair<std::string, std::string> MediaFileHandlerView::displayMenuAddMetadata
                     }
                     return false;
                 }));
-                screen.ExitLoopClosure()();  // Thoát vòng lặp chính sau khi nhập xong
+                screen.ExitLoopClosure()();  
                 return true;
             }
         } else {
@@ -286,11 +276,11 @@ std::pair<std::string, std::string> MediaFileHandlerView::displayMenuAddMetadata
     }
 
     if (event == Event::ArrowUp || event == Event::ArrowDown) {
-        if (menu->OnEvent(event)) { // Để menu quản lý selected_index
+        if (menu->OnEvent(event)) { 
             error_message.clear();
             success_message.clear();
         }
-        return true; // Ngăn chặn xử lý sự kiện thêm
+        return true; 
     }
 
     return false;
@@ -299,7 +289,7 @@ std::pair<std::string, std::string> MediaFileHandlerView::displayMenuAddMetadata
 
     screen.Loop(main_component);
 
-    return result;  // Trả về key-value.
+    return result; 
 }
 
 std::pair<std::string, std::string> MediaFileHandlerView::displayMenuEditMetadata(
@@ -314,17 +304,16 @@ std::pair<std::string, std::string> MediaFileHandlerView::displayMenuEditMetadat
         error_message = "Error: " + exception;
     }
 
-    // Danh sách các key hiện tại từ metadata của file
     std::vector<std::string> keys;
     for (const auto& [key, value] : mediaFile->getAllMetadata()) {
         keys.push_back(key);
     }
-    keys.push_back("Exit");  // Thêm tùy chọn Exit
+    keys.push_back("Exit");  
 
     auto menu = Menu(&keys, &selected_index);
     auto screen = ScreenInteractive::TerminalOutput();
 
-    std::pair<std::string, std::string> result;  // Lưu kết quả trả về
+    std::pair<std::string, std::string> result; 
 
     auto main_component = Renderer(menu, [&] {
         return vbox({
@@ -345,20 +334,17 @@ std::pair<std::string, std::string> MediaFileHandlerView::displayMenuEditMetadat
         if (selected_index >= 0 && selected_index < (int)keys.size()) {
             selected_key = keys[selected_index];
 
-            // Nếu chọn "Exit", trả về { "0", "" }
             if (selected_key == "Exit") {
                 result = std::make_pair("0", "");
                 screen.ExitLoopClosure()();
                 return true;
             }
 
-            // Kiểm tra nếu key tồn tại
             if (mediaFile->getMetadata(selected_key).empty()) {
                 error_message = "Error: Key '" + selected_key + "' does not exist.";
             } else {
                 error_message.clear();
 
-                // Lấy giá trị mới cho key
                 std::string value = mediaFile->getMetadata(selected_key);
                 auto input_component = Renderer([&] {
                     return vbox({
@@ -376,7 +362,7 @@ std::pair<std::string, std::string> MediaFileHandlerView::displayMenuEditMetadat
                 screen.Loop(CatchEvent(input_component, [&](Event event) {
                     if (event == Event::Return) {
                         if (!value.empty()) {
-                            result = std::make_pair(selected_key, value);  // Trả về key-value mới
+                            result = std::make_pair(selected_key, value);  
                             screen.ExitLoopClosure()();
                             return true;
                         } else {
@@ -389,29 +375,28 @@ std::pair<std::string, std::string> MediaFileHandlerView::displayMenuEditMetadat
                     }
                     return false;
                 }));
-                screen.ExitLoopClosure()();  // Thoát khỏi vòng lặp chính
+                screen.ExitLoopClosure()(); 
                 return true;
             }
         }
     }
 
     if (event == Event::ArrowUp || event == Event::ArrowDown) {
-        if (menu->OnEvent(event)) { // Để menu quản lý selected_index
+        if (menu->OnEvent(event)) {
             error_message.clear();
         }
-        return true; // Ngăn chặn xử lý sự kiện thêm
+        return true; 
     }
 
     if (event.is_mouse() && event.mouse().button == Mouse::Left &&
         event.mouse().motion == Mouse::Pressed) {
-        int menu_start_y = 5;  // Khoảng cách từ đầu màn hình tới menu (tuỳ chỉnh nếu cần)
+        int menu_start_y = 5; 
         int clicked_index = event.mouse().y - menu_start_y;
 
         if (clicked_index >= 0 && clicked_index < (int)keys.size()) {
             selected_index = clicked_index;
             selected_key = keys[selected_index];
 
-            // Nếu chọn "Exit", trả về { "0", "" }
             if (selected_key == "Exit") {
                 result = std::make_pair("0", "");
                 screen.ExitLoopClosure()();
@@ -423,7 +408,6 @@ std::pair<std::string, std::string> MediaFileHandlerView::displayMenuEditMetadat
             } else {
                 error_message.clear();
 
-                // Lấy giá trị mới cho key
                 std::string value = mediaFile->getMetadata(selected_key);
                 auto input_component = Renderer([&] {
                     return vbox({
@@ -441,7 +425,7 @@ std::pair<std::string, std::string> MediaFileHandlerView::displayMenuEditMetadat
                 screen.Loop(CatchEvent(input_component, [&](Event event) {
                     if (event == Event::Return) {
                         if (!value.empty()) {
-                            result = std::make_pair(selected_key, value);  // Trả về key-value mới
+                            result = std::make_pair(selected_key, value); 
                             screen.ExitLoopClosure()();
                             return true;
                         } else {
@@ -454,7 +438,7 @@ std::pair<std::string, std::string> MediaFileHandlerView::displayMenuEditMetadat
                     }
                     return false;
                 }));
-                screen.ExitLoopClosure()();  // Thoát khỏi vòng lặp chính
+                screen.ExitLoopClosure()();  
                 return true;
             }
         } else {
@@ -468,7 +452,7 @@ std::pair<std::string, std::string> MediaFileHandlerView::displayMenuEditMetadat
 
     screen.Loop(main_component);
 
-    return result;  // Trả về key-value hoặc { "0", "" }
+    return result;  
 }
 
 std::string MediaFileHandlerView::displayMenuDeleteMetadata(std::shared_ptr<MediaFile> mediaFile) 
@@ -477,17 +461,16 @@ std::string MediaFileHandlerView::displayMenuDeleteMetadata(std::shared_ptr<Medi
     int selected_index = 0;
     std::string error_message;
 
-    // Lấy danh sách các key từ metadata
     std::vector<std::string> keys;
     for (const auto& [key, value] : mediaFile->getAllMetadata()) {
         keys.push_back(key);
     }
-    keys.push_back("Exit");  // Thêm Exit để thoát mà không xóa
+    keys.push_back("Exit"); 
 
     auto menu = Menu(&keys, &selected_index);
     auto screen = ScreenInteractive::TerminalOutput();
 
-    std::string result;  // Kết quả trả về
+    std::string result;  
 
     auto main_component = Renderer(menu, [&] {
         return vbox({
@@ -508,19 +491,17 @@ std::string MediaFileHandlerView::displayMenuDeleteMetadata(std::shared_ptr<Medi
             if (selected_index >= 0 && selected_index < (int)keys.size()) {
                 selected_key = keys[selected_index];
 
-                // Nếu chọn "Exit", trả về chuỗi rỗng
                 if (selected_key == "Exit") {
-                    result = "0";  // Không xóa gì
+                    result = "0";  
                     screen.ExitLoopClosure()();
                     return true;
                 }
 
-                // Kiểm tra nếu key tồn tại
                 if (mediaFile->getMetadata(selected_key).empty()) {
                     error_message = "Error: Key '" + selected_key + "' does not exist.";
                 } else {
                     error_message.clear();
-                    result = selected_key;  // Trả về key đã chọn
+                    result = selected_key; 
                     screen.ExitLoopClosure()();
                     return true;
                 }
@@ -529,16 +510,15 @@ std::string MediaFileHandlerView::displayMenuDeleteMetadata(std::shared_ptr<Medi
 
         if (event.is_mouse() && event.mouse().button == Mouse::Left &&
             event.mouse().motion == Mouse::Pressed) {
-            int menu_start_y = 5;  // Tùy chỉnh khoảng cách nếu cần
+            int menu_start_y = 5;  
             int clicked_index = event.mouse().y - menu_start_y;
 
             if (clicked_index >= 0 && clicked_index < (int)keys.size()) {
                 selected_index = clicked_index;
                 selected_key = keys[selected_index];
 
-                // Nếu chọn "Exit", trả về chuỗi rỗng
                 if (selected_key == "Exit") {
-                    result = "0";  // Không xóa gì
+                    result = "0"; 
                     screen.ExitLoopClosure()();
                     return true;
                 }
@@ -547,7 +527,7 @@ std::string MediaFileHandlerView::displayMenuDeleteMetadata(std::shared_ptr<Medi
                     error_message = "Error: Key '" + selected_key + "' does not exist.";
                 } else {
                     error_message.clear();
-                    result = selected_key;  // Trả về key đã chọn
+                    result = selected_key;  
                     screen.ExitLoopClosure()();
                     return true;
                 }
@@ -560,7 +540,7 @@ std::string MediaFileHandlerView::displayMenuDeleteMetadata(std::shared_ptr<Medi
             if (menu->OnEvent(event)) {
                 error_message.clear();
             }
-            return true;  // Ngăn xử lý lặp lại
+            return true; 
         }
 
         return false;
@@ -568,5 +548,5 @@ std::string MediaFileHandlerView::displayMenuDeleteMetadata(std::shared_ptr<Medi
 
     screen.Loop(main_component);
 
-    return result;  // Trả về key hoặc chuỗi rỗng nếu thoát
+    return result;  
 }

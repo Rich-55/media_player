@@ -1,12 +1,7 @@
 #ifndef SCAN_VIEW_H
 #define SCAN_VIEW_H
 
-#include "../View/BaseView.h"
-#include <vector>
-#include <dirent.h>
-#include <sys/stat.h>
-#include <cstdlib>
-
+#include "BaseView.h"
 
 class ScanView : public BaseView{
     private:

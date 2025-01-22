@@ -2,6 +2,7 @@
 #define MEDIA_FILE_HANDLER_VIEW_H
 
 #include "BaseView.h"
+
 class MediaFileHandlerView : public BaseView {
     public:
         MediaFileHandlerView();

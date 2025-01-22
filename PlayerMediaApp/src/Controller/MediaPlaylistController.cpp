@@ -4,15 +4,12 @@ MediaPlaylistController::MediaPlaylistController(MediaFileManager& mediaFileMana
 : mediaFileManager(mediaFileManager), folderManager(folderManager), playlist(playlistModel), mediaManagerView(mediaManagerView), playlistHandlerView(playlistHandlerView)
 {}
 
-std::vector<std::string> MediaPlaylistController::getListPathMediaFiles() {
-    return playlist->getListPathMediaFiles();
-}
+std::vector<std::string> MediaPlaylistController::getListPathMediaFiles() { return playlist->getListPathMediaFiles();}
 
-void MediaPlaylistController::setNamePlaylist(std::string name) {
-    playlist->setName(name);
-}
+void MediaPlaylistController::setNamePlaylist(std::string name) { playlist->setName(name);}
 
-bool MediaPlaylistController::addMediaFileInPlaylist(std::string fileName) {
+bool MediaPlaylistController::addMediaFileInPlaylist(std::string fileName) 
+{
     std::shared_ptr<MediaFile> mediaFile = mediaFileManager.getMediaFile(fileName);
     if (playlist->checkMediaFile(mediaFile->getName())) {
         return false;
@@ -97,20 +94,17 @@ bool MediaPlaylistController::deleteMediaFileInPlaylist(std::string fileName) {
 }
 
 
-void MediaPlaylistController::displayAllMediaFilesInPlaylist()
-{
-    playlistHandlerView->displayAllMediaFileInPlaylist(playlist);
-}
+void MediaPlaylistController::displayAllMediaFilesInPlaylist(){playlistHandlerView->displayAllMediaFileInPlaylist(playlist);}
 
-int MediaPlaylistController::showMenuWithMediaListInPlaylist()
-{
-    return playlistHandlerView->showMenuWithMediaListInPlaylist(playlist);
-}
+int MediaPlaylistController::showMenuWithMediaListInPlaylist(){return playlistHandlerView->showMenuWithMediaListInPlaylist(playlist);}
 
-void MediaPlaylistController::handlerPlaylist() {
+void MediaPlaylistController::handlerPlaylist() 
+{
+
     int choice;
     std::string message;
     std::string error;
+
     while (true) {
         system("clear");
         try {
