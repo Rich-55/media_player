@@ -11,9 +11,9 @@ class ScanView : public BaseView{
 
         int showMenu() override;
         
-        int showListFolder(std::vector<std::string>) override;
-        int showListUSBName(std::vector<std::string>) override;
-        void setListPathNameIsAdded(std::unordered_set<std::string>) override;
+        int showListFolder(std::vector<std::string> listFolder) override;
+        int showListUSBName(std::vector<std::string> usbDevices) override;
+        void setListPathNameIsAdded(std::unordered_set<std::string> listPathName) override;
         void showFileAdded() override;
 
         

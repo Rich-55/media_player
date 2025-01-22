@@ -10,17 +10,18 @@ class PlaylistHandlerView : public BaseView {
         
         int showMenu()override;
 
-        bool showConfirmMenu(std::string) override;
+        bool showConfirmMenu(std::string message) override;
 
-        void showNotificationMessage(std::string, std::string) override;
+        void showNotificationMessage(std::string message, std::string type) override;
 
         std::string showMenuCreatePlaylist() override;
 
-        int showMenuWithMediaListInPlaylist(std::shared_ptr<Playlist>) override;
+        int showMenuWithMediaListInPlaylist(std::shared_ptr<Playlist> playlist) override;
 
-        std::string displayAllMediaFileInPlaylist(std::shared_ptr<Playlist>) override;
+        std::string displayAllMediaFileInPlaylist(std::shared_ptr<Playlist> playlist) override;
         
-        std::pair<std::string, std::string> displayAllFolder(std::pair<std::unordered_set<std::string> , std::unordered_set<std::string> >) override;
+        std::pair<std::string, std::string> displayAllFolder(std::pair<std::unordered_set<std::string>, std::unordered_set<std::string>>
+        listFolderDirectoryAndUSB) override;
 };
 
 

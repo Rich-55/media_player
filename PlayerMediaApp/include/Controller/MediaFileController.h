@@ -23,11 +23,11 @@ protected:
         }
     }
 public:
-    MediaFileController(std::shared_ptr<MediaFile> , std::shared_ptr<BaseView>);
+    MediaFileController(std::shared_ptr<MediaFile> m, std::shared_ptr<BaseView> v);
 
     void handlerMediaFile();
 
-    void getDetailMediaFile(std::string);
+    void getDetailMediaFile(std::string message);
 
     std::string addMetadata();
 

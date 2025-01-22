@@ -25,16 +25,16 @@ class MediaPlaylistManagerController{
         std::shared_ptr<BaseView> playlistHandlerView;
         std::unordered_map<std::string, std::shared_ptr<MediaPlaylistController>> listMediaPlaylistController;
     public:
-        MediaPlaylistManagerController(PlaylistManager&, MediaFileManager&, FolderManager&, std::shared_ptr<BaseView>, std::shared_ptr<BaseView>, std::shared_ptr<BaseView>);
+        MediaPlaylistManagerController(PlaylistManager& playlistModel, MediaFileManager& mediafileManager, FolderManager& folderManager, std::shared_ptr<BaseView> mediaManagerView, std::shared_ptr<BaseView> playlistManagerView, std::shared_ptr<BaseView> playlistHandlerView);
 
         void handlerPlaylistManager();
 
-        void addMediaPlaylistController(std::string, std::shared_ptr<MediaPlaylistController>);
+        void addMediaPlaylistController(std::string playlistName, std::shared_ptr<MediaPlaylistController> mediaPlaylistController);
         std::shared_ptr<MediaPlaylistController> getMediaPlaylistController(const std::string& playlistName);
 
-        std::string createPlaylist(std::string);
+        std::string createPlaylist(std::string namePlaylist);
         
-        bool deletePlaylist(std::string);
+        bool deletePlaylist(std::string playlistName);
 
         std::string displayAllPlaylist();
 

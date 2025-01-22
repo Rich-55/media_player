@@ -8,20 +8,20 @@ class Playlist {
         std::string name;
         std::vector<std::shared_ptr<MediaFile>> listMediaFiles;
     public:
-        Playlist(std::string);
+        Playlist(std::string name);
 
         std::string getName() const;
-        void setName(std::string);
+        void setName(std::string name);
 
-        bool checkMediaFile(std::string);
+        bool checkMediaFile(std::string file);
 
         std::vector<std::shared_ptr<MediaFile>> getListMediaFiles();
         std::vector<std::string> getListPathMediaFiles();
 
-        void loadMediaFile(std::shared_ptr<MediaFile>);
-        void addMediaFile(std::shared_ptr<MediaFile>);
+        void loadMediaFile(std::shared_ptr<MediaFile> file);
+        void addMediaFile(std::shared_ptr<MediaFile> file);
 
-        void deleteMediaFile(std::string);
+        void deleteMediaFile(std::string fileName);
 
         ~Playlist();
 };

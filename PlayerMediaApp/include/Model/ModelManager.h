@@ -20,10 +20,9 @@ class ModelManager{
 
         FolderManager &getFolderManager();
 
-        std::shared_ptr<Playlist> getPlaylist(std::string);
+        std::shared_ptr<Playlist> getPlaylist(std::string name);
 
-        std::shared_ptr<MediaFile> getMediaFile(std::string);
-
+        std::shared_ptr<MediaFile> getMediaFile(std::string fileName);
 
 };
 

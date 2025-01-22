@@ -34,7 +34,7 @@ class ControllerManager{
         std::unique_ptr<MediaPlaylistManagerController> mediaPlaylistManagerController;
         
     public:
-        ControllerManager(ModelManager, ViewManager, std::shared_ptr<UARTManager>);
+        ControllerManager(ModelManager model, ViewManager view, std::shared_ptr<UARTManager>  uart);
         
         std::shared_ptr<BaseView> getView(const std::string& viewName);
         
