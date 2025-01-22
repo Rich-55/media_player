@@ -80,23 +80,26 @@ int PlaylistHandlerView::showMenuWithMediaListInPlaylist(std::shared_ptr<Playlis
         "0. Back to main menu"
     };
 
-    std::vector<int> logic_mapping = {1, 2, 3, 4, 0}; 
-    int selected = 0; 
-    std::string error_message; 
-    int final_selected = -1; 
+    std::vector<int> logic_mapping = {1, 2, 3, 4, 0}; // Liên kết mục menu với logic tương ứng
+    int selected = 0; // Vị trí được chọn ban đầu
+    std::string error_message; // Lưu thông báo lỗi nếu có
+    int final_selected = -1; // Kết quả trả về cuối cùng
 
-    const int rows_per_page = 25; 
-    const int scroll_visible_rows = 10; 
-    int current_page = 0;
+    // Phân trang danh sách media
+    const int rows_per_page = 25; // Số lượng media mỗi trang
+    const int scroll_visible_rows = 10; // Số hàng hiển thị khi cuộn
+    int current_page = 0;         // Trang hiện tại
     int total_pages = std::ceil((double)playlist->getListMediaFiles().size() / rows_per_page);
-    int scroll_offset = 0;
+    int scroll_offset = 0; // Offset khi cuộn trong trang
 
     auto create_table_view = [&]() {
         std::vector<ftxui::Element> rows;
 
+        // Kiểm tra nếu playlist rỗng
         if (playlist->getListMediaFiles().empty()) {
             rows.push_back(ftxui::text("No media files in the playlist.") | ftxui::bold | ftxui::center);
         } else {
+            // Tiêu đề bảng
             rows.push_back(ftxui::hbox({
                 ftxui::text("No") | ftxui::bold | ftxui::size(ftxui::WIDTH, ftxui::EQUAL, 5) | ftxui::border,
                 ftxui::text("File Name") | ftxui::bold | ftxui::size(ftxui::WIDTH, ftxui::EQUAL, 25) | ftxui::border,
@@ -108,6 +111,7 @@ int PlaylistHandlerView::showMenuWithMediaListInPlaylist(std::shared_ptr<Playlis
                 ftxui::text("Date Created") | ftxui::bold | ftxui::size(ftxui::WIDTH, ftxui::EQUAL, 20) | ftxui::border,
             }));
 
+            // Lấy danh sách media files trên trang hiện tại
             int start_index = current_page * rows_per_page;
             int end_index = std::min(start_index + rows_per_page, (int)playlist->getListMediaFiles().size());
 
@@ -158,6 +162,7 @@ int PlaylistHandlerView::showMenuWithMediaListInPlaylist(std::shared_ptr<Playlis
             return true;
         }
 
+        // Xử lý nhập số từ bàn phím để chọn menu
         if (event.is_character() && std::isdigit(event.character()[0])) {
             int number = event.character()[0] - '0';
             auto it = std::find(logic_mapping.begin(), logic_mapping.end(), number);
@@ -171,16 +176,18 @@ int PlaylistHandlerView::showMenuWithMediaListInPlaylist(std::shared_ptr<Playlis
             }
         }
 
+        // Xử lý điều hướng menu bằng phím mũi tên lên/xuống
         if (event == Event::ArrowUp || event == Event::ArrowDown) {
             menu->OnEvent(event);
             return true;
         }
 
+        // Xử lý click chuột vào menu chính
         if (event.is_mouse() && event.mouse().button == Mouse::Left && event.mouse().motion == Mouse::Pressed) {
-            int clicked_index = event.mouse().y - 3; 
+            int clicked_index = event.mouse().y - 3; // Căn chỉnh tọa độ Y (thay đổi nếu cần)
             if (clicked_index >= 0 && clicked_index < (int)menu_entries.size()) {
-                selected = clicked_index;
-                final_selected = logic_mapping[selected]; 
+                selected = clicked_index; // Cập nhật vị trí được chọn
+                final_selected = logic_mapping[selected]; // Trả về logic tương ứng
                 screen.ExitLoopClosure()();
                 return true;
             } else {
@@ -189,10 +196,11 @@ int PlaylistHandlerView::showMenuWithMediaListInPlaylist(std::shared_ptr<Playlis
             }
         }
 
+        // Xử lý chuyển trang danh sách media
         if (event == Event::ArrowLeft) {
             if (current_page > 0) {
                 --current_page;
-                scroll_offset = 0; 
+                scroll_offset = 0; // Reset offset khi chuyển trang
                 error_message.clear();
             } else {
                 error_message = "Already on the first page!";
@@ -203,7 +211,7 @@ int PlaylistHandlerView::showMenuWithMediaListInPlaylist(std::shared_ptr<Playlis
         if (event == Event::ArrowRight) {
             if (current_page < total_pages - 1) {
                 ++current_page;
-                scroll_offset = 0;
+                scroll_offset = 0; // Reset offset khi chuyển trang
                 error_message.clear();
             } else {
                 error_message = "Already on the last page!";
@@ -211,6 +219,7 @@ int PlaylistHandlerView::showMenuWithMediaListInPlaylist(std::shared_ptr<Playlis
             return true;
         }
 
+        // Xử lý cuộn danh sách media
         if (event.mouse().button == Mouse::WheelUp) {
             if (scroll_offset > 0) {
                 --scroll_offset;
@@ -261,13 +270,13 @@ std::string PlaylistHandlerView::displayAllMediaFileInPlaylist(std::shared_ptr<P
     }
 
         
-        const int rows_per_page = 25;
-        const int scroll_visible_rows = 10; 
+        const int rows_per_page = 25; // Số lượng hàng tối đa mỗi trang
+        const int scroll_visible_rows = 10; // Số hàng hiển thị khi cuộn
         int current_page = 0;
         int total_pages = std::ceil((double)media_files.size() / rows_per_page);
-        int selected_index = -1;
-        int hovered_index = -1;
-        int scroll_offset = 0;
+        int selected_index = -1;  // Không có hàng nào được chọn ban đầu
+        int hovered_index = -1;  // Hover index cho di chuyển chuột
+        int scroll_offset = 0;   // Offset cuộn trong trang
         std::string input_buffer;
         std::string result_filename;
         bool is_exit_hovered = false;
@@ -277,6 +286,7 @@ std::string PlaylistHandlerView::displayAllMediaFileInPlaylist(std::shared_ptr<P
         auto render_view = [&]() -> Element {
             Elements table_rows;
 
+            // Tiêu đề bảng
             table_rows.push_back(
                 hbox({
                     text("STT") | bold | size(WIDTH, EQUAL, 5) | border,
@@ -394,26 +404,30 @@ std::string PlaylistHandlerView::displayAllMediaFileInPlaylist(std::shared_ptr<P
             }
 
             if (event.mouse().motion == Mouse::Moved) {
-    const int list_y_start = 16; 
-    const int row_height = 3; 
-    const int list_y_end = list_y_start + scroll_visible_rows * row_height; 
+    // Xác định giới hạn vùng danh sách hiển thị
+    const int list_y_start = 16;  // Tọa độ Y bắt đầu vùng danh sách
+    const int row_height = 3;     // Chiều cao thực tế mỗi hàng
+    const int list_y_end = list_y_start + scroll_visible_rows * row_height; // Tọa độ Y kết thúc vùng danh sách
 
+    // Tính toán vị trí hàng hover
     if (event.mouse().y >= list_y_start && event.mouse().y < list_y_end) {
         int relative_y = event.mouse().y - list_y_start;
         int hovered_row = (relative_y / row_height) + (scroll_offset + current_page * rows_per_page);
 
+        // Chỉ hover nếu chỉ số hàng hợp lệ
         if (hovered_row >= current_page * rows_per_page &&
             hovered_row < std::min((current_page + 1) * rows_per_page, (int)media_files.size())) {
             hovered_index = hovered_row;
         } else {
-            hovered_index = -1;
+            hovered_index = -1; // Ngoài phạm vi hợp lệ
         }
     } else {
-        hovered_index = -1;
+        hovered_index = -1; // Ngoài phạm vi danh sách
     }
 
-    const int exit_button_y_start = 47;
-    const int exit_button_y_end = exit_button_y_start + 3; 
+    // Kiểm tra hover vào nút Exit
+    const int exit_button_y_start = 47;  // Tọa độ Y bắt đầu của nút Exit
+    const int exit_button_y_end = exit_button_y_start + 3; // Chiều cao của nút Exit
     is_exit_hovered = (event.mouse().y >= exit_button_y_start && event.mouse().y < exit_button_y_end);
 
     return true;
@@ -423,14 +437,14 @@ if (event.is_character()) {
     char c = event.character()[0];
     if (std::isalnum(c) || c == '.' || c == '_' || c == '-' || c == ' ' || c == '(' || c == ')') {
         input_buffer += c;
-        hovered_index = -1; 
+        hovered_index = -1; // Vô hiệu hóa trạng thái hover khi nhập
         return true;
     }
 }
 
 if (event == Event::Backspace && !input_buffer.empty()) {
     input_buffer.pop_back();
-    hovered_index = -1; 
+    hovered_index = -1; // Vô hiệu hóa trạng thái hover khi nhập
     return true;
 }
 
@@ -505,9 +519,11 @@ if (event == Event::Return) {
 std::pair<std::string, std::string> PlaylistHandlerView::displayAllFolder(
     std::pair<std::unordered_set<std::string>, std::unordered_set<std::string>> listFolderDirectoryAndUSB) {
 
+    // Convert unordered_set to vector for display
     std::vector<std::string> listFolderDirectory(listFolderDirectoryAndUSB.first.begin(), listFolderDirectoryAndUSB.first.end());
     std::vector<std::string> listFolderUSB(listFolderDirectoryAndUSB.second.begin(), listFolderDirectoryAndUSB.second.end());
 
+    // Main menu entries
     std::vector<std::string> mainMenuEntries = {
         "1. Directory",
         "2. USB",
@@ -536,7 +552,7 @@ std::pair<std::string, std::string> PlaylistHandlerView::displayAllFolder(
         }
 
         if (event.is_mouse() && event.mouse().button == Mouse::Left && event.mouse().motion == Mouse::Pressed) {
-            int clickedIndex = event.mouse().y - 3; 
+            int clickedIndex = event.mouse().y - 3; // Adjust based on menu offset
             if (clickedIndex >= 0 && clickedIndex < (int)mainMenuEntries.size()) {
                 selectedIndex = clickedIndex;
                 screen.ExitLoopClosure()();
@@ -551,17 +567,17 @@ std::pair<std::string, std::string> PlaylistHandlerView::displayAllFolder(
     screen.Loop(mainComponent);
 
     finalSelected = selectedIndex;
-    if (finalSelected == 2) { 
+    if (finalSelected == 2) { // Exit
         return {"", ""};
     }
 
     std::vector<std::string>* selectedList;
     std::string sourceType;
 
-    if (finalSelected == 0) {
+    if (finalSelected == 0) { // Directory
         selectedList = &listFolderDirectory;
         sourceType = "Directory";
-    } else if (finalSelected == 1) {
+    } else if (finalSelected == 1) { // USB
         selectedList = &listFolderUSB;
         sourceType = "USB";
     }
@@ -604,7 +620,7 @@ std::pair<std::string, std::string> PlaylistHandlerView::displayAllFolder(
                 try {
                     int number = std::stoi(inputBuffer);
                     if (number == 0) {
-                        folderSelectedIndex = (int)folderMenuEntries.size() - 1;
+                        folderSelectedIndex = (int)folderMenuEntries.size() - 1; // Exit
                     } else if (number > 0 && number <= (int)selectedList->size()) {
                         folderSelectedIndex = number - 1;
                     } else {
@@ -633,7 +649,7 @@ std::pair<std::string, std::string> PlaylistHandlerView::displayAllFolder(
         }
 
         if (event.is_mouse() && event.mouse().button == Mouse::Left && event.mouse().motion == Mouse::Pressed) {
-            int clickedIndex = event.mouse().y - 3;
+            int clickedIndex = event.mouse().y - 3; // Adjust based on menu offset
             if (clickedIndex >= 0 && clickedIndex < (int)folderMenuEntries.size()) {
                 folderSelectedIndex = clickedIndex;
                 screen.ExitLoopClosure()();
@@ -650,7 +666,7 @@ std::pair<std::string, std::string> PlaylistHandlerView::displayAllFolder(
 
     screen.Loop(folderComponent);
 
-    if (folderSelectedIndex == (int)folderMenuEntries.size() - 1) {
+    if (folderSelectedIndex == (int)folderMenuEntries.size() - 1) { // Exit
         return {sourceType, ""};
     }
 

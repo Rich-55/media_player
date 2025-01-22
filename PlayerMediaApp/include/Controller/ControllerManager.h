@@ -29,8 +29,8 @@ class ControllerManager{
 
         std::unique_ptr<MediaFileManagerController> mediaFileManagerController;
         std::unique_ptr<MediaPlaylistManagerController> mediaPlaylistManagerController;
-        asio::io_context io_context;
-        std::unique_ptr<asio::serial_port> serial_port;
+        asio::io_context io_context;                      // Quản lý IO cho UART
+        std::unique_ptr<asio::serial_port> serial_port;   // Serial port cho UART
         std::thread uartThread;    
     public:
         ControllerManager(ModelManager, ViewManager);

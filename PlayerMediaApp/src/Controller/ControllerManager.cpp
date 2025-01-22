@@ -355,6 +355,7 @@ void ControllerManager::stopUART() {
 
 void ControllerManager::setUpUART(const std::string& port, unsigned int baud_rate) {
     try {
+        // Khởi tạo serial_port
         serial_port = std::make_unique<asio::serial_port>(io_context, port);
         serial_port->set_option(asio::serial_port_base::baud_rate(baud_rate));
         serial_port->set_option(asio::serial_port_base::character_size(8));
@@ -362,8 +363,10 @@ void ControllerManager::setUpUART(const std::string& port, unsigned int baud_rat
         serial_port->set_option(asio::serial_port_base::stop_bits(asio::serial_port_base::stop_bits::one));
         serial_port->set_option(asio::serial_port_base::flow_control(asio::serial_port_base::flow_control::none));
 
+        // Đăng ký xử lý UART
         asyncHandleUart(*serial_port, playerController);
 
+        // Chạy io_context trên một luồng riêng
         uartThread = std::thread([this]() {
             try {
                 io_context.run();
@@ -396,6 +399,7 @@ void ControllerManager::runApp() {
 
     while (true) {
         try {
+            // Hiển thị menu chính
             choice = mainMenuView->showMenuWithPlayer(
                 model.getMediaFileManager(),
                 playerController,

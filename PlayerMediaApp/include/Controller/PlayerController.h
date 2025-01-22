@@ -22,9 +22,11 @@ extern "C" {
 #include <SDL2/SDL_mixer.h>
 }
 
+// A simple audio packet queue
 extern std::queue<AVPacket*> audioQueue;
 extern std::mutex audioQueueMutex;
 
+// Audio settings
 extern int64_t audio_out_channel_layout;
 extern int audio_out_channels;
 extern int audio_out_sample_rate;
@@ -45,19 +47,19 @@ class PlayerController {
         bool manualTransition;
         bool repeat;
         Mix_Music* currentMusic;
-       
+        //observers
         std::vector<std::function<void(int)>> observersIndex;
         std::vector<std::function<void()>> observersState;
 
         static void musicFinishedCallback();
         
-        std::atomic<int> currentDuration;
-        std::atomic<bool> durationRunning;
-        std::thread durationThread;
+        std::atomic<int> currentDuration; // Thời gian đang chạy (tính bằng giây)
+        std::atomic<bool> durationRunning; // Trạng thái chạy của bộ đếm
+        std::thread durationThread; // Luồng để đếm thời gian
 
-        void startDuration();
-        void stopDuration();
-        void resetDuration();
+        void startDuration(); // Bắt đầu đếm thời gian
+        void stopDuration();  // Dừng đếm thời gian và reset
+        void resetDuration(); // Reset về 0
 
     public:
         

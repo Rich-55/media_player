@@ -56,13 +56,13 @@ std::vector<std::string> PlayerController::getMediaFiles() {
     return mediaFiles;
 }
 void PlayerController::startDuration() {
-    stopDuration(); 
+    stopDuration(); // Dừng nếu đã có luồng trước đó
     durationRunning = true;
     durationThread = std::thread([this]() {
         while (durationRunning) {
             std::this_thread::sleep_for(std::chrono::seconds(1));
             if (durationRunning && !paused) {
-                ++currentDuration; 
+                ++currentDuration; // Tăng thời gian khi đang chạy
             }
         }
     });
@@ -114,9 +114,9 @@ void PlayerController::play() {
         return;
     }
 
-    stopPlaybackThread(); 
-    resetDuration(); 
-    startDuration(); 
+    stopPlaybackThread(); // Stop any existing playback thread
+    resetDuration(); // Reset thời gian khi bắt đầu phát
+    startDuration(); // Bắt đầu đếm thời gian
     const std::string& file = mediaFiles[currentIndex];
     currentPlayingFile = file; 
     notifyObserversState();
@@ -185,8 +185,8 @@ void PlayerController::toggleRepeat() {
 
 
 void PlayerController::stop() {
-    stopDuration(); 
-    resetDuration(); 
+    stopDuration(); // Dừng đếm thời gian
+    resetDuration(); // Reset thời gian
     std::unique_lock<std::recursive_mutex> lock(stateMutex);
 
     playing = false;
@@ -256,7 +256,7 @@ void PlayerController::playbackWorker(const std::string& file) {
 
     std::unique_lock<std::recursive_mutex> lock(stateMutex);
     playing = false;
-    stopDuration(); 
+    stopDuration(); // Dừng đếm thời gian
     resetDuration(); 
     currentPlayingFile = "";
 }

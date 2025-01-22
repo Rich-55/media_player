@@ -29,14 +29,17 @@ void BaseView::showNotificationMessage(std::string message, std::string type) {
 
 bool BaseView::showConfirmMenu(std::string message)
 {
+    // Chỉ mục được chọn
     int selected_index = 0;
     bool confirmed = false;
 
+    // Tùy chọn "Yes" và "No"
     std::vector<std::string> options = {"Yes", "No"};
     auto menu = Menu(&options, &selected_index);
 
     auto screen = ScreenInteractive::TerminalOutput();
 
+    // Tạo giao diện xác nhận
     auto main_component = Renderer(menu, [&] {
         return vbox({
             text("Confirm Action") | bold | center,
@@ -49,22 +52,27 @@ bool BaseView::showConfirmMenu(std::string message)
         });
     });
 
+    // Xử lý sự kiện
     main_component = CatchEvent(main_component, [&](Event event) {
         if (event == Event::Return) {
+            // Xác nhận lựa chọn
             confirmed = (selected_index == 0); // Yes -> true, No -> false
             screen.ExitLoopClosure()();
             return true;
         }
 
         if (event.is_mouse() && event.mouse().button == Mouse::Left && event.mouse().motion == Mouse::Pressed) {
-            int menu_start_y = 5;
-            int menu_height = options.size();
+            // Tính toán vùng menu dựa trên dòng nơi menu bắt đầu hiển thị
+            int menu_start_y = 5;  // Số dòng từ đầu giao diện đến menu
+            int menu_height = options.size();  // Số mục trong menu
 
-            int clicked_index = event.mouse().y - menu_start_y;
+            int clicked_index = event.mouse().y - menu_start_y;  // Tính chỉ mục được click
 
+            // Debug để kiểm tra tọa độ chuột
             std::cout << "Mouse clicked at: (" << event.mouse().x << ", " << event.mouse().y << ")\n";
             std::cout << "Menu start y: " << menu_start_y << ", clicked index: " << clicked_index << "\n";
 
+            // Kiểm tra nếu click trong phạm vi menu
             if (clicked_index >= 0 && clicked_index < menu_height) {
                 selected_index = clicked_index;
                 confirmed = (selected_index == 0); // Yes -> true, No -> false
