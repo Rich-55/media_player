@@ -1,12 +1,8 @@
 #ifndef FOLDER_MANAGER_H
 #define FOLDER_MANAGER_H
 
-#include <iostream>
-#include <string>
-#include <vector>
-#include <fstream>
-#include <unordered_map>
-#include <unordered_set>
+#include "../utils/ConfigLoader.h"
+
 class FolderManager{
     private:
         std::unordered_map<std::string, std::unordered_set<std::string>> listFolderDirectory;

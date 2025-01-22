@@ -6,16 +6,55 @@
 #include <ftxui/dom/elements.hpp>        // For Elements
 #include <ftxui/component/event.hpp> 
 #include <ftxui/screen/screen.hpp>
-#include <boost/asio.hpp>
+
+#include <taglib/fileref.h>
+#include <taglib/tag.h>
+#include <taglib/mpegfile.h>
+#include <taglib/id3v2tag.h>
+#include <taglib/textidentificationframe.h>
+#include <taglib/tbytevector.h>
+#include <taglib/id3v2frame.h>
+#include <taglib/mp4file.h>
+#include <filesystem>
+
+extern "C" {
+    #include <libavcodec/avcodec.h>
+    #include <libavformat/avformat.h>
+    #include <libswscale/swscale.h>
+    #include <libswresample/swresample.h>
+    #include <libavutil/imgutils.h>
+    #include <SDL2/SDL.h>
+    #include <SDL2/SDL_mixer.h>
+}
+
+#include <vector>
+#include <iostream>
+#include <string>
+#include <iomanip>
+#include <functional>
+#include <unordered_map>
+#include <unordered_set>
+#include <memory>
+#include <regex>
+#include <limits>
+#include <fstream>
+
+#include <unistd.h>
+#include <dirent.h>
+#include <sys/stat.h>
+#include <cstdlib>
+#include <functional>
 
 #include <cmath>
 #include <stdexcept>
-#include <regex>
 #include <thread>
+#include <atomic>
+#include <mutex>
+#include <queue>
 #include <chrono>
 
 using namespace ftxui;
-namespace asio = boost::asio;
+
 
 //MainMenu
 #define METADATA_FILE_HANDLER 1

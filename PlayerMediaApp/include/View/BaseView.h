@@ -1,15 +1,10 @@
-#ifndef VIEW_BASE_H
-#define VIEW_BASE_H
-#include <vector>
-#include <iostream>
-#include <string>
-#include <iomanip>
-#include <functional>
-#include <unordered_map>
+#ifndef BASE_VIEW_H
+#define BASE_VIEW_H
+
 #include "../Model/MediaFileManager.h"
 #include "../Model/PlaylistManager.h"
 #include "../Controller/PlayerController.h"
-#include "../utils/ConfigLoader.h"
+
 class BaseView{
     private:
     public:

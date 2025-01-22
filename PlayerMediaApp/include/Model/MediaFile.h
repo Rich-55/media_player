@@ -1,19 +1,7 @@
 #ifndef MEDIAFILE_H
 #define MEDIAFILE_H
 
-#include <iostream>
-#include <taglib/fileref.h>
-#include <taglib/tag.h>
-#include <taglib/mpegfile.h>
-#include <taglib/id3v2tag.h>
-#include <taglib/textidentificationframe.h>
-#include <taglib/tbytevector.h>
-#include <taglib/id3v2frame.h>
-#include <taglib/mp4file.h>
-#include <filesystem>
-#include <iostream>
-#include <string>
-#include <map>
+#include "../utils/ConfigLoader.h"
 
 class MediaFile {
 private:

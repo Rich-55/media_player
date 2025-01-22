@@ -1,7 +1,8 @@
 #include "../../include/Controller/MediaScannerController.h"
 
 MediaScannerController::MediaScannerController(MediaFileManager& m, PlaylistManager& p, FolderManager& f,std::shared_ptr<BaseView> v)
-     : mediaFileManager(m), playlistManager(p) ,folderManager(f), scanView(v){}
+     : mediaFileManager(m), playlistManager(p) ,folderManager(f), scanView(v)
+{}
 
 bool has_extension(const std::string &filename, const std::string &extension) 
 {

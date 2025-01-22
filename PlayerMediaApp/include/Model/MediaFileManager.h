@@ -1,14 +1,10 @@
 #ifndef METADATA_MANAGER_H
 #define METADATA_MANAGER_H
-#include <vector>
-#include <iostream>
-#include <memory>
-#include <string>
-#include <unordered_map>
-#include <fstream>
-#include "../Model/MediaFile.h"
-#include "../Model/VideoFile.h"
-#include "../Model/AudioFile.h"
+
+#include "MediaFile.h"
+#include "VideoFile.h"
+#include "AudioFile.h"
+
 class MediaFileManager{
     private:
         std::vector<std::shared_ptr<MediaFile>> listMediaFiles;

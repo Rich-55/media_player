@@ -13,7 +13,8 @@ std::string MediaFile::getDuration() const { return this->duration;}
 std::string MediaFile::getDateCreated() const { return this->dateCreated;}
 void MediaFile::setType(std::string type) { this->fileType = type;}
 
-void MediaFile::inputMediaFile(std::string pathName, bool isSame) {
+void MediaFile::inputMediaFile(std::string pathName, bool isSame) 
+{
     TagLib::FileRef file(pathName.c_str());
     TagLib::AudioProperties *audioProps = file.audioProperties();
     if (!audioProps) {
@@ -64,6 +65,4 @@ std::string MediaFile::getType() { return "";}
 
 std::string MediaFile::getMetadata(const std::string&) const { return "";}
 
-std::map<std::string, std::string> MediaFile::getAllMetadata() const { return {};}
-
-
+std::map<std::string, std::string> MediaFile::getAllMetadata() const { return {}; }

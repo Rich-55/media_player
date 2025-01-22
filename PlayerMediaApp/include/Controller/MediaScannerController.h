@@ -11,9 +11,6 @@
 #include "../utils/ScanException.h"
 #include "../utils/ConfigLoader.h"
 
-#include <memory>
-#include <unordered_set>
-#include <unistd.h>
 
 
 class MediaScannerController{

@@ -2,25 +2,7 @@
 #define PLAYER_CONTROLLER_H
 #include "../Model/MediaFileManager.h"
 #include "../Model/MediaFile.h"
-
-#include <iostream>
-#include <vector>
-#include <string>
-#include <thread>
-#include <atomic>
-#include <mutex>
-#include <stdexcept>
-#include <queue>
-
-extern "C" {
-#include <libavcodec/avcodec.h>
-#include <libavformat/avformat.h>
-#include <libswscale/swscale.h>
-#include <libswresample/swresample.h>
-#include <libavutil/imgutils.h>
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_mixer.h>
-}
+#include "../utils/ConfigLoader.h"
 
 // A simple audio packet queue
 extern std::queue<AVPacket*> audioQueue;
@@ -40,37 +22,48 @@ class PlayerController {
         std::atomic<bool> paused;
         std::thread playbackThread;
         std::recursive_mutex stateMutex;
+
         void playbackWorker(const std::string& file);
         void stopPlaybackThread();
         void playAudio(const char* filePath);
         void playVideo(const char* filePath);
+
         bool manualTransition;
         bool repeat;
-        Mix_Music* currentMusic;
+
+        //Mix_Music* currentMusic;
         //observers
         std::vector<std::function<void(int)>> observersIndex;
         std::vector<std::function<void()>> observersState;
-
+        std::vector<std::function<void()>> observersVolume;
+        std::vector<std::function<void(int)>> observersDuration;
         static void musicFinishedCallback();
         
-        std::atomic<int> currentDuration; // Thời gian đang chạy (tính bằng giây)
-        std::atomic<bool> durationRunning; // Trạng thái chạy của bộ đếm
-        std::thread durationThread; // Luồng để đếm thời gian
+        std::atomic<int> currentDuration; 
+        std::atomic<bool> durationRunning;
+        std::thread durationThread;
 
-        void startDuration(); // Bắt đầu đếm thời gian
-        void stopDuration();  // Dừng đếm thời gian và reset
-        void resetDuration(); // Reset về 0
+        void startDuration();
+        void stopDuration(); 
+        void resetDuration();
 
     public:
         
         PlayerController(const std::vector<std::string>& files);
         ~PlayerController();
-        
+        void setNotificationsEnabled(bool enabled);
         void addObserverIndex(std::function<void(int)> index);
         void notifyObserversIndex();
 
         void addObserverState(std::function<void()> observer);
         void notifyObserversState(); 
+
+        void addObserverVolume(std::function<void()> observer);
+        void notifyObserversVolume();  
+
+        void addObserverDuration(std::function<void(int)> observer);
+        void notifyObserversDuration();     
+
         size_t getCurrentIndex();
         std::vector<std::string> getMediaFiles();
         static std::string currentPlayingFile;

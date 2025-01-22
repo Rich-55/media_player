@@ -6,19 +6,22 @@ AudioFile::AudioFile(const std::string& fileName, const std::string& pathName, u
     : MediaFile(fileName, pathName, size, dateCreated, duration, fileType) {}
 
 // Lấy giá trị metadata theo key
-std::string AudioFile::getMetadata(const std::string& key) const {
+std::string AudioFile::getMetadata(const std::string& key) const 
+{
     if (metadataAudio.find(key) != metadataAudio.end()) {
         return metadataAudio.at(key);
     }
     return "";
 }
 
-std::map<std::string, std::string> AudioFile::getAllMetadata() const{
+std::map<std::string, std::string> AudioFile::getAllMetadata() const
+{
     return metadataAudio;
 }
 
 
-void AudioFile::inputMediaFile(std::string pathName, bool isSame) {
+void AudioFile::inputMediaFile(std::string pathName, bool isSame) 
+{
     MediaFile::inputMediaFile(pathName, isSame);
 
     TagLib::FileRef file(pathName.c_str());
@@ -45,7 +48,8 @@ void AudioFile::inputMediaFile(std::string pathName, bool isSame) {
     setType("Audio");
 }
 
-bool AudioFile::addNewKey(const std::string& key, const std::string& value) {
+bool AudioFile::addNewKey(const std::string& key, const std::string& value) 
+{
     bool check = false;
     //check key is exist in metadataAudio
     if (metadataAudio.find(key) != metadataAudio.end()) {
@@ -98,7 +102,8 @@ bool AudioFile::addNewKey(const std::string& key, const std::string& value) {
     return check;
 }
 
-bool AudioFile::editKey(const std::string& key, const std::string& value) {
+bool AudioFile::editKey(const std::string& key, const std::string& value) 
+{
     bool check = false;
     TagLib::FileRef fileRef(this->getPath().c_str());
     if (!fileRef.isNull() && fileRef.tag()) {
@@ -146,7 +151,8 @@ bool AudioFile::editKey(const std::string& key, const std::string& value) {
     return check;
 }
 
-bool AudioFile::deleteKey(const std::string& key) {
+bool AudioFile::deleteKey(const std::string& key) 
+{
     bool check = false;
 
     TagLib::FileRef fileRef(this->getPath().c_str());
@@ -191,6 +197,4 @@ bool AudioFile::deleteKey(const std::string& key) {
 }
 
 
-std::string AudioFile::getType() {
-    return "Audio";
-}
+std::string AudioFile::getType() {return "Audio";}

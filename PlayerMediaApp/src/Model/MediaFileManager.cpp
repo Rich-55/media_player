@@ -34,7 +34,8 @@ bool MediaFileManager::checkFileExists(std::string fileName)
 
 
 
-void writePathToFile(const std::string &pathName, const std::string &filePath = "database/video/video.data") {
+void writePathToFile(const std::string &pathName, const std::string &filePath = "database/video/video.data") 
+{
     std::ofstream file(filePath, std::ios::app); 
     if (!file.is_open()) {
         std::cerr << "Error: Unable to open file " << filePath << '\n';
@@ -173,7 +174,8 @@ void MediaFileManager::updateDatabase()
 }
 
 
-bool MediaFileManager::deleteMediaFile(std::string fileName) {
+bool MediaFileManager::deleteMediaFile(std::string fileName) 
+{
     for (auto it = listMediaFiles.begin(); it != listMediaFiles.end(); ++it) {
         if ((*it)->getName() == fileName) {
 

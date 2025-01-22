@@ -2,14 +2,16 @@
 
 PlaylistManager::PlaylistManager(){}
 
-bool PlaylistManager::checkPlaylist(){
+bool PlaylistManager::checkPlaylist()
+{
     if(listPlaylist.empty()){
         return false;
     }
     return true;
 }
 
-bool PlaylistManager::checkPlaylistName(std::string name){
+bool PlaylistManager::checkPlaylistName(std::string name)
+{
     for(const auto &playlist : listPlaylist){
         if(playlist->getName() == name){
             return true;
@@ -18,7 +20,8 @@ bool PlaylistManager::checkPlaylistName(std::string name){
     return false;
 }
 
-std::shared_ptr<Playlist> PlaylistManager::getPlaylist(std::string name) {
+std::shared_ptr<Playlist> PlaylistManager::getPlaylist(std::string name) 
+{
     for (auto playlist : listPlaylist) {
         if (playlist->getName() == name) {
             return playlist;
@@ -28,7 +31,8 @@ std::shared_ptr<Playlist> PlaylistManager::getPlaylist(std::string name) {
     return nullptr; 
 }
 
-void PlaylistManager::loadPlaylist(std::shared_ptr<Playlist> playlist){
+void PlaylistManager::loadPlaylist(std::shared_ptr<Playlist> playlist)
+{
     for (const auto &p : listPlaylist) {
         if (p->getName() == playlist->getName()) {
             std::cerr << "Playlist already exists.\n";
@@ -39,7 +43,8 @@ void PlaylistManager::loadPlaylist(std::shared_ptr<Playlist> playlist){
 }
 
 
-void PlaylistManager::addPlaylist(std::shared_ptr<Playlist> playlist) {
+void PlaylistManager::addPlaylist(std::shared_ptr<Playlist> playlist) 
+{
     for (const auto &p : listPlaylist) {
         if (p->getName() == playlist->getName()) {
             std::cerr << "Playlist already exists.\n";
@@ -64,7 +69,8 @@ void PlaylistManager::addPlaylist(std::shared_ptr<Playlist> playlist) {
     }
 }
 
-bool PlaylistManager::deletePlaylist(std::string name) {
+bool PlaylistManager::deletePlaylist(std::string name)
+{
     if (!checkPlaylistName(name)) {
         std::cerr << "Playlist does not exist.\n";
         return false;
@@ -95,10 +101,6 @@ bool PlaylistManager::deletePlaylist(std::string name) {
 }
 
 
-std::vector<std::shared_ptr<Playlist> > PlaylistManager::getAllPlaylist(){
-    return listPlaylist;
-}
+std::vector<std::shared_ptr<Playlist> > PlaylistManager::getAllPlaylist(){return listPlaylist;}
 
-PlaylistManager::~PlaylistManager(){
-    listPlaylist.clear();
-}
+PlaylistManager::~PlaylistManager(){ listPlaylist.clear();}

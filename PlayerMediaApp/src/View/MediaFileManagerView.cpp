@@ -19,26 +19,23 @@ int MediaFileManagerView::showMenuWithMediaList(MediaFileManager mediaFileManage
         "0. Back to main menu"
     };
 
-    std::vector<int> logic_mapping = {1, 2, 3, 4, 5, 6, 0};// Liên kết mục menu với logic tương ứng
-    int selected = 0; // Vị trí được chọn ban đầu
-    std::string error_message; // Lưu thông báo lỗi nếu có
-    int final_selected = -1; // Kết quả trả về cuối cùng
+    std::vector<int> logic_mapping = {1, 2, 3, 4, 5, 6, 0};
+    int selected = 0; 
+    std::string error_message; 
+    int final_selected = -1; 
 
-    // Phân trang danh sách media
-    const int rows_per_page = 25; // Số lượng media mỗi trang
-    const int scroll_visible_rows = 10; // Số hàng hiển thị khi cuộn
-    int current_page = 0;         // Trang hiện tại
+    const int rows_per_page = 25; 
+    const int scroll_visible_rows = 10; 
+    int current_page = 0;       
     int total_pages = std::ceil((double)mediaFileManager.getAllMediaFile().size() / rows_per_page);
-    int scroll_offset = 0; // Offset khi cuộn trong trang
+    int scroll_offset = 0; 
 
     auto create_table_view = [&]() {
         std::vector<ftxui::Element> rows;
 
-        // Kiểm tra nếu playlist rỗng
         if (mediaFileManager.getAllMediaFile().empty()) {
             rows.push_back(ftxui::text("No media files in the playlist.") | ftxui::bold | ftxui::center);
         } else {
-            // Tiêu đề bảng
             rows.push_back(ftxui::hbox({
                     text("STT") | bold | size(WIDTH, EQUAL, 5) | border,
                     text("File Name") | bold | size(WIDTH, EQUAL, 30) | border,
@@ -49,7 +46,6 @@ int MediaFileManagerView::showMenuWithMediaList(MediaFileManager mediaFileManage
                 })
             );
 
-            // Lấy danh sách media files trên trang hiện tại
             int start_index = current_page * rows_per_page;
             int end_index = std::min(start_index + rows_per_page, (int)mediaFileManager.getAllMediaFile().size());
 
@@ -93,14 +89,12 @@ int MediaFileManagerView::showMenuWithMediaList(MediaFileManager mediaFileManage
 
     auto screen = ScreenInteractive::TerminalOutput();
     main_component = CatchEvent(main_component, [&](Event event) {
-        // Xử lý chọn menu chính bằng phím Enter
         if (event == Event::Return) {
             final_selected = logic_mapping[selected];
             screen.ExitLoopClosure()();
             return true;
         }
 
-        // Xử lý nhập số từ bàn phím để chọn menu
         if (event.is_character() && std::isdigit(event.character()[0])) {
             int number = event.character()[0] - '0';
             auto it = std::find(logic_mapping.begin(), logic_mapping.end(), number);
@@ -114,18 +108,16 @@ int MediaFileManagerView::showMenuWithMediaList(MediaFileManager mediaFileManage
             }
         }
 
-        // Xử lý điều hướng menu bằng phím mũi tên lên/xuống
         if (event == Event::ArrowUp || event == Event::ArrowDown) {
             menu->OnEvent(event);
             return true;
         }
 
-        // Xử lý click chuột vào menu chính
         if (event.is_mouse() && event.mouse().button == Mouse::Left && event.mouse().motion == Mouse::Pressed) {
-            int clicked_index = event.mouse().y - 3; // Căn chỉnh tọa độ Y (thay đổi nếu cần)
+            int clicked_index = event.mouse().y - 3; 
             if (clicked_index >= 0 && clicked_index < (int)menu_entries.size()) {
-                selected = clicked_index; // Cập nhật vị trí được chọn
-                final_selected = logic_mapping[selected]; // Trả về logic tương ứng
+                selected = clicked_index; 
+                final_selected = logic_mapping[selected]; 
                 screen.ExitLoopClosure()();
                 return true;
             } else {
@@ -134,11 +126,10 @@ int MediaFileManagerView::showMenuWithMediaList(MediaFileManager mediaFileManage
             }
         }
 
-        // Xử lý chuyển trang danh sách media
         if (event == Event::ArrowLeft) {
             if (current_page > 0) {
                 --current_page;
-                scroll_offset = 0; // Reset offset khi chuyển trang
+                scroll_offset = 0;
                 error_message.clear();
             } else {
                 error_message = "Already on the first page!";
@@ -149,7 +140,7 @@ int MediaFileManagerView::showMenuWithMediaList(MediaFileManager mediaFileManage
         if (event == Event::ArrowRight) {
             if (current_page < total_pages - 1) {
                 ++current_page;
-                scroll_offset = 0; // Reset offset khi chuyển trang
+                scroll_offset = 0; 
                 error_message.clear();
             } else {
                 error_message = "Already on the last page!";
@@ -157,7 +148,6 @@ int MediaFileManagerView::showMenuWithMediaList(MediaFileManager mediaFileManage
             return true;
         }
 
-        // Xử lý cuộn danh sách media
         if (event.mouse().button == Mouse::WheelUp) {
             if (scroll_offset > 0) {
                 --scroll_offset;
@@ -213,24 +203,24 @@ std::string MediaFileManagerView::displayAllMediaFile(MediaFileManager MediaFile
         }
 
 
-        const int rows_per_page = 25; // Số lượng hàng tối đa mỗi trang
-        const int scroll_visible_rows = 10; // Số hàng hiển thị khi cuộn
+        const int rows_per_page = 25; 
+        const int scroll_visible_rows = 10; 
         int current_page = 0;
         int total_pages = std::ceil((double)media_files.size() / rows_per_page);
-        int selected_index = -1;  // Không có hàng nào được chọn ban đầu
-        int hovered_index = -1;  // Hover index cho di chuyển chuột
-        int scroll_offset = 0;   // Offset cuộn trong trang
+        int selected_index = -1;  
+        int hovered_index = -1;  
+        int scroll_offset = 0;   
         std::string input_buffer;
         std::string result_filename;
         bool is_exit_hovered = false;
         std::string error_message;
         auto screen = ScreenInteractive::TerminalOutput();
 
-        // Giao diện chính
+        
         auto render_view = [&]() -> Element {
             Elements table_rows;
 
-            // Tiêu đề bảng
+            
             table_rows.push_back(
                 hbox({
                     text("STT") | bold | size(WIDTH, EQUAL, 5) | border,
@@ -242,7 +232,7 @@ std::string MediaFileManagerView::displayAllMediaFile(MediaFileManager MediaFile
                 })
             );
 
-            // Dữ liệu hàng trên trang hiện tại
+            
             int start_index = current_page * rows_per_page;
             int end_index = std::min(start_index + rows_per_page, (int)media_files.size());
             for (int i = start_index + scroll_offset;
@@ -260,19 +250,19 @@ std::string MediaFileManagerView::displayAllMediaFile(MediaFileManager MediaFile
                         text(mediaFile->getDuration()) | size(WIDTH, EQUAL, 15) | border,
                         text(mediaFile->getDateCreated()) | size(WIDTH, EQUAL, 20) | border,
                         text(std::to_string(mediaFile->getSize()) + " bytes") | size(WIDTH, EQUAL, 20) | border,
-                    }) | (is_selected ? inverted : nothing) // Highlight selected row
-                      | (is_hovered && !is_selected ? dim | color(Color::Yellow) : nothing) // Highlight hovered row
+                    }) | (is_selected ? inverted : nothing) 
+                      | (is_hovered && !is_selected ? dim | color(Color::Yellow) : nothing) 
                 );
             }
 
-            // Danh sách cuộn với thanh cuộn
+            
             auto scrollable_list = vbox(std::move(table_rows)) | vscroll_indicator | frame | border | size(HEIGHT, EQUAL, 35);
 
-            // Nút Exit
+            
             auto exit_button = text("Exit (Simulate 0)") | bold | center | border |
                                (is_exit_hovered ? color(Color::Red) : nothing);
 
-            // Giao diện tổng hợp
+            
             return vbox({
                 separator(),
                 text("Use UP/DOWN to navigate rows, LEFT/RIGHT to change pages, ENTER to select.") | dim | center,
@@ -294,7 +284,7 @@ std::string MediaFileManagerView::displayAllMediaFile(MediaFileManager MediaFile
             });
         };
 
-        // Container cho danh sách scroll
+        
         auto container = Container::Vertical({
             Renderer(render_view),
         });
@@ -353,30 +343,30 @@ std::string MediaFileManagerView::displayAllMediaFile(MediaFileManager MediaFile
             }
 
             if (event.mouse().motion == Mouse::Moved) {
-    // Xác định giới hạn vùng danh sách hiển thị
-    const int list_y_start = 16;  // Tọa độ Y bắt đầu vùng danh sách
-    const int row_height = 3;     // Chiều cao thực tế mỗi hàng
-    const int list_y_end = list_y_start + scroll_visible_rows * row_height; // Tọa độ Y kết thúc vùng danh sách
+    
+    const int list_y_start = 16;  
+    const int row_height = 3;     
+    const int list_y_end = list_y_start + scroll_visible_rows * row_height; 
 
-    // Tính toán vị trí hàng hover
+    
     if (event.mouse().y >= list_y_start && event.mouse().y < list_y_end) {
         int relative_y = event.mouse().y - list_y_start;
         int hovered_row = (relative_y / row_height) + (scroll_offset + current_page * rows_per_page);
 
-        // Chỉ hover nếu chỉ số hàng hợp lệ
+        
         if (hovered_row >= current_page * rows_per_page &&
             hovered_row < std::min((current_page + 1) * rows_per_page, (int)media_files.size())) {
             hovered_index = hovered_row;
         } else {
-            hovered_index = -1; // Ngoài phạm vi hợp lệ
+            hovered_index = -1; 
         }
     } else {
-        hovered_index = -1; // Ngoài phạm vi danh sách
+        hovered_index = -1; 
     }
 
-    // Kiểm tra hover vào nút Exit
-    const int exit_button_y_start = 47;  // Tọa độ Y bắt đầu của nút Exit
-    const int exit_button_y_end = exit_button_y_start + 3; // Chiều cao của nút Exit
+    
+    const int exit_button_y_start = 47;  
+    const int exit_button_y_end = exit_button_y_start + 3;
     is_exit_hovered = (event.mouse().y >= exit_button_y_start && event.mouse().y < exit_button_y_end);
 
     return true;
@@ -386,7 +376,7 @@ if (event.is_character()) {
     char c = event.character()[0];
     if (std::isalnum(c) || c == '.' || c == '_' || c == '-' || c == ' ' || c == '(' || c == ')') {
         input_buffer += c;
-        hovered_index = -1; // Vô hiệu hóa trạng thái hover khi nhập
+        hovered_index = -1; 
         return true;
     }
 }
@@ -400,7 +390,7 @@ if (event == Event::Backspace && !input_buffer.empty()) {
 if (event.mouse().button == Mouse::Left) {
     if (is_exit_hovered) {
         hovered_index = -1;
-        result_filename = "exit"; // Trả về "exit" khi nhấn vào nút Exit
+        result_filename = "exit"; 
         screen.ExitLoopClosure()();
         return true;
     }
@@ -494,24 +484,24 @@ std::string MediaFileManagerView::displayAllMediaFileOfAudio(MediaFileManager Me
         }
 
 
-        const int rows_per_page = 25; // Số lượng hàng tối đa mỗi trang
-        const int scroll_visible_rows = 10; // Số hàng hiển thị khi cuộn
+        const int rows_per_page = 25; 
+        const int scroll_visible_rows = 10; 
         int current_page = 0;
         int total_pages = std::ceil((double)media_files.size() / rows_per_page);
-        int selected_index = -1;  // Không có hàng nào được chọn ban đầu
-        int hovered_index = -1;  // Hover index cho di chuyển chuột
-        int scroll_offset = 0;   // Offset cuộn trong trang
+        int selected_index = -1;  
+        int hovered_index = -1;  
+        int scroll_offset = 0;   
         std::string input_buffer;
         std::string result_filename;
         bool is_exit_hovered = false;
         std::string error_message;
         auto screen = ScreenInteractive::TerminalOutput();
 
-        // Giao diện chính
+        
         auto render_view = [&]() -> Element {
             Elements table_rows;
 
-            // Tiêu đề bảng
+            
             table_rows.push_back(
                 hbox({
                     text("STT") | bold | size(WIDTH, EQUAL, 5) | border,
@@ -523,7 +513,7 @@ std::string MediaFileManagerView::displayAllMediaFileOfAudio(MediaFileManager Me
                 })
             );
 
-            // Dữ liệu hàng trên trang hiện tại
+            
             int start_index = current_page * rows_per_page;
             int end_index = std::min(start_index + rows_per_page, (int)media_files.size());
             for (int i = start_index + scroll_offset;
@@ -541,19 +531,19 @@ std::string MediaFileManagerView::displayAllMediaFileOfAudio(MediaFileManager Me
                         text(mediaFile->getDuration()) | size(WIDTH, EQUAL, 15) | border,
                         text(mediaFile->getDateCreated()) | size(WIDTH, EQUAL, 20) | border,
                         text(std::to_string(mediaFile->getSize()) + " bytes") | size(WIDTH, EQUAL, 20) | border,
-                    }) | (is_selected ? inverted : nothing) // Highlight selected row
-                      | (is_hovered && !is_selected ? dim | color(Color::Yellow) : nothing) // Highlight hovered row
+                    }) | (is_selected ? inverted : nothing) 
+                      | (is_hovered && !is_selected ? dim | color(Color::Yellow) : nothing) 
                 );
             }
 
-            // Danh sách cuộn với thanh cuộn
+            
             auto scrollable_list = vbox(std::move(table_rows)) | vscroll_indicator | frame | border | size(HEIGHT, EQUAL, 35);
 
-            // Nút Exit
+            
             auto exit_button = text("Exit (Simulate 0)") | bold | center | border |
                                (is_exit_hovered ? color(Color::Red) : nothing);
 
-            // Giao diện tổng hợp
+            
             return vbox({
                 separator(),
                 text("Use UP/DOWN to navigate rows, LEFT/RIGHT to change pages, ENTER to select.") | dim | center,
@@ -575,7 +565,7 @@ std::string MediaFileManagerView::displayAllMediaFileOfAudio(MediaFileManager Me
             });
         };
 
-        // Container cho danh sách scroll
+        
         auto container = Container::Vertical({
             Renderer(render_view),
         });
@@ -634,30 +624,30 @@ std::string MediaFileManagerView::displayAllMediaFileOfAudio(MediaFileManager Me
             }
 
             if (event.mouse().motion == Mouse::Moved) {
-    // Xác định giới hạn vùng danh sách hiển thị
-    const int list_y_start = 16;  // Tọa độ Y bắt đầu vùng danh sách
-    const int row_height = 3;     // Chiều cao thực tế mỗi hàng
-    const int list_y_end = list_y_start + scroll_visible_rows * row_height; // Tọa độ Y kết thúc vùng danh sách
+    
+    const int list_y_start = 16;  
+    const int row_height = 3;     
+    const int list_y_end = list_y_start + scroll_visible_rows * row_height; 
 
-    // Tính toán vị trí hàng hover
+    
     if (event.mouse().y >= list_y_start && event.mouse().y < list_y_end) {
         int relative_y = event.mouse().y - list_y_start;
         int hovered_row = (relative_y / row_height) + (scroll_offset + current_page * rows_per_page);
 
-        // Chỉ hover nếu chỉ số hàng hợp lệ
+        
         if (hovered_row >= current_page * rows_per_page &&
             hovered_row < std::min((current_page + 1) * rows_per_page, (int)media_files.size())) {
             hovered_index = hovered_row;
         } else {
-            hovered_index = -1; // Ngoài phạm vi hợp lệ
+            hovered_index = -1; 
         }
     } else {
-        hovered_index = -1; // Ngoài phạm vi danh sách
+        hovered_index = -1; 
     }
 
-    // Kiểm tra hover vào nút Exit
-    const int exit_button_y_start = 47;  // Tọa độ Y bắt đầu của nút Exit
-    const int exit_button_y_end = exit_button_y_start + 3; // Chiều cao của nút Exit
+    
+    const int exit_button_y_start = 47;  
+    const int exit_button_y_end = exit_button_y_start + 3;
     is_exit_hovered = (event.mouse().y >= exit_button_y_start && event.mouse().y < exit_button_y_end);
 
     return true;
@@ -667,21 +657,21 @@ if (event.is_character()) {
     char c = event.character()[0];
     if (std::isalnum(c) || c == '.' || c == '_' || c == '-' || c == ' ' || c == '(' || c == ')') {
         input_buffer += c;
-        hovered_index = -1; // Vô hiệu hóa trạng thái hover khi nhập
+        hovered_index = -1; 
         return true;
     }
 }
 
 if (event == Event::Backspace && !input_buffer.empty()) {
     input_buffer.pop_back();
-    hovered_index = -1; // Vô hiệu hóa trạng thái hover khi nhập
+    hovered_index = -1; 
     return true;
 }
 
 if (event.mouse().button == Mouse::Left) {
     if (is_exit_hovered) {
         hovered_index = -1;
-        result_filename = "exit"; // Trả về "exit" khi nhấn vào nút Exit
+        result_filename = "exit"; 
         screen.ExitLoopClosure()();
         return true;
     }
@@ -697,7 +687,7 @@ if (event.mouse().button == Mouse::Left) {
 if (event == Event::Return) {
     if (!input_buffer.empty()) {
         if (input_buffer == "0") {
-            result_filename = "";
+            result_filename = "exit";
             screen.ExitLoopClosure()();
             return true;
         }
@@ -775,24 +765,24 @@ std::string MediaFileManagerView::displayAllMediaFileOfVideo(MediaFileManager Me
         }
 
 
-        const int rows_per_page = 25; // Số lượng hàng tối đa mỗi trang
-        const int scroll_visible_rows = 10; // Số hàng hiển thị khi cuộn
+        const int rows_per_page = 25; 
+        const int scroll_visible_rows = 10; 
         int current_page = 0;
         int total_pages = std::ceil((double)media_files.size() / rows_per_page);
-        int selected_index = -1;  // Không có hàng nào được chọn ban đầu
-        int hovered_index = -1;  // Hover index cho di chuyển chuột
-        int scroll_offset = 0;   // Offset cuộn trong trang
+        int selected_index = -1;  
+        int hovered_index = -1;  
+        int scroll_offset = 0;   
         std::string input_buffer;
         std::string result_filename;
         bool is_exit_hovered = false;
         std::string error_message;
         auto screen = ScreenInteractive::TerminalOutput();
 
-        // Giao diện chính
+        
         auto render_view = [&]() -> Element {
             Elements table_rows;
 
-            // Tiêu đề bảng
+            
             table_rows.push_back(
                 hbox({
                     text("STT") | bold | size(WIDTH, EQUAL, 5) | border,
@@ -804,7 +794,7 @@ std::string MediaFileManagerView::displayAllMediaFileOfVideo(MediaFileManager Me
                 })
             );
 
-            // Dữ liệu hàng trên trang hiện tại
+            
             int start_index = current_page * rows_per_page;
             int end_index = std::min(start_index + rows_per_page, (int)media_files.size());
             for (int i = start_index + scroll_offset;
@@ -822,19 +812,19 @@ std::string MediaFileManagerView::displayAllMediaFileOfVideo(MediaFileManager Me
                         text(mediaFile->getDuration()) | size(WIDTH, EQUAL, 15) | border,
                         text(mediaFile->getDateCreated()) | size(WIDTH, EQUAL, 20) | border,
                         text(std::to_string(mediaFile->getSize()) + " bytes") | size(WIDTH, EQUAL, 20) | border,
-                    }) | (is_selected ? inverted : nothing) // Highlight selected row
-                      | (is_hovered && !is_selected ? dim | color(Color::Yellow) : nothing) // Highlight hovered row
+                    }) | (is_selected ? inverted : nothing) 
+                      | (is_hovered && !is_selected ? dim | color(Color::Yellow) : nothing) 
                 );
             }
 
-            // Danh sách cuộn với thanh cuộn
+            
             auto scrollable_list = vbox(std::move(table_rows)) | vscroll_indicator | frame | border | size(HEIGHT, EQUAL, 35);
 
-            // Nút Exit
+            
             auto exit_button = text("Exit (Simulate 0)") | bold | center | border |
                                (is_exit_hovered ? color(Color::Red) : nothing);
 
-            // Giao diện tổng hợp
+            
             return vbox({
                 separator(),
                 text("Use UP/DOWN to navigate rows, LEFT/RIGHT to change pages, ENTER to select.") | dim | center,
@@ -856,7 +846,7 @@ std::string MediaFileManagerView::displayAllMediaFileOfVideo(MediaFileManager Me
             });
         };
 
-        // Container cho danh sách scroll
+        
         auto container = Container::Vertical({
             Renderer(render_view),
         });
@@ -915,30 +905,30 @@ std::string MediaFileManagerView::displayAllMediaFileOfVideo(MediaFileManager Me
             }
 
             if (event.mouse().motion == Mouse::Moved) {
-    // Xác định giới hạn vùng danh sách hiển thị
-    const int list_y_start = 16;  // Tọa độ Y bắt đầu vùng danh sách
-    const int row_height = 3;     // Chiều cao thực tế mỗi hàng
-    const int list_y_end = list_y_start + scroll_visible_rows * row_height; // Tọa độ Y kết thúc vùng danh sách
+    
+    const int list_y_start = 16;  
+    const int row_height = 3;     
+    const int list_y_end = list_y_start + scroll_visible_rows * row_height; 
 
-    // Tính toán vị trí hàng hover
+    
     if (event.mouse().y >= list_y_start && event.mouse().y < list_y_end) {
         int relative_y = event.mouse().y - list_y_start;
         int hovered_row = (relative_y / row_height) + (scroll_offset + current_page * rows_per_page);
 
-        // Chỉ hover nếu chỉ số hàng hợp lệ
+        
         if (hovered_row >= current_page * rows_per_page &&
             hovered_row < std::min((current_page + 1) * rows_per_page, (int)media_files.size())) {
             hovered_index = hovered_row;
         } else {
-            hovered_index = -1; // Ngoài phạm vi hợp lệ
+            hovered_index = -1; 
         }
     } else {
-        hovered_index = -1; // Ngoài phạm vi danh sách
+        hovered_index = -1; 
     }
 
-    // Kiểm tra hover vào nút Exit
-    const int exit_button_y_start = 47;  // Tọa độ Y bắt đầu của nút Exit
-    const int exit_button_y_end = exit_button_y_start + 3; // Chiều cao của nút Exit
+    
+    const int exit_button_y_start = 47;  
+    const int exit_button_y_end = exit_button_y_start + 3;
     is_exit_hovered = (event.mouse().y >= exit_button_y_start && event.mouse().y < exit_button_y_end);
 
     return true;
@@ -948,21 +938,21 @@ if (event.is_character()) {
     char c = event.character()[0];
     if (std::isalnum(c) || c == '.' || c == '_' || c == '-' || c == ' ' || c == '(' || c == ')') {
         input_buffer += c;
-        hovered_index = -1; // Vô hiệu hóa trạng thái hover khi nhập
+        hovered_index = -1; 
         return true;
     }
 }
 
 if (event == Event::Backspace && !input_buffer.empty()) {
     input_buffer.pop_back();
-    hovered_index = -1; // Vô hiệu hóa trạng thái hover khi nhập
+    hovered_index = -1; 
     return true;
 }
 
 if (event.mouse().button == Mouse::Left) {
     if (is_exit_hovered) {
         hovered_index = -1;
-        result_filename = "exit"; // Trả về "exit" khi nhấn vào nút Exit
+        result_filename = "exit"; 
         screen.ExitLoopClosure()();
         return true;
     }
@@ -978,7 +968,7 @@ if (event.mouse().button == Mouse::Left) {
 if (event == Event::Return) {
     if (!input_buffer.empty()) {
         if (input_buffer == "0") {
-            result_filename = "";
+            result_filename = "exit";
             screen.ExitLoopClosure()();
             return true;
         }

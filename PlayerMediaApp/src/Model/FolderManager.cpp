@@ -2,7 +2,8 @@
 
 FolderManager::FolderManager(){}
 
-std::unordered_set<std::string> FolderManager::getListFolderDirectory(){
+std::unordered_set<std::string> FolderManager::getListFolderDirectory()
+{
     std::ifstream inFile("database/listFolderDirectory.data");
     if (!inFile) {
         std::cerr << "Failed to open file.\n";
@@ -23,8 +24,8 @@ std::unordered_set<std::string> FolderManager::getListFolderDirectory(){
     return folderKeys;
 }
 
-std::unordered_set<std::string> FolderManager::getListFolderUSB(){
-    //read from file
+std::unordered_set<std::string> FolderManager::getListFolderUSB()
+{
     std::ifstream inFile("database/listFolderUSB.data");
     if (!inFile) {
         std::cerr << "Failed to open file.\n";
@@ -85,7 +86,7 @@ std::string FolderManager::getFolderUSB(std::string folderName)
     }
 }
 
-void FolderManager::addDataFolderDirectory(const std::string &folder, std::unordered_set<std::string> listFiles) 
+void FolderManager::addDataFolderDirectory(const std::string &folder, std::unordered_set<std::string> listFiles)
 {
     listFolderDirectory[folder] = listFiles;
 }
@@ -134,6 +135,7 @@ void FolderManager::updateFolderDirectory(std::string folderName)
         std::cout << "Folder not found: " << folderName << std::endl;
     }
 }
+
 void FolderManager::updateFolderUSB(std::string folderName)
 {
     auto it = listFolderUSB.find(folderName);

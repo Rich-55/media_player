@@ -1,6 +1,7 @@
 #include "../../include/Controller/MediaFileController.h"
 
-MediaFileController::MediaFileController(std::shared_ptr<MediaFile>  m, std::shared_ptr<BaseView> v) : mediaFile(m), mediaFileHandlerView(v){}
+MediaFileController::MediaFileController(std::shared_ptr<MediaFile>  m, std::shared_ptr<BaseView> v) : mediaFile(m), mediaFileHandlerView(v)
+{}
 
 void MediaFileController::getDetailMediaFile(std::string message) {mediaFileHandlerView->displayDetailMediaFile(mediaFile, message);}
 
@@ -8,6 +9,7 @@ std::string MediaFileController::addMetadata()
 {
     std::pair<std::string, std::string> key_value;
     std::string exception;
+
     while(true){
         try {
             key_value = mediaFileHandlerView->displayMenuAddMetadata(mediaFile, exception);
@@ -49,6 +51,7 @@ std::string MediaFileController::editMetadata()
 {
     std::pair<std::string, std::string> key_value;
     std::string exception;
+
     while(true){
         try {
             key_value = mediaFileHandlerView->displayMenuEditMetadata(mediaFile, exception);
@@ -87,6 +90,7 @@ std::string MediaFileController::editMetadata()
 std::string MediaFileController::deleteMetadata() 
 {
     std::string key;
+
     while(true)
     {
         try {
@@ -115,9 +119,9 @@ std::string MediaFileController::deleteMetadata()
 void MediaFileController::handlerMediaFile()
 {   
     std::string message;
+    
     while(true){
         try{
-            std::cout << "Inside MediaFileController::handlerMediaFile()\n";
             getDetailMediaFile(message);
             int choice = mediaFileHandlerView->showMenu();
             switch (choice)
