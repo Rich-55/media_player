@@ -16,6 +16,8 @@ std::shared_ptr<BaseView> ViewManager::getView(std::string name)  {
             views[name] = std::make_shared<PlaylistHandlerView>();
         }else if (name == "PlaylistManagerView") {
             views[name] = std::make_shared<PlaylistManagerView>();
+        }else if (name == "UartView") {
+            views[name] = std::make_shared<UartView>();
         }
     }
     return views[name];

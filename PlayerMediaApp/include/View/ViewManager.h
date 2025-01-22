@@ -8,6 +8,7 @@
 #include "MediaFileManagerView.h"
 #include "PlaylistHandlerView.h"
 #include "PlaylistManagerView.h"
+#include "UartView.h"
 
 
 class ViewManager{

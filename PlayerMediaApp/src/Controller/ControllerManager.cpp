@@ -11,9 +11,38 @@ std::shared_ptr<BaseView> ControllerManager::getView(const std::string& viewName
     }
     return viewPtr;
 }
+/// @brief Run UART function
+void ControllerManager::runUart()
+{
+    auto uartView = getView("UartView");
+    std::vector<std::string> portList = uartManager->getPortList();
+    std::vector<std::string> baudRateOptions = uartManager->getBaudRateOptions();
+    std::string port;
+    unsigned int baudRate;
+    std::pair<std::string, unsigned int> portAndBaudRate;
+    while (true)
+    {
+        portAndBaudRate = uartView->getPortAndBaudRate(portList, baudRateOptions);
+        port = portAndBaudRate.first;
+        baudRate = portAndBaudRate.second;
+        std::cout << "Port: " << port << ", Baud Rate: " << baudRate << std::endl;
+        if(port == "exit"){
+            return;
+        }
+        if (!uartManager->checkPortConnection(port, baudRate)) {
+            std::cout << "Failed to connect to port " << port << ".\n";
+            continue;
+        }else{
+            std::cout << "Connected to port " << port << ".\n";
+             break;
+        }
+
+    }
+
+}
 
 
-// ScanData function: Scan data from the folder in directory or USB
+/// @brief ScanData function: Scan data from the folder in directory or USB
 void ControllerManager::ScanData() 
 {
     try {
@@ -33,7 +62,7 @@ void ControllerManager::ScanData()
     }
 }
 
-// Media File Handler function: Handle metadata file (add, delete, edit)
+/// @brief Media File Handler function: Handle metadata file (add, delete, edit)
 std::string ControllerManager::mediaFileHandler() {
     try {
         
@@ -75,7 +104,7 @@ std::string ControllerManager::mediaFileHandler() {
     return "";
 }
 
-// MediaFileManager function: Handle media file (add, delete, edit, view)
+/// @brief MediaFileManager function: Handle media file (add, delete, edit, view)
 void ControllerManager::mediaFileManager()
 {
     try {
@@ -107,7 +136,7 @@ void ControllerManager::mediaFileManager()
     }
 }
 
-// PlaylistHandler function: Handle playlist (add media, delete media, view)
+/// @brief PlaylistHandler function: Handle playlist (add media, delete media, view)
 void ControllerManager::playlistHandler() 
 {
     try {
@@ -182,7 +211,7 @@ void ControllerManager::playlistHandler()
     }
 }
 
-// PlaylistManager function: Handle playlist (create, delete, view)
+/// @brief PlaylistManager function: Handle playlist (create, delete, view)
 void ControllerManager::playlistManager() 
 {
     try {
@@ -216,7 +245,7 @@ void ControllerManager::playlistManager()
     }
 }
 
-// PlayMusicHandler function: Play single music
+/// @brief PlayMusicHandler function: Play single music
 std::string ControllerManager::playMusicHandler()
 {
     try {
@@ -237,7 +266,7 @@ std::string ControllerManager::playMusicHandler()
     }
 }
 
-// PlayPlaylist function: Play playlist
+/// @brief PlayPlaylist function: Play playlist
 std::vector<std::string> ControllerManager::playPlaylist() 
 {
     std::string playlistName;
@@ -282,7 +311,7 @@ std::vector<std::string> ControllerManager::playPlaylist()
     
     return mediaPlaylistController->getListPathMediaFiles();
 }
-
+/// @brief PlayVideoHandler function: Play single video
 std::string ControllerManager::playVideoHandler() 
 {
     try {
@@ -303,14 +332,14 @@ std::string ControllerManager::playVideoHandler()
     }
 }
 
-
+/// @brief runApp function: Run the application
 void ControllerManager::runApp() {
     if (model.getFolderManager().getListFolderDirectory().empty() &&
         model.getFolderManager().getListFolderUSB().empty()) {
         return;
     }
     
-   uartManager->setUpUART("/dev/ttyACM0", 115200, playerController);
+   uartManager->runMediaUart(playerController);
 
     auto mainMenuView = getView("MainMenuView");
     std::string typePlay = "noplay"; 
@@ -429,7 +458,6 @@ void ControllerManager::runApp() {
                         playerController->stop();
                         playerController = nullptr;
                     }
-                    uartManager->stopUART();
                     return; 
                 default:
                     throw InvalidChoiceException();

@@ -88,3 +88,22 @@ target_link_libraries(${PROJECT_NAME}
     ftxui::dom
     ftxui::component
 )
+# Thêm Google Test
+enable_testing()
+find_package(GTest REQUIRED)
+include(GoogleTest)
+
+# Tìm tất cả các file test
+file(GLOB_RECURSE TEST_FILES ${CMAKE_SOURCE_DIR}/test/*.cpp)
+
+# Tạo target cho unit test
+add_executable(tests ${TEST_FILES})
+
+# Link thư viện Google Test
+target_link_libraries(tests PRIVATE GTest::GTest GTest::Main)
+
+# Thêm include directories cho test
+target_include_directories(tests PRIVATE ${INCLUDE_DIR})
+
+# Đăng ký các bài kiểm tra
+gtest_discover_tests(tests)

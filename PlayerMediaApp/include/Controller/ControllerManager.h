@@ -40,6 +40,8 @@ class ControllerManager{
         
         void runApp();
 
+        void runUart();
+
         void ScanData();
 
         std::string mediaFileHandler();

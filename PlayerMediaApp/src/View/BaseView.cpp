@@ -111,4 +111,7 @@ int BaseView::showListUSBName(std::vector<std::string>) {return -1;}
 void BaseView::setListPathNameIsAdded(std::unordered_set<std::string>){}
 void BaseView::showFileAdded(){}
 
+//view for uart manager
+std::pair<std::string, unsigned int> BaseView::getPortAndBaudRate(std::vector<std::string>, std::vector<std::string>){return {"", 0};}
+
 BaseView::~BaseView(){}
