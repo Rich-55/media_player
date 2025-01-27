@@ -10,7 +10,6 @@
 #include "PlaylistManagerView.h"
 #include "UartView.h"
 
-
 class ViewManager{
     private:
         std::unordered_map<std::string, std::shared_ptr<BaseView>> views; 

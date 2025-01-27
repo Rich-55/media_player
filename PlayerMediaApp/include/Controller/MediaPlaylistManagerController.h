@@ -1,8 +1,6 @@
 #ifndef MEDIA_PLAYLIST_MANAGER_CONTROLLER_H
 #define MEDIA_PLAYLIST_MANAGER_CONTROLLER_H
 
-
-
 #include "../Model/PlaylistManager.h"
 #include "../Model/MediaFileManager.h"
 #include "../Model/FolderManager.h"
@@ -13,7 +11,6 @@
 
 #include "../utils/PlaylistManagerException.h"
 #include "../utils/ConfigLoader.h"
-
 
 class MediaPlaylistManagerController{
     private:

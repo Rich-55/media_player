@@ -1,28 +1,28 @@
-# Tên project và phiên bản
+# Project name and version
 cmake_minimum_required(VERSION 3.10)
 project(PlayerMediaApp VERSION 1.0 LANGUAGES CXX)
 
-# Cấu hình phiên bản C++
+# Configure C++ version
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Bật các cảnh báo và tùy chọn biên dịch
+# Enable warnings and compile options
 add_compile_options(-Wall -Wextra -Werror)
 
-# Thêm thư viện FTXUI (FetchContent tải về tự động)
+# Add the FTXUI library (FetchContent downloads it automatically)
 include(FetchContent)
 FetchContent_Declare(
   ftxui
   GIT_REPOSITORY https://github.com/ArthurSonzogni/FTXUI.git
-  GIT_TAG main # Thay đổi tag này theo phiên bản bạn cần
+  GIT_TAG main # Change this tag to the version you need
 )
 FetchContent_MakeAvailable(ftxui)
 
-# Thư mục include và source
+# Include and source directories
 set(INCLUDE_DIR ${CMAKE_SOURCE_DIR}/include)
 set(SRC_DIR ${CMAKE_SOURCE_DIR}/src)
 
-# Tìm tất cả các tệp nguồn trong src
+# Find all source files in the src directory
 file(GLOB_RECURSE SRC_FILES
     ${SRC_DIR}/*.cpp
 )
@@ -30,13 +30,13 @@ include_directories(
     /usr/include
     /usr/local/include
 )
-# Đặt thư mục đầu ra của tệp thực thi
+# Set the output directory for the executable file
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR})
 
-# Tạo target chính
+# Create the main target
 add_executable(${PROJECT_NAME} main.cpp ${SRC_FILES})
 
-# Thêm đường dẫn include
+# Add include paths
 target_include_directories(${PROJECT_NAME} PRIVATE ${INCLUDE_DIR})
 
 find_package(SDL2 REQUIRED)
@@ -49,7 +49,7 @@ pkg_check_modules(AVUTIL REQUIRED libavutil)
 pkg_check_modules(SWSCALE REQUIRED libswscale)
 pkg_check_modules(SWRESAMPLE REQUIRED libswresample)
 
-# Tìm thư viện FFmpeg
+# Find the FFmpeg libraries
 find_library(AVFORMAT_LIB avformat REQUIRED)
 find_library(AVCODEC_LIB avcodec REQUIRED)
 find_library(AVUTIL_LIB avutil REQUIRED)
@@ -73,10 +73,10 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
 )
 
 message(STATUS "AVFormat libraries: ${AVFORMAT_LIBRARIES}")
-# Liên kết các thư viện cần thiết
+# Link the necessary libraries
 target_link_libraries(${PROJECT_NAME}
   PRIVATE
-    tag # Thư viện libtag
+    tag # libtag library
     avformat
     avcodec
     avutil
@@ -84,26 +84,26 @@ target_link_libraries(${PROJECT_NAME}
     swresample
     SDL2
     SDL2_mixer
-    ftxui::screen # LiênS kết FTXUI
+    ftxui::screen # Link FTXUI
     ftxui::dom
     ftxui::component
 )
-# Thêm Google Test
+# Add Google Test
 enable_testing()
 find_package(GTest REQUIRED)
 include(GoogleTest)
 
-# Tìm tất cả các file test
+# Find all test files
 file(GLOB_RECURSE TEST_FILES ${CMAKE_SOURCE_DIR}/test/*.cpp)
 
-# Tạo target cho unit test
+# Create a target for unit tests
 add_executable(tests ${TEST_FILES})
 
-# Link thư viện Google Test
+# Link the Google Test library
 target_link_libraries(tests PRIVATE GTest::GTest GTest::Main)
 
-# Thêm include directories cho test
+# Add include directories for tests
 target_include_directories(tests PRIVATE ${INCLUDE_DIR})
 
-# Đăng ký các bài kiểm tra
+# Register the tests
 gtest_discover_tests(tests)

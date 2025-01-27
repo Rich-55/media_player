@@ -6,7 +6,8 @@ System Architecture
 
 Class Diagram
 ----------------------------------
-.. plantuml:: class_diagram.plantuml
+.. plantuml:: class_diagram.puml
 
 Sequence Diagram
 ----------------------------------
+.. plantuml:: sequence_diagram.puml

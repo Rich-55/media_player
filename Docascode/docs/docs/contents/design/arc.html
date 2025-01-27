@@ -9,6 +9,7 @@
   <title>System Architecture &mdash; Media Player  documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=ead420b5" />
 
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
@@ -84,8 +85,9 @@
 <section id="class-diagram">
 <h2>Class Diagram<a class="headerlink" href="#class-diagram" title="Permalink to this heading"></a></h2>
 <p class="plantuml">
-<img src="../../_images/plantuml-18e39701e817e5ccdb83e8780c7efaa3bda4c146.png" alt="&#64;startuml Media Player Class Diagram
+<img src="../../_images/plantuml-7e607f2a596396b4855e793d6a1e56b226d99783.png" alt="&#64;startuml Media Player Class Diagram
 
+left to right direction
 ' Style configurations
 skinparam classAttributeIconSize 0
 skinparam class {
@@ -95,184 +97,244 @@ skinparam class {
 }
 
 
-
 package View {
-    ' class CLI {
-    '     - currentPage: int
-    '     - itemsPerPage: int
-    '     + showMainMenu()
-    '     + showMediaList(files: vector&lt;shared_ptr&lt;MediaFile&gt;&gt;)
-    '     + showPlaylistMenu()
-    '     + showMetadataMenu(file: shared_ptr&lt;MediaFile&gt;)
-    '     + showPlayerControls()
-    '     + showVolume(level: int)
-    ' }
-
-    class CLIManager{
-        - currentPlayView: CurrentPlayView
-        - menuView: MenuView
+    class CLIManager {
+        - views : unordered_map&lt;string, shared_ptr&lt;ViewBase&gt;&gt; 
+        - currentView : shared_ptr&lt;ViewBase&gt;
+        + getView(String) : shared_ptr&lt;ViewBase&gt;
+        + switchView(string) : void 
     }
 
-    class CurrentPlayView{
-        - volumeCurrentView: VolumeCurrentView
-        - metadataCurrentView: MetadataCurrentView
-        - menuControlPlayView: MenuControlPlayView
+    abstract class ViewBase {
+        + virtual showMenu() = 0 : void 
+        + virtual displayAllMediaFile(MetadataManager) : void
+        + virtual displayAllMediaFileOfAudio(MetadataManager) : void
+        + virtual displayAllMediaFileOfVideo(MetadataManager) : void
+        + virtual displayDetailMediaFile(std::shared_ptr&lt;MediaFile&gt; ) : void
+        + virtual displayMenuAddMetadata(std::shared_ptr&lt;MediaFile&gt; ) : void
+        + virtual displayMenuEditMetadata(std::shared_ptr&lt;MediaFile&gt; ) : void
+        + virtual displayMenuDeleteMetadata(std::shared_ptr&lt;MediaFile&gt; ) : void
     }
 
-    class VolumeCurrentView{
-        + showVolume()
+    class ScanView {
+        + showMenu() override : void
     }
 
-    class MetadataCurrentView{
-        + showFileName()
-        + showPathName()
-        + showSize()
-        + showDuration()
-        + showFileType()
-        - metadataCurrentAudioView: MetadataCurrentAudioView
-        - metadataCurrentVideoView: MetadataCurrentVideoView
+    class MediaFileManagerView {
+        + showMenu() override : void
+        + displayAllMediaFile(MetadataManager) override : void
+        + displayAllMediaFileOfAudio(MetadataManager) override : void
+        + displayAllMediaFileOfVideo(MetadataManager) override : void
     }
 
-    class MetadataCurrentAudioView{
-        + showTrackName()
-        + showAlbum()
-        + showArtist()
-        + showPublisher()
-        + showGenre()
-        + showBitrate()
-        + showSampleRate()
+    class MediaFileHandlerView {
+        + showMenu() override : void
+        + displayDetailMediaFile(std::shared_ptr&lt;MediaFile&gt; ) override : void
+        + displayMenuAddMetadata(std::shared_ptr&lt;MediaFile&gt; ) override : void
+        + displayMenuEditMetadata(std::shared_ptr&lt;MediaFile&gt; ) override : void
+        + displayMenuDeleteMetadata(std::shared_ptr&lt;MediaFile&gt; ) override : void
     }
 
-    class MetadataCurrentVideoView{
-        + showResolution()
-        + showFrameRate()
-        + showCodec()
-        + showBitrate()
+    class PlaylistView {
+        + showMenu() override : void
+        + showAllPlaylist(playlistManager : PlaylistManager)
+        + showPlaylistContent(playlist : Playlist)
     }
 
-    class MenuControlPlayView{
-        + playButton()
-        + pauseButton()
-        + nextButton()
-        + previousButton()
-        + increaseVolumeButton()
-        + decreaseVolumeButton()
+    class PlaylistHandlerView {
+        + showMenu() override : void
+        + showCreatePlaylist() : void
+        + showEditPlaylist() : void
+        + showDeletePlaylist() : void
     }
 
-    class MenuView{
-        + showAllMediaFile()
-        + showAllPlaylist()
-        + showPlaylistContent()
-        + menuFileHandlingView : MenuFileHandlingView 
-        + menuPlaylistHandlingView : MenuPlaylistHandlingView
+    class BaseCurrentPlayView {
+        + virtual showCurrentPlay() : void
     }
 
-    class MenuFileHandlingView{
-        + showAddFile()
-        + showRemoveFile()
-        + showEditFile()
+    class VolumeView {
+        + showCurrentPlay() override: void
+        + showVolume(level : int) : void
     }
 
-    class MenuPlaylistHandlingView{
-        + showCreatePlaylist()
-        + showEditPlaylist()
-        + showDeletePlaylist()
+    class MetadataView {
+        + showCurrentPlay() override: void
+        + showMetadata(file : MediaFile) : void
+    }
+
+    class MenuControlPlayView {
+        + showCurrentPlay() override: void
+        + displayControls() : void
+        + onPlayButton() : void
+        + onPauseButton() : void
+        + onNextButton() : void
+        + onPreviousButton() : void
+        + onVolumeChange(level : int) : void
+    }
+
+    class BoardManager {
+        - lcd : S32K144InterfaceLCD
+    }
+
+    class S32K144InterfaceLCD {
+        + showCurrentPlayLCD(currentPlay : CurrentPlay) : void
     }
 }
 
-CLIManager --&gt; CurrentPlayView
-CurrentPlayView --&gt; VolumeCurrentView
-CurrentPlayView --&gt; MetadataCurrentView
-MetadataCurrentView --&gt; MetadataCurrentAudioView
-MetadataCurrentView --&gt; MetadataCurrentVideoView
-CurrentPlayView --&gt; MenuControlPlayView
-CLIManager --&gt; MenuView
-MenuView --&gt; MenuFileHandlingView
-MenuView --&gt; MenuPlaylistHandlingView
+CLIManager o--&gt; ViewBase : has &gt;
+CLIManager o--&gt; BaseCurrentPlayView : has &gt;
+ViewBase &lt;|-- ScanView
+ViewBase &lt;|-- MediaFileView
+ViewBase &lt;|-- MediaFileHandlerView
+ViewBase &lt;|-- PlaylistView
+ViewBase &lt;|-- PlaylistHandlerView
+BaseCurrentPlayView &lt;|-- VolumeView
+BaseCurrentPlayView &lt;|-- MetadataView
+BaseCurrentPlayView &lt;|-- MenuControlPlayView
+BoardManager --&gt; S32K144InterfaceLCD
 
 
 package Controller {
-    class MediaController {
-        - mediaScanner: MediaScanner*
-        - player: MediaPlayer*
-        - playlistManager: PlaylistManager*
-        - deviceManager: DeviceManager*
-        + scanDirectory(path: string)
-        + playMedia(file: MediaFile*)
-        + pauseMedia()
-        + stopMedia()
-        + nextTrack()
-        + previousTrack()
+    class ControllerManager {
+        - mediaScannerController: unique_ptr&lt;MediaScannerController&gt;
+        - playerController: unique_ptr&lt;PlayerController&gt;
+        - mediaPlaylistController: unique_ptr&lt;MediaPlaylistController&gt;
+        - mediaFileController: unique_ptr&lt;MediaFileController&gt;
+        - mediaFileManagerController : unique_ptr&lt;MediaFileManagerController&gt;
+        - deviceController: unique_ptr&lt;DeviceController&gt;
+        - modelManager: ModelManager
+        - cliManager: CLIManager
+    }
+
+    
+    class MediaScannerController {
+        - metadataManager: MetadataManager&amp;
+        - scanView : shared_ptr&lt;ViewBase&gt;
+        - listPaths : unordered_set&lt;string&gt;
+        + scanUSBDevices() : void
+        + scanHomeDirectory() : void
+        + getListPaths() : unordered_set&lt;string&gt; 
+    }
+
+    
+    class PlayerController {
+        - currentPlay : CurrentPlay
+        - baseCurrentPlayView : BaseCurrentPlayView
+        + getCurrentFile() : shared_ptr&lt;MediaFile&gt;
+        + play(file: shared_ptr&lt;MediaFile&gt;) : void
+        + pause() : void
+        + next() : void
+        + previous() : void
+        + adjustVolume(level: int) : void
+        + updateCurrentPlayView() : void
+    }
+
+    class MediaPlaylistController {
+        - playlistManager: PlaylistManager
+    }
+
+
+    class MediaFileController {
+        - mediaFile: shared_ptr&lt;MediaFile&gt;
+        - mediaFileHandlerView : shared_ptr&lt;ViewBase&gt;
+        + getDetailMediaFile() : void 
+        + editMediaFile() : void
+        + addNewKey() : void
+        + deleteKey() : void
+    }
+
+    class MediaFileManagerController {
+        - mediaManager: MetadataManager&amp; 
+        - mediaFileManagerView : shared_ptr&lt;ViewBase&gt;
+        + addData(const unordered_set&lt;std::string&gt;&amp;) : void
+        + showAllMediaFile() : void
+        + showAllMediaFileOfVideo() : void 
+        + showAllMediaFileOfAudio() : void
+    }
+
+    class DeviceController {
+        - currentPlay : CurrentPlay
+        - boardManager : BoardManager
         + setVolume(level: int)
+        + updateDisplay(info: string)
+        + handleButtonPress(button: ButtonType)
     }
-    
-    class MediaScanner {
-        - supportedFormats: vector&lt;string&gt;
-        + scanDirectory(path: string): vector&lt;shared_ptr&lt;MediaFile&gt;&gt;
-        + scanUSB(): vector&lt;shared_ptr&lt;MediaFile&gt;&gt;
-        - mountUSB()
-        - unmountUSB()
+
+
+}
+
+ControllerManager &quot;1&quot; o-- &quot;1&quot; MediaScannerController : has &gt;
+ControllerManager &quot;1&quot; o-- &quot;1&quot; PlayerController : has &gt;
+ControllerManager &quot;1&quot; o-- &quot;1&quot; MediaPlaylistController : has &gt;
+ControllerManager &quot;1&quot; o-- &quot;1&quot; MediaFileController : has &gt;
+ControllerManager &quot;1&quot; o-- &quot;1&quot; MediaFileManagerController : has &gt;
+ControllerManager &quot;1&quot; o-- &quot;1&quot; DeviceController : has &gt;
+
+
+package Model {
+
+    class ModelManager{
+        - metadataManager: MetadataManager
+        - playlistManager: PlaylistManager
+        - currentPlay: CurrentPlay
+        + getMetadataManager()
+        + getPlaylistManager()
+        + getCurrentPlay()
     }
-    
-    class MediaPlayer {
-        - currentFile: MediaFile*
+
+    class CurrentPlay{
+        - currentPlay: queue&lt;shared_ptr&lt;MediaFile&gt;&gt;
+        - volume: int
         - isPlaying: bool
         - currentPosition: int
-        + play(file: MediaFile*)
-        + pause()
-        + stop()
-        + seek(position: int)
-        + getCurrentPosition(): int
-        - initSDL()
-        - cleanupSDL()
+        + getCurrentFile(): shared_ptr&lt;MediaFile&gt;
     }
-}
-package Model {
+
     abstract class MediaFile {
         - fileName : String
         - pathName : String
         - size : double
         - duration : String
         - fileType : String
-        + getDuration(): int
-        + getPath(): string
+        + getPath(): String
+        + getSize() : double
         + getName(): string
-        + virtual editMediaFile() : void
-        + virtual detailMediaFile() : void
-        + virtual getType(): string
+        + getDuration(): int
+        + virtual getType : String
+        + virtual inputMediaFile() : void
+        + virtual addNewKey(const string&amp; key, const string&amp; value) : void 
+        + virtual editKey(const string&amp; key, const string&amp; value) : void
+        + virtual deleteKey(const string&amp; key) : void
+        + virtual getMetadata(const std::string&amp; key) const : String
+        + virtual getAllMetadata() const : unordered_map&lt;string, string&gt;
         + virtual ~MediaFile();
     }
     
     class AudioFile {
-        - trackName : String
-        - album : String
-        - artist : String
-        - publisher : String
-        - genre : String
-        - bitrate : int
-        - sampleRate : int
-        + getArtist(): string
-        + getAlbum(): string
-        + setArtist(artist: string)
-        + getType() override : string
-        + editMediaFile() override : void
-        + detailMediaFile() override : void
+        - metadataAudio : unordered_map&lt;string, string&gt; 
+        - allowedKeys : const static unordered_set&lt;string&gt;
+        + getMetadata(const string&amp; key) const : String
+        + getAllMetadata() const : unordered_map&lt;string, string&gt;
+        + getType() override : String
+        + inputMediaFile(string pathName) override : void
+        + addMetadata(const string&amp; key, const string&amp; value) override : void 
+        + editMetadata(const string&amp; key, const string&amp; value) override : void
+        + deleteMetadata(const string&amp; key) override : void
     }
     
     class VideoFile {
-        - codec: string
-        - bitrate: int
-        - resolution: string
-        + getCodec(): string
-        + getBitrate(): int
-        + getResolution(): string
-        + getType() override : string
-        + editMediaFile() override : void
-        + detailMediaFile() override : void
+        - metadataVideo : unordered_map&lt;string, string&gt; 
+        - allowedKeys : const static unordered_set&lt;string&gt;
+        + getMetadata(const string&amp; key) const : String
+        + getAllMetadata() const : unordered_map&lt;string, string&gt;
+        + getType() override : String
+        + inputMediaFile(string pathName) override : void
+        + addMetadata(const string&amp; key, const string&amp; value) override : void 
+        + editMetadata(const string&amp; key, const string&amp; value) override : void
+        + deleteMetadata(const string&amp; key) override : void
     }
     
     class Playlist {
-        - id: int
         - name: string
         - mediaFiles: vector&lt;shared_ptr&lt;MediaFile&gt;&gt;
         + addFile(file: shared_ptr&lt;MediaFile&gt;)
@@ -281,13 +343,16 @@ package Model {
         + getName(): string
         + setName(name: string)
     }
+
     class MetadataManager {
         - listMediaFiles : vector&lt;shared_ptr&lt;MediaFile&gt;&gt;
-        + addMediaFileFromUSB(file : shared_ptr&lt;MediaFile&gt;) : void
-        + addMediaFileFromPC(file : shared_ptr&lt;MediaFile&gt;) : void
-        + editMediaFile(file : shared_ptr&lt;MediaFile&gt;) : void
-        + removeMediaFile(file : shared_ptr&lt;MediaFile&gt;) : void
-        + displayAllMediaFiles() : void
+        - listPaths : unordered_set&lt;std::string&gt;
+        + addMediaFile(string, string) : void
+        + deleteMediaFile(string) : void
+        + getAllMediaFile() : vector&lt;shared_ptr&lt;MediaFile&gt;&gt;
+        + getAllAudioFiles() : vector&lt;shared_ptr&lt;MediaFile&gt;&gt;
+        + getAllVideoFiles() : vector&lt;shared_ptr&lt;MediaFile&gt;&gt;
+        + getAllMediaFiles() : void
     }
     
     class PlaylistManager {
@@ -299,38 +364,31 @@ package Model {
         + getAllPlaylists(): playlists
     }
     
-    class DeviceManager {
-        - volume: int
-        - s32k144Connection: S32K144Interface*
-        + setVolume(level: int)
-        + getVolume(): int
-        + updateDisplay(info: string)
-        + handleButtonPress(button: ButtonType)
-    }
 }
 
-
-package Hardware {
-    class S32K144Interface {
-        - serialConnection: SerialPort*
-        + connect()
-        + disconnect()
-        + readADC(): int
-        + readButtons(): ButtonState
-        + updateDisplay(text: string)
-    }
-}
 
 enum MediaType {
     AUDIO
     VIDEO
 }
 
+enum Metadata{
+    TITLE
+    ARTIST
+    ALBUM
+    GENRE
+    COMMENT
+    YEAR
+    TRACK
+}
+
 enum ButtonType {
     PLAY_PAUSE
     NEXT
     PREVIOUS
-    STOP
+    PAUSE
+    VOLUME_UP
+    VOLUME_DOWN
 }
 
 ' Inheritance relationships
@@ -341,35 +399,108 @@ MediaFile &lt;|-- VideoFile : extends
 PlaylistManager &quot;1&quot; o-- &quot;0..*&quot; Playlist : manages &gt;
 Playlist &quot;1&quot; o-- &quot;0..*&quot; MediaFile : contains &gt;
 MetadataManager &quot;1&quot; o-- &quot;0..*&quot; MediaFile : manages &gt;
-' Aggregation relationships (weak ownership)
-MediaController o-- MediaScanner : uses &gt;
-MediaController o-- MediaPlayer : uses &gt;
-MediaController o-- PlaylistManager : uses &gt;
-MediaController o-- DeviceManager : uses &gt;
+
+ModelManager &quot;1&quot; o-- &quot;1&quot; MetadataManager : has &gt;
+ModelManager &quot;1&quot; o-- &quot;1&quot; PlaylistManager : has &gt;
+ModelManager &quot;1&quot; o-- &quot;1&quot; CurrentPlay : has &gt;
 
 ' Association relationships
-CLI &quot;1&quot; --&gt; &quot;1&quot; MediaController : controls &gt;
-DeviceManager &quot;1&quot; --&gt; &quot;1&quot; S32K144Interface : interfaces with &gt;
+
 MediaFile --&gt; &quot;1&quot; MediaType : has type &gt;
-DeviceManager --&gt; ButtonType : handles &gt;
+PlayerController --&gt; &quot;1&quot; ButtonType
+AudioFile --&gt; &quot;1&quot; Metadata : has &gt;
+VideoFile --&gt; &quot;1&quot; Metadata : has &gt;
 
-
-
-note &quot;CLI depends on MediaController\nfor all operations&quot; as N1
-CLI .. N1
-N1 .. MediaController
-
-note &quot;MediaController is the central\ncoordinator between all components&quot; as N2
-MediaController .. N2
-
-note &quot;DeviceManager handles all\nhardware interactions&quot; as N3
-DeviceManager .. N3
-
+ControllerManager &quot;1&quot; o-- &quot;1&quot; ModelManager : has &gt;
+ControllerManager &quot;1&quot; o-- &quot;1&quot; CLIManager : has &gt;
 &#64;enduml"/>
 </p>
 </section>
 <section id="sequence-diagram">
 <h2>Sequence Diagram<a class="headerlink" href="#sequence-diagram" title="Permalink to this heading"></a></h2>
+<p class="plantuml">
+<img src="../../_images/plantuml-36a7680760dee8fad93ac15594f94685a70622aa.png" alt="&#64;startuml Sequence Diagram
+
+actor User as U
+
+' ------------------------- Play Media File -------------------------
+U -&gt; CLIManager : Select &quot;Play Media File&quot;
+CLIManager -&gt; ControllerManager : handleUserInput(&quot;Play Media File&quot;)
+ControllerManager -&gt; PlayerController : play(file)
+PlayerController -&gt; ModelManager : getCurrentPlay()
+ModelManager -&gt; CurrentPlay : getCurrentFile()
+CurrentPlay --&gt; PlayerController : return currentFile
+PlayerController -&gt; BaseCurrentPlayView : updateCurrentPlayView()
+PlayerController -&gt; CurrentPlay : play(file)
+CurrentPlay --&gt; BaseCurrentPlayView : update play status
+BaseCurrentPlayView -&gt; CLIManager : Display current play details
+
+' ------------------------- View All Media Files -------------------------
+U -&gt; CLIManager : Select &quot;View All Media Files&quot;
+CLIManager -&gt; ControllerManager : handleUserInput(&quot;View All Media Files&quot;)
+ControllerManager -&gt; MediaFileController : displayAllMediaFiles()
+MediaFileController -&gt; ModelManager : getMetadataManager()
+ModelManager -&gt; MetadataManager : fetchAllMediaFiles(page=1, limit=25)
+MetadataManager --&gt; MediaFileController : Return list of media files
+MediaFileController -&gt; CLIManager : Display media file list
+
+' ------------------------- List All Playlists -------------------------
+U -&gt; CLIManager : Select &quot;List All Playlists&quot;
+CLIManager -&gt; ControllerManager : handleUserInput(&quot;List All Playlists&quot;)
+ControllerManager -&gt; MediaPlaylistController : sendPlaylistToView()
+MediaPlaylistController -&gt; ModelManager : getPlaylistManager()
+ModelManager -&gt; PlaylistManager : fetchAllPlaylists()
+PlaylistManager --&gt; MediaPlaylistController : Return list of playlists
+MediaPlaylistController -&gt; CLIManager : Display playlists
+
+' ------------------------- Create Playlist -------------------------
+U -&gt; CLIManager : Select &quot;Create Playlist&quot;
+CLIManager -&gt; ControllerManager : handleUserInput(&quot;Create Playlist&quot;)
+ControllerManager -&gt; MediaPlaylistController : createPlaylist(name)
+MediaPlaylistController -&gt; ModelManager : getPlaylistManager()
+ModelManager -&gt; PlaylistManager : createPlaylist(name)
+PlaylistManager --&gt; MediaPlaylistController : Return new playlist ID
+MediaPlaylistController -&gt; CLIManager : Notify &quot;Playlist Created&quot;
+
+' ------------------------- Add Song to Playlist -------------------------
+U -&gt; CLIManager : Select &quot;Add Song to Playlist&quot;
+CLIManager -&gt; ControllerManager : handleUserInput(&quot;Add Song&quot;)
+ControllerManager -&gt; MediaPlaylistController : addSongToPlaylist(song, playlist)
+MediaPlaylistController -&gt; ModelManager : getPlaylistManager()
+ModelManager -&gt; PlaylistManager : addSong(playlist, song)
+PlaylistManager --&gt; MediaPlaylistController : Return updated playlist
+MediaPlaylistController -&gt; CLIManager : Notify &quot;Song Added&quot;
+
+' ------------------------- View Metadata of File -------------------------
+U -&gt; CLIManager : Select &quot;View Metadata of File&quot;
+CLIManager -&gt; ControllerManager : handleUserInput(&quot;View Metadata&quot;)
+ControllerManager -&gt; MediaFileController : showMetadataFile(file)
+MediaFileController -&gt; ModelManager : getMetadataManager()
+ModelManager -&gt; MetadataManager : fetchMetadata(file)
+MetadataManager --&gt; MediaFileController : Return metadata
+MediaFileController -&gt; CLIManager : Display metadata
+
+' ------------------------- Edit Metadata of File -------------------------
+U -&gt; CLIManager : Select &quot;Edit Metadata&quot;
+CLIManager -&gt; ControllerManager : handleUserInput(&quot;Edit Metadata&quot;)
+ControllerManager -&gt; MediaFileController : editMetadata(file, key, value)
+MediaFileController -&gt; ModelManager : getMetadataManager()
+ModelManager -&gt; MetadataManager : updateMetadata(file, key, value)
+MetadataManager --&gt; MediaFileController : Confirm update
+MediaFileController -&gt; CLIManager : Notify &quot;Metadata Updated&quot;
+
+' ------------------------- Delete Playlist -------------------------
+U -&gt; CLIManager : Select &quot;Delete Playlist&quot;
+CLIManager -&gt; ControllerManager : handleUserInput(&quot;Delete Playlist&quot;)
+ControllerManager -&gt; MediaPlaylistController : deletePlaylist(playlist_id)
+MediaPlaylistController -&gt; ModelManager : getPlaylistManager()
+ModelManager -&gt; PlaylistManager : deletePlaylist(playlist_id)
+PlaylistManager --&gt; MediaPlaylistController : Confirm deletion
+MediaPlaylistController -&gt; CLIManager : Notify &quot;Playlist Deleted&quot;
+
+&#64;enduml
+"/>
+</p>
 </section>
 </section>
 
