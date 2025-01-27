@@ -8,7 +8,7 @@
 #include "MediaFileManagerView.h"
 #include "PlaylistHandlerView.h"
 #include "PlaylistManagerView.h"
-
+#include "UartView.h"
 
 class ViewManager{
     private:
@@ -18,7 +18,7 @@ class ViewManager{
 
         ViewManager();
 
-        std::shared_ptr<BaseView> getView(std::string);
+        std::shared_ptr<BaseView> getView(std::string viewName);
 
         ~ViewManager();
     

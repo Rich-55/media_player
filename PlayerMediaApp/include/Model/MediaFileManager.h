@@ -13,16 +13,16 @@ class MediaFileManager{
     public:
         MediaFileManager();
 
-        std::shared_ptr<MediaFile> getMediaFile(std::string);
-        std::shared_ptr<MediaFile> getMediaFileByPath(std::string);
+        std::shared_ptr<MediaFile> getMediaFile(std::string fileName);
+        std::shared_ptr<MediaFile> getMediaFileByPath(std::string pathName);
 
-        bool checkFileExists(std::string);
+        bool checkFileExists(std::string fileName);
 
-        bool addMediaFile(std::string, std::string);
+        bool addMediaFile(std::string pathName, std::string type);
 
-        bool loadMediaFile(std::string, std::string);
+        bool loadMediaFile(std::string pathName, std::string type);
 
-        bool deleteMediaFile(std::string);
+        bool deleteMediaFile(std::string fileName);
 
         void updateDatabase();
 

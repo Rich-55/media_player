@@ -40,6 +40,9 @@ class BaseView{
         virtual void setListPathNameIsAdded(std::unordered_set<std::string>);
         virtual void showFileAdded();
 
+        //view for uart manager
+        virtual std::pair<std::string, unsigned int> getPortAndBaudRate(std::vector<std::string>, std::vector<std::string>);
+
         virtual ~BaseView();
 
 };

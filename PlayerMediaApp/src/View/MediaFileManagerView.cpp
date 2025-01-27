@@ -43,6 +43,7 @@ int MediaFileManagerView::showMenuWithMediaList(MediaFileManager mediaFileManage
                     text("Duration") | bold | size(WIDTH, EQUAL, 15) | border,
                     text("Date Created") | bold | size(WIDTH, EQUAL, 20) | border,
                     text("File Size") | bold | size(WIDTH, EQUAL, 20) | border,
+                    text("File Path") | bold | size(WIDTH, EQUAL, 100) | border,
                 })
             );
 
@@ -60,6 +61,7 @@ int MediaFileManagerView::showMenuWithMediaList(MediaFileManager mediaFileManage
                         text(mediaFile->getDuration()) | size(WIDTH, EQUAL, 15) | border,
                         text(mediaFile->getDateCreated()) | size(WIDTH, EQUAL, 20) | border,
                         text(std::to_string(mediaFile->getSize()) + " bytes") | size(WIDTH, EQUAL, 20) | border,
+                        text(mediaFile->getPath()) | size(WIDTH, EQUAL, 100) | border,
                     }) 
                 );
             }

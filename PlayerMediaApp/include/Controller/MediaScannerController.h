@@ -1,17 +1,12 @@
 #ifndef MEDIA_SCANNER_CONTROLLER_H
 #define MEDIA_SCANNER_CONTROLLER_H
 
-
 #include "../Model/MediaFileManager.h"
 #include "../Model/FolderManager.h"
 #include "../View/BaseView.h"
 #include "../View/ScanView.h"
-
-
 #include "../utils/ScanException.h"
 #include "../utils/ConfigLoader.h"
-
-
 
 class MediaScannerController{
     private:
@@ -24,11 +19,11 @@ class MediaScannerController{
         std::unordered_set<std::string> listPathsAdded;
     public:
         
-        MediaScannerController(MediaFileManager&, PlaylistManager&,FolderManager&, std::shared_ptr<BaseView>);
+        MediaScannerController(MediaFileManager& mediaFileManager, PlaylistManager& playlistManager, FolderManager& folderManager,std::shared_ptr<BaseView> scanView);
 
-        void handleScan(bool);
+        void handleScan(bool isRunning);
 
-        void addDataFileWithFolder(std::string, std::string);
+        void addDataFileWithFolder(std::string nameFolder, std::string nameLocation);
 
         void loadData();
         void loadFolder();
@@ -44,7 +39,6 @@ class MediaScannerController{
 
         std::unordered_set<std::string> scanFolder(const std::string &path);
 
-        
 };
 
 #endif

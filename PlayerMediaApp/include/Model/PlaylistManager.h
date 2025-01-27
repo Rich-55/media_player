@@ -10,13 +10,13 @@ class PlaylistManager{
         PlaylistManager();
 
         bool checkPlaylist();
-        bool checkPlaylistName(std::string);
+        bool checkPlaylistName(std::string name);
 
-        std::shared_ptr<Playlist> getPlaylist(std::string);
+        std::shared_ptr<Playlist> getPlaylist(std::string name);
 
-        void loadPlaylist(std::shared_ptr<Playlist>);
-        void addPlaylist(std::shared_ptr<Playlist>);
-        bool deletePlaylist(std::string);
+        void loadPlaylist(std::shared_ptr<Playlist> playlist);
+        void addPlaylist(std::shared_ptr<Playlist> playlist);
+        bool deletePlaylist(std::string name);
 
         std::vector<std::shared_ptr<Playlist> > getAllPlaylist();
 

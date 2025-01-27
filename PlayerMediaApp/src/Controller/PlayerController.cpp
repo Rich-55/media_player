@@ -114,12 +114,11 @@ void PlayerController::resetDuration()
 int PlayerController::getDuration() {return this->currentDuration.load();}
 
 void PlayerController::setVolume(int newVolume) 
-{
-    std::unique_lock<std::recursive_mutex> lock(stateMutex);
+{   
     if (newVolume < 0) newVolume = 0;
     if (newVolume > 100) newVolume = 100;
-    volume = newVolume;
-    Mix_VolumeMusic(volume * MIX_MAX_VOLUME / 100); 
+    volume.store(newVolume, std::memory_order_relaxed);
+    Mix_VolumeMusic(volume.load(std::memory_order_relaxed) * MIX_MAX_VOLUME / 100);
     notifyObserversVolume();
 }
 
@@ -127,7 +126,7 @@ void PlayerController::increaseVolume(int increment) {setVolume(volume + increme
 
 void PlayerController::decreaseVolume(int decrement) {setVolume(volume - decrement);}
 
-int PlayerController::getVolume() {return volume;}
+int PlayerController::getVolume() const {return volume.load(std::memory_order_relaxed); }
 
 bool PlayerController::isRepeat() {return this->repeat;}
 
@@ -370,7 +369,7 @@ void PlayerController::musicFinishedCallback()
 
         if (music) {
 
-            Mix_VolumeMusic(volume);
+            Mix_VolumeMusic(instance->volume);
 
             Mix_PlayMusic(music, 1);
 

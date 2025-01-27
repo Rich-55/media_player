@@ -6,14 +6,9 @@
 #include <memory>
 #include <iostream>
 #include "../Controller/PlayerController.h"
+
 namespace asio = boost::asio;
 class UARTManager {
-public:
-    UARTManager();
-    ~UARTManager();
-
-    void setUpUART(const std::string& port, unsigned int baud_rate, std::shared_ptr<PlayerController>& playerController);
-    void stopUART();
 
 private:
     asio::io_context io_context;
@@ -21,6 +16,17 @@ private:
     std::thread uartThread;
 
     static void asyncHandleUart(asio::serial_port& serial, std::shared_ptr<PlayerController>& playerController);
+public:
+    UARTManager();
+    ~UARTManager();
+
+    void runMediaUart(std::shared_ptr<PlayerController>& playerController);
+    void stopUART();
+    bool isConnectionActive() const; // New method to check connection status
+    bool checkPortConnection(const std::string& port, unsigned int baud_rate);
+
+    std::vector<std::string> getPortList();
+    std::vector<std::string> getBaudRateOptions();
 };
 
 #endif 

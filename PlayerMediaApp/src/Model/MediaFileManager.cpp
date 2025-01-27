@@ -45,7 +45,7 @@ void writePathToFile(const std::string &pathName, const std::string &filePath = 
     file.close();
 }
 
-bool MediaFileManager::loadMediaFile( std::string pathName, std::string type)
+bool MediaFileManager::loadMediaFile(std::string pathName, std::string type)
 {   
     bool result = false;
     bool isSame = false;
@@ -81,7 +81,7 @@ bool MediaFileManager::loadMediaFile( std::string pathName, std::string type)
     return result;
 }
 
-bool MediaFileManager::addMediaFile( std::string pathName, std::string type)
+bool MediaFileManager::addMediaFile(std::string pathName, std::string type)
 {   
     bool result = false;
     bool isSame = false;

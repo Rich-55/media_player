@@ -31,6 +31,8 @@ class PlayerController {
         bool manualTransition;
         bool repeat;
 
+        std::atomic<int> volume{100};
+
         //Mix_Music* currentMusic;
         //observers
         std::vector<std::function<void(int)>> observersIndex;
@@ -87,8 +89,8 @@ class PlayerController {
         void increaseVolume(int increment);
         void decreaseVolume(int decrement);
 
-        int getVolume();
-        
+        int getVolume() const;
+
         int getDuration();
 };
 
