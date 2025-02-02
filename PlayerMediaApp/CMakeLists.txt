@@ -6,26 +6,15 @@ project(PlayerMediaApp VERSION 1.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-<<<<<<< HEAD
 # Enable warnings and compilation options
 add_compile_options(-Wall -Wextra -Werror)
 
 # Add FTXUI library (FetchContent will automatically download it)
-=======
-# Enable warnings and compile options
-add_compile_options(-Wall -Wextra -Werror)
-
-# Add the FTXUI library (FetchContent downloads it automatically)
->>>>>>> refs/remotes/origin/test
 include(FetchContent)
 FetchContent_Declare(
   ftxui
   GIT_REPOSITORY https://github.com/ArthurSonzogni/FTXUI.git
-<<<<<<< HEAD
   GIT_TAG main # newest
-=======
-  GIT_TAG main # Change this tag to the version you need
->>>>>>> refs/remotes/origin/test
 )
 FetchContent_MakeAvailable(ftxui)
 
@@ -47,11 +36,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR})
 # Create the main target
 add_executable(${PROJECT_NAME} main.cpp ${SRC_FILES})
 
-<<<<<<< HEAD
 # Add include directories
-=======
-# Add include paths
->>>>>>> refs/remotes/origin/test
 target_include_directories(${PROJECT_NAME} PRIVATE ${INCLUDE_DIR})
 
 find_package(SDL2 REQUIRED)
@@ -64,11 +49,7 @@ pkg_check_modules(AVUTIL REQUIRED libavutil)
 pkg_check_modules(SWSCALE REQUIRED libswscale)
 pkg_check_modules(SWRESAMPLE REQUIRED libswresample)
 
-<<<<<<< HEAD
 # Find all lib of FFMPEG
-=======
-# Find the FFmpeg libraries
->>>>>>> refs/remotes/origin/test
 find_library(AVFORMAT_LIB avformat REQUIRED)
 find_library(AVCODEC_LIB avcodec REQUIRED)
 find_library(AVUTIL_LIB avutil REQUIRED)
@@ -92,17 +73,10 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
 )
 
 message(STATUS "AVFormat libraries: ${AVFORMAT_LIBRARIES}")
-<<<<<<< HEAD
 # Link necessary libraries
 target_link_libraries(${PROJECT_NAME}
   PRIVATE
     tag #Taglib
-=======
-# Link the necessary libraries
-target_link_libraries(${PROJECT_NAME}
-  PRIVATE
-    tag # libtag library
->>>>>>> refs/remotes/origin/test
     avformat
     avcodec
     avutil
@@ -110,19 +84,11 @@ target_link_libraries(${PROJECT_NAME}
     swresample
     SDL2
     SDL2_mixer
-<<<<<<< HEAD
     ftxui::screen # FTXUI
     ftxui::dom
     ftxui::component
 )
 # Gtest
-=======
-    ftxui::screen # Link FTXUI
-    ftxui::dom
-    ftxui::component
-)
-# Add Google Test
->>>>>>> refs/remotes/origin/test
 enable_testing()
 find_package(GTest REQUIRED)
 include(GoogleTest)
@@ -133,20 +99,11 @@ file(GLOB_RECURSE TEST_FILES ${CMAKE_SOURCE_DIR}/test/*.cpp)
 # Create a target for unit tests
 add_executable(tests ${TEST_FILES})
 
-<<<<<<< HEAD
 # Link Google Test libraries
-=======
-# Link the Google Test library
->>>>>>> refs/remotes/origin/test
 target_link_libraries(tests PRIVATE GTest::GTest GTest::Main)
 
 # Add include directories for tests
 target_include_directories(tests PRIVATE ${INCLUDE_DIR})
 
-<<<<<<< HEAD
 # Register test cases
 gtest_discover_tests(tests)
-=======
-# Register the tests
-gtest_discover_tests(tests)
->>>>>>> refs/remotes/origin/test

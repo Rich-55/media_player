@@ -5,7 +5,7 @@ AudioFile::AudioFile() {};
 AudioFile::AudioFile(const std::string& fileName, const std::string& pathName, unsigned long long size, const std::string& dateCreated, const std::string& duration, const std::string& fileType)
     : MediaFile(fileName, pathName, size, dateCreated, duration, fileType) {}
 
-// Lấy giá trị metadata theo key
+// Get metadata value by key
 std::string AudioFile::getMetadata(const std::string& key) const 
 {
     if (metadataAudio.find(key) != metadataAudio.end()) {
