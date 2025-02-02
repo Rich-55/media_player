@@ -8,6 +8,6 @@ PlaylistManager &ModelManager::getPlaylistManager(){ return this->playlistManage
 
 FolderManager &ModelManager::getFolderManager(){ return this->folderManager;}
 
-std::shared_ptr<Playlist> ModelManager::getPlaylist(std::string name){ return playlistManager.getPlaylist(name);}
+std::shared_ptr<Playlist> ModelManager::getPlaylist(std::string playlistName){ return playlistManager.getPlaylist(playlistName);}
 
 std::shared_ptr<MediaFile> ModelManager::getMediaFile(std::string fileName){ return mediaFileManager.getMediaFile(fileName);}

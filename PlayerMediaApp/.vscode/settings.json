@@ -85,7 +85,8 @@
         "source_location": "cpp",
         "future": "cpp",
         "typeindex": "cpp",
-        "span": "cpp"
+        "span": "cpp",
+        "forward_list": "cpp"
     },
     "C_Cpp.errorSquiggles": "enabled"
 }

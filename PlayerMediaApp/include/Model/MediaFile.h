@@ -22,7 +22,7 @@ public:
     virtual ~MediaFile();
 
     // Getters
-    std::string getName() const;
+    std::string getFileName() const;
     std::string getPath() const;
     unsigned long getSize() const;
     std::string getDuration() const;

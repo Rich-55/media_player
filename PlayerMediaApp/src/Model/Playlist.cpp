@@ -1,16 +1,16 @@
 #include "../../include/Model/Playlist.h"
 
-Playlist::Playlist(std::string name) : name(name) {}
+Playlist::Playlist(std::string playlistName) : playlistName(playlistName) {}
 
-std::string Playlist::getName() const{ return this->name;}
+std::string Playlist::getPlaylistName() const{ return this->playlistName;}
 
-void Playlist::setName(std::string name){ this->name = name;}
+void Playlist::setPlaylistName(std::string playlistName){ this->playlistName = playlistName;}
 
-bool Playlist::checkMediaFile(std::string file)
+bool Playlist:: checkMediaFile(std::string fileName)
 {
     for(const auto &mediaFile : listMediaFiles)
     {
-        if(mediaFile->getName() == file)
+        if(mediaFile->getFileName() == fileName)
         {
             return true;
         }
@@ -30,17 +30,17 @@ std::vector<std::string> Playlist::getListPathMediaFiles()
     return listPathMediaFiles;
 }
 
-void Playlist::loadMediaFile(std::shared_ptr<MediaFile> file){ listMediaFiles.push_back(file);}
+void Playlist::loadMediaFile(std::shared_ptr<MediaFile> mediafile){ listMediaFiles.push_back(mediafile);}
 
-void Playlist::addMediaFile(std::shared_ptr<MediaFile> file) 
+void Playlist::addMediaFile(std::shared_ptr<MediaFile> mediafile) 
 {   
-    std::cout << "Playlist name: " << name << std::endl;
+    std::cout << "Playlist name: " << playlistName << std::endl;
 
     for (const auto &mediaFile : listMediaFiles)
     {
-        if (mediaFile->getName() == file->getName())
+        if (mediaFile->getFileName() == mediafile->getFileName())
         {   
-            if(mediaFile->getSize() == file->getSize())
+            if(mediaFile->getSize() == mediafile->getSize())
             {
                 std::cerr << "File already exists in the playlist.\n";
                 return;
@@ -48,18 +48,18 @@ void Playlist::addMediaFile(std::shared_ptr<MediaFile> file)
         }
     }
 
-    listMediaFiles.push_back(file);
+    listMediaFiles.push_back(mediafile);
     std::cout << "Media file added to playlist.\n";
 
     std::string directory = "database/playlist";
-    std::string playlistFilePath = directory + "/" + name + ".playlist";
+    std::string playlistFilePath = directory + "/" + playlistName + ".playlist";
 
     if (std::filesystem::exists(playlistFilePath))
     {
         std::ofstream outFile(playlistFilePath, std::ios::app); 
         if (outFile.is_open())
         {
-            outFile << file->getPath() << "\n"; 
+            outFile << mediafile->getPath() << "\n"; 
             std::cout << "Media file path added to playlist file: " << playlistFilePath << "\n";
         }
         else
@@ -78,7 +78,7 @@ void Playlist::deleteMediaFile(std::string fileName)
 
     std::shared_ptr<MediaFile> targetMedia = nullptr;
     for (const auto& mediaFile : listMediaFiles) {
-        if (mediaFile->getName() == fileName) {
+        if (mediaFile->getFileName() == fileName) {
             targetMedia = mediaFile;
             break;
         }
@@ -91,7 +91,7 @@ void Playlist::deleteMediaFile(std::string fileName)
 
     std::string filePath = targetMedia->getPath(); 
     std::string directory = "database/playlist";
-    std::string playlistFilePath = directory + "/" + name + ".playlist";
+    std::string playlistFilePath = directory + "/" + playlistName + ".playlist";
 
     if (!std::filesystem::exists(playlistFilePath)) {
         std::cerr << "Playlist file does not exist: " << playlistFilePath << "\n";

@@ -10,20 +10,20 @@ bool PlaylistManager::checkPlaylist()
     return true;
 }
 
-bool PlaylistManager::checkPlaylistName(std::string name)
+bool PlaylistManager::checkPlaylistName(std::string playlistName)
 {
     for(const auto &playlist : listPlaylist){
-        if(playlist->getName() == name){
+        if(playlist->getPlaylistName() == playlistName){
             return true;
         }
     }
     return false;
 }
 
-std::shared_ptr<Playlist> PlaylistManager::getPlaylist(std::string name) 
+std::shared_ptr<Playlist> PlaylistManager::getPlaylist(std::string playlistName) 
 {
     for (auto playlist : listPlaylist) {
-        if (playlist->getName() == name) {
+        if (playlist->getPlaylistName() == playlistName) {
             return playlist;
         }
     }
@@ -33,8 +33,8 @@ std::shared_ptr<Playlist> PlaylistManager::getPlaylist(std::string name)
 
 void PlaylistManager::loadPlaylist(std::shared_ptr<Playlist> playlist)
 {
-    for (const auto &p : listPlaylist) {
-        if (p->getName() == playlist->getName()) {
+    for (const auto &pl : listPlaylist) {
+        if (pl->getPlaylistName() == playlist->getPlaylistName()) {
             std::cerr << "Playlist already exists.\n";
             return;
         }
@@ -42,11 +42,10 @@ void PlaylistManager::loadPlaylist(std::shared_ptr<Playlist> playlist)
     listPlaylist.push_back(playlist);
 }
 
-
 void PlaylistManager::addPlaylist(std::shared_ptr<Playlist> playlist) 
 {
     for (const auto &p : listPlaylist) {
-        if (p->getName() == playlist->getName()) {
+        if (p->getPlaylistName() == playlist->getPlaylistName()) {
             std::cerr << "Playlist already exists.\n";
             return;
         }
@@ -59,7 +58,7 @@ void PlaylistManager::addPlaylist(std::shared_ptr<Playlist> playlist)
         std::filesystem::create_directories(directory);
     }
 
-    std::string filePath = directory + "/" + playlist->getName() + ".playlist";
+    std::string filePath = directory + "/" + playlist->getPlaylistName() + ".playlist";
     std::ofstream outFile(filePath);
     if (outFile.is_open()) {
         outFile.close();
@@ -69,15 +68,15 @@ void PlaylistManager::addPlaylist(std::shared_ptr<Playlist> playlist)
     }
 }
 
-bool PlaylistManager::deletePlaylist(std::string name)
+bool PlaylistManager::deletePlaylist(std::string playlistName)
 {
-    if (!checkPlaylistName(name)) {
+    if (!checkPlaylistName(playlistName)) {
         std::cerr << "Playlist does not exist.\n";
         return false;
     }
 
     std::string directory = "database/playlist";
-    std::string playlistFilePath = directory + "/" + name + ".playlist";
+    std::string playlistFilePath = directory + "/" + playlistName + ".playlist";
 
     if (std::filesystem::exists(playlistFilePath)) {
         if (std::filesystem::remove(playlistFilePath)) {
@@ -91,7 +90,7 @@ bool PlaylistManager::deletePlaylist(std::string name)
     }
 
     for (auto it = listPlaylist.begin(); it != listPlaylist.end(); ++it) {
-        if ((*it)->getName() == name) {
+        if ((*it)->getPlaylistName() == playlistName) {
             listPlaylist.erase(it);
             std::cout << "Playlist deleted successfully.\n";
             return true;
@@ -99,7 +98,6 @@ bool PlaylistManager::deletePlaylist(std::string name)
     }
     return false;
 }
-
 
 std::vector<std::shared_ptr<Playlist> > PlaylistManager::getAllPlaylist(){return listPlaylist;}
 

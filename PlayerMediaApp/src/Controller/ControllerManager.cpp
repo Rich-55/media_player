@@ -319,7 +319,7 @@ std::string ControllerManager::playVideoHandler()
 
         fileName = mediaFileManagerView->displayAllMediaFileOfVideo(model.getMediaFileManager());
 
-        if (fileName.empty()) {
+        if (fileName == "exit") {
             return "exit";
         }
 
@@ -342,8 +342,6 @@ void ControllerManager::runApp() {
 
     auto mainMenuView = getView("MainMenuView");
     std::string typePlay = "noplay"; 
-    std::string media;
-    std::vector<std::string> listMedia;
     int choice;
     std::string error;
 
@@ -392,16 +390,17 @@ void ControllerManager::runApp() {
                     playlistHandler();
                     break;
                 case PLAY_MUSIC: {
+                    std::string music;
                     if(playerController){
                         playerController->setNotificationsEnabled(false);
                     }
-                    media = playMusicHandler(); 
-                    if (media == "exit") {
+                    music = playMusicHandler(); 
+                    if (music == "exit") {
                         break;
                     }
-                    if (!media.empty()) {
+                    if (!music.empty()) {
                         typePlay = "single"; 
-                        std::vector<std::string> singleMedia = {media};
+                        std::vector<std::string> singleMedia = {music};
                         if (playerController) {
                             playerController->stop();
                             playerController = nullptr;
@@ -412,6 +411,7 @@ void ControllerManager::runApp() {
                     break;
                 }
                 case PLAY_PLAYLIST: {
+                    std::vector<std::string> listMedia;
                     if(playerController){
                         playerController->setNotificationsEnabled(false);
                     }
@@ -433,16 +433,17 @@ void ControllerManager::runApp() {
                     break;
                 }
                 case PLAY_VIDEO: {
+                    std::string video;
                     if(playerController){
                         playerController->setNotificationsEnabled(false);
                     }
-                    media = playVideoHandler(); 
-                    if (media == "exit") {
+                    video = playVideoHandler(); 
+                    if (video == "exit") {
                         break;
                     }
-                    if (!media.empty()) {
+                    if (!video.empty()) {
                         typePlay = "single"; 
-                        std::vector<std::string> singleMedia = {media};
+                        std::vector<std::string> singleMedia = {video};
                         if (playerController) {
                             playerController->stop();
                             playerController = nullptr;

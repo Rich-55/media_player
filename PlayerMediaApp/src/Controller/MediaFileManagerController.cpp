@@ -151,6 +151,10 @@ void MediaFileManagerController::handleMediaFileManager()
                         if (fileName == "exit") {
                             break;
                         }
+                        if(mediaManager.getMediaFile(fileName)->getPath() == PlayerController::currentPlayingFile){
+                            error = "File is running, can't delete";
+                            break;
+                        }
                         if(deleteData(fileName)){
                             message = "File " + fileName + " has been deleted.";
                         }else{

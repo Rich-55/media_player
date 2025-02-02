@@ -4,7 +4,7 @@ MediaFileManager::MediaFileManager(){}
 std::shared_ptr<MediaFile> MediaFileManager::getMediaFile(std::string fileName)
 {
    for(std::shared_ptr<MediaFile> file : listMediaFiles){
-        if(file->getName() == fileName){
+        if(file->getFileName() == fileName){
             return file;
         }
     } 
@@ -24,7 +24,7 @@ std::shared_ptr<MediaFile> MediaFileManager::getMediaFileByPath(std::string path
 bool MediaFileManager::checkFileExists(std::string fileName)
 {
     for(std::shared_ptr<MediaFile> file : listMediaFiles){
-        if(file->getName() == fileName){
+        if(file->getFileName() == fileName){
             return true;
         }
     } 
@@ -177,7 +177,7 @@ void MediaFileManager::updateDatabase()
 bool MediaFileManager::deleteMediaFile(std::string fileName) 
 {
     for (auto it = listMediaFiles.begin(); it != listMediaFiles.end(); ++it) {
-        if ((*it)->getName() == fileName) {
+        if ((*it)->getFileName() == fileName) {
 
             listMediaFiles.erase(it);
 

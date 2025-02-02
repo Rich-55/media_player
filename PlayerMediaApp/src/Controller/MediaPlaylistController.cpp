@@ -6,12 +6,12 @@ MediaPlaylistController::MediaPlaylistController(MediaFileManager& mediaFileMana
 
 std::vector<std::string> MediaPlaylistController::getListPathMediaFiles() { return playlist->getListPathMediaFiles();}
 
-void MediaPlaylistController::setNamePlaylist(std::string name) { playlist->setName(name);}
+void MediaPlaylistController::setNamePlaylist(std::string playlistName) { playlist->setPlaylistName(playlistName);}
 
 bool MediaPlaylistController::addMediaFileInPlaylist(std::string fileName) 
 {
     std::shared_ptr<MediaFile> mediaFile = mediaFileManager.getMediaFile(fileName);
-    if (playlist->checkMediaFile(mediaFile->getName())) {
+    if (playlist->checkMediaFile(mediaFile->getFileName())) {
         return false;
     }
     playlist->addMediaFile(mediaFile);
@@ -46,7 +46,7 @@ bool MediaPlaylistController::addMediaFileByFolder()
                 continue;
             }
 
-            if (playlist->checkMediaFile(mediaFile->getName())) {
+            if (playlist->checkMediaFile(mediaFile->getFileName())) {
                 continue;
             }
 
@@ -64,7 +64,7 @@ bool MediaPlaylistController::addMediaFileByFolder()
                 continue;
             }
 
-            if (playlist->checkMediaFile(mediaFile->getName())) {
+            if (playlist->checkMediaFile(mediaFile->getFileName())) {
                 continue;
             }
 
@@ -171,7 +171,7 @@ void MediaPlaylistController::handlerPlaylist()
                 if (newPlaylistName == "exit") {
                     break;
                 }
-                playlist->setName(newPlaylistName);
+                playlist->setPlaylistName(newPlaylistName);
                 message = "Playlist has been renamed to " + newPlaylistName;
                 break;
             }

@@ -197,7 +197,7 @@ int MainMenuView::showMenuWithPlayer(MediaFileManager mediaFileManager, std::sha
 
             return vbox({
                 text("=== Music Status ===") | bold | center,
-                text("Currently playing: " + media->getName()) | center,
+                text("Currently playing: " + media->getFileName()) | center,
                 text("Current State: " + music_status) | center,
                 text("Repeat: " + std::string(is_repeat ? "ON" : "OFF")) | center,
                 text("Duration: " + duration + "/" + media->getDuration()) | center,
