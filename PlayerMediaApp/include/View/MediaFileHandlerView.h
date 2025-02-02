@@ -16,8 +16,6 @@ class MediaFileHandlerView : public BaseView {
         std::pair<std::string, std::string> displayMenuAddMetadata(std::shared_ptr<MediaFile> mediaFile, std::string exception) override;
         std::pair<std::string, std::string> displayMenuEditMetadata(std::shared_ptr<MediaFile> mediaFile, std::string exception) override;
         std::string displayMenuDeleteMetadata(std::shared_ptr<MediaFile> mediaFile) override;
-
-
 };
 
 #endif

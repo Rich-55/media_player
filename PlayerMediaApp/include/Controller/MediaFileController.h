@@ -1,7 +1,6 @@
 #ifndef MEDIA_FILE_CONTROLLER_H
 #define MEDIA_FILE_CONTROLLER_H
 
-
 #include "../Model/MediaFile.h"
 #include "../View/BaseView.h"
 
@@ -34,10 +33,6 @@ public:
     std::string editMetadata();
 
     std::string deleteMetadata();
-
-
-
-
 
 };
 

@@ -9,7 +9,6 @@
 #include "../utils/MediaFileManagerException.h"
 #include "../utils/ConfigLoader.h"
 
-
 class MediaFileManagerController {
 private:
     MediaFileManager& mediaManager;

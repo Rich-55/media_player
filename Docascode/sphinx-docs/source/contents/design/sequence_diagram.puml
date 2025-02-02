@@ -1,0 +1,80 @@
+@startuml Sequence Diagram
+
+actor User as U
+
+' ------------------------- Play Media File -------------------------
+U -> CLIManager : Select "Play Media File"
+CLIManager -> ControllerManager : handleUserInput("Play Media File")
+ControllerManager -> PlayerController : play(file)
+PlayerController -> ModelManager : getCurrentPlay()
+ModelManager -> CurrentPlay : getCurrentFile()
+CurrentPlay --> PlayerController : return currentFile
+PlayerController -> BaseCurrentPlayView : updateCurrentPlayView()
+PlayerController -> CurrentPlay : play(file)
+CurrentPlay --> BaseCurrentPlayView : update play status
+BaseCurrentPlayView -> CLIManager : Display current play details
+
+' ------------------------- View All Media Files -------------------------
+U -> CLIManager : Select "View All Media Files"
+CLIManager -> ControllerManager : handleUserInput("View All Media Files")
+ControllerManager -> MediaFileController : displayAllMediaFiles()
+MediaFileController -> ModelManager : getMetadataManager()
+ModelManager -> MetadataManager : fetchAllMediaFiles(page=1, limit=25)
+MetadataManager --> MediaFileController : Return list of media files
+MediaFileController -> CLIManager : Display media file list
+
+' ------------------------- List All Playlists -------------------------
+U -> CLIManager : Select "List All Playlists"
+CLIManager -> ControllerManager : handleUserInput("List All Playlists")
+ControllerManager -> MediaPlaylistController : sendPlaylistToView()
+MediaPlaylistController -> ModelManager : getPlaylistManager()
+ModelManager -> PlaylistManager : fetchAllPlaylists()
+PlaylistManager --> MediaPlaylistController : Return list of playlists
+MediaPlaylistController -> CLIManager : Display playlists
+
+' ------------------------- Create Playlist -------------------------
+U -> CLIManager : Select "Create Playlist"
+CLIManager -> ControllerManager : handleUserInput("Create Playlist")
+ControllerManager -> MediaPlaylistController : createPlaylist(name)
+MediaPlaylistController -> ModelManager : getPlaylistManager()
+ModelManager -> PlaylistManager : createPlaylist(name)
+PlaylistManager --> MediaPlaylistController : Return new playlist ID
+MediaPlaylistController -> CLIManager : Notify "Playlist Created"
+
+' ------------------------- Add Song to Playlist -------------------------
+U -> CLIManager : Select "Add Song to Playlist"
+CLIManager -> ControllerManager : handleUserInput("Add Song")
+ControllerManager -> MediaPlaylistController : addSongToPlaylist(song, playlist)
+MediaPlaylistController -> ModelManager : getPlaylistManager()
+ModelManager -> PlaylistManager : addSong(playlist, song)
+PlaylistManager --> MediaPlaylistController : Return updated playlist
+MediaPlaylistController -> CLIManager : Notify "Song Added"
+
+' ------------------------- View Metadata of File -------------------------
+U -> CLIManager : Select "View Metadata of File"
+CLIManager -> ControllerManager : handleUserInput("View Metadata")
+ControllerManager -> MediaFileController : showMetadataFile(file)
+MediaFileController -> ModelManager : getMetadataManager()
+ModelManager -> MetadataManager : fetchMetadata(file)
+MetadataManager --> MediaFileController : Return metadata
+MediaFileController -> CLIManager : Display metadata
+
+' ------------------------- Edit Metadata of File -------------------------
+U -> CLIManager : Select "Edit Metadata"
+CLIManager -> ControllerManager : handleUserInput("Edit Metadata")
+ControllerManager -> MediaFileController : editMetadata(file, key, value)
+MediaFileController -> ModelManager : getMetadataManager()
+ModelManager -> MetadataManager : updateMetadata(file, key, value)
+MetadataManager --> MediaFileController : Confirm update
+MediaFileController -> CLIManager : Notify "Metadata Updated"
+
+' ------------------------- Delete Playlist -------------------------
+U -> CLIManager : Select "Delete Playlist"
+CLIManager -> ControllerManager : handleUserInput("Delete Playlist")
+ControllerManager -> MediaPlaylistController : deletePlaylist(playlist_id)
+MediaPlaylistController -> ModelManager : getPlaylistManager()
+ModelManager -> PlaylistManager : deletePlaylist(playlist_id)
+PlaylistManager --> MediaPlaylistController : Confirm deletion
+MediaPlaylistController -> CLIManager : Notify "Playlist Deleted"
+
+@enduml

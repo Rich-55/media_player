@@ -1,0 +1,14 @@
+/* custom.css */
+.wy-nav-content {
+    max-width: 100%; /* Remove content width restriction */
+    margin: 0 auto; /* Center the content */
+    padding: 0 20px; /* Optional: Add some padding */
+}
+
+.wy-nav-content-wrap {
+    max-width: 100%;
+}
+
+.wy-side-scroll {
+    max-width: 300px; /* Optional: Adjust sidebar width if needed */
+}

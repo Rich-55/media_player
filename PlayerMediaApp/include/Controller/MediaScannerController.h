@@ -1,17 +1,12 @@
 #ifndef MEDIA_SCANNER_CONTROLLER_H
 #define MEDIA_SCANNER_CONTROLLER_H
 
-
 #include "../Model/MediaFileManager.h"
 #include "../Model/FolderManager.h"
 #include "../View/BaseView.h"
 #include "../View/ScanView.h"
-
-
 #include "../utils/ScanException.h"
 #include "../utils/ConfigLoader.h"
-
-
 
 class MediaScannerController{
     private:
@@ -44,7 +39,6 @@ class MediaScannerController{
 
         std::unordered_set<std::string> scanFolder(const std::string &path);
 
-        
 };
 
 #endif
