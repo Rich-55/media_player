@@ -125,5 +125,4 @@ target_link_libraries(unit_tests PRIVATE
 # Auto-discover tests
 gtest_discover_tests(unit_tests)
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR})
-
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/..)
