@@ -85,10 +85,11 @@
 <section id="class-diagram">
 <h2>Class Diagram<a class="headerlink" href="#class-diagram" title="Permalink to this heading"></a></h2>
 <p class="plantuml">
-<img src="../../_images/plantuml-7e607f2a596396b4855e793d6a1e56b226d99783.png" alt="&#64;startuml Media Player Class Diagram
+<img src="../../_images/plantuml-6e65cadea215f1d9be3c4735871ccedf94ea3dd3.png" alt="&#64;startuml Media Player Class Diagram
 
-left to right direction
 ' Style configurations
+skinparam dpi 55
+left to right direction
 skinparam classAttributeIconSize 0
 skinparam class {
     BackgroundColor white
@@ -96,324 +97,566 @@ skinparam class {
     BorderColor black
 }
 
-
-package View {
-    class CLIManager {
-        - views : unordered_map&lt;string, shared_ptr&lt;ViewBase&gt;&gt; 
-        - currentView : shared_ptr&lt;ViewBase&gt;
-        + getView(String) : shared_ptr&lt;ViewBase&gt;
-        + switchView(string) : void 
-    }
-
-    abstract class ViewBase {
-        + virtual showMenu() = 0 : void 
-        + virtual displayAllMediaFile(MetadataManager) : void
-        + virtual displayAllMediaFileOfAudio(MetadataManager) : void
-        + virtual displayAllMediaFileOfVideo(MetadataManager) : void
-        + virtual displayDetailMediaFile(std::shared_ptr&lt;MediaFile&gt; ) : void
-        + virtual displayMenuAddMetadata(std::shared_ptr&lt;MediaFile&gt; ) : void
-        + virtual displayMenuEditMetadata(std::shared_ptr&lt;MediaFile&gt; ) : void
-        + virtual displayMenuDeleteMetadata(std::shared_ptr&lt;MediaFile&gt; ) : void
-    }
-
-    class ScanView {
-        + showMenu() override : void
-    }
-
-    class MediaFileManagerView {
-        + showMenu() override : void
-        + displayAllMediaFile(MetadataManager) override : void
-        + displayAllMediaFileOfAudio(MetadataManager) override : void
-        + displayAllMediaFileOfVideo(MetadataManager) override : void
-    }
-
-    class MediaFileHandlerView {
-        + showMenu() override : void
-        + displayDetailMediaFile(std::shared_ptr&lt;MediaFile&gt; ) override : void
-        + displayMenuAddMetadata(std::shared_ptr&lt;MediaFile&gt; ) override : void
-        + displayMenuEditMetadata(std::shared_ptr&lt;MediaFile&gt; ) override : void
-        + displayMenuDeleteMetadata(std::shared_ptr&lt;MediaFile&gt; ) override : void
-    }
-
-    class PlaylistView {
-        + showMenu() override : void
-        + showAllPlaylist(playlistManager : PlaylistManager)
-        + showPlaylistContent(playlist : Playlist)
-    }
-
-    class PlaylistHandlerView {
-        + showMenu() override : void
-        + showCreatePlaylist() : void
-        + showEditPlaylist() : void
-        + showDeletePlaylist() : void
-    }
-
-    class BaseCurrentPlayView {
-        + virtual showCurrentPlay() : void
-    }
-
-    class VolumeView {
-        + showCurrentPlay() override: void
-        + showVolume(level : int) : void
-    }
-
-    class MetadataView {
-        + showCurrentPlay() override: void
-        + showMetadata(file : MediaFile) : void
-    }
-
-    class MenuControlPlayView {
-        + showCurrentPlay() override: void
-        + displayControls() : void
-        + onPlayButton() : void
-        + onPauseButton() : void
-        + onNextButton() : void
-        + onPreviousButton() : void
-        + onVolumeChange(level : int) : void
-    }
-
-    class BoardManager {
-        - lcd : S32K144InterfaceLCD
-    }
-
-    class S32K144InterfaceLCD {
-        + showCurrentPlayLCD(currentPlay : CurrentPlay) : void
-    }
-}
-
-CLIManager o--&gt; ViewBase : has &gt;
-CLIManager o--&gt; BaseCurrentPlayView : has &gt;
-ViewBase &lt;|-- ScanView
-ViewBase &lt;|-- MediaFileView
-ViewBase &lt;|-- MediaFileHandlerView
-ViewBase &lt;|-- PlaylistView
-ViewBase &lt;|-- PlaylistHandlerView
-BaseCurrentPlayView &lt;|-- VolumeView
-BaseCurrentPlayView &lt;|-- MetadataView
-BaseCurrentPlayView &lt;|-- MenuControlPlayView
-BoardManager --&gt; S32K144InterfaceLCD
-
-
-package Controller {
-    class ControllerManager {
-        - mediaScannerController: unique_ptr&lt;MediaScannerController&gt;
-        - playerController: unique_ptr&lt;PlayerController&gt;
-        - mediaPlaylistController: unique_ptr&lt;MediaPlaylistController&gt;
-        - mediaFileController: unique_ptr&lt;MediaFileController&gt;
-        - mediaFileManagerController : unique_ptr&lt;MediaFileManagerController&gt;
-        - deviceController: unique_ptr&lt;DeviceController&gt;
-        - modelManager: ModelManager
-        - cliManager: CLIManager
-    }
-
-    
-    class MediaScannerController {
-        - metadataManager: MetadataManager&amp;
-        - scanView : shared_ptr&lt;ViewBase&gt;
-        - listPaths : unordered_set&lt;string&gt;
-        + scanUSBDevices() : void
-        + scanHomeDirectory() : void
-        + getListPaths() : unordered_set&lt;string&gt; 
-    }
-
-    
-    class PlayerController {
-        - currentPlay : CurrentPlay
-        - baseCurrentPlayView : BaseCurrentPlayView
-        + getCurrentFile() : shared_ptr&lt;MediaFile&gt;
-        + play(file: shared_ptr&lt;MediaFile&gt;) : void
-        + pause() : void
-        + next() : void
-        + previous() : void
-        + adjustVolume(level: int) : void
-        + updateCurrentPlayView() : void
-    }
-
-    class MediaPlaylistController {
-        - playlistManager: PlaylistManager
-    }
-
-
-    class MediaFileController {
-        - mediaFile: shared_ptr&lt;MediaFile&gt;
-        - mediaFileHandlerView : shared_ptr&lt;ViewBase&gt;
-        + getDetailMediaFile() : void 
-        + editMediaFile() : void
-        + addNewKey() : void
-        + deleteKey() : void
-    }
-
-    class MediaFileManagerController {
-        - mediaManager: MetadataManager&amp; 
-        - mediaFileManagerView : shared_ptr&lt;ViewBase&gt;
-        + addData(const unordered_set&lt;std::string&gt;&amp;) : void
-        + showAllMediaFile() : void
-        + showAllMediaFileOfVideo() : void 
-        + showAllMediaFileOfAudio() : void
-    }
-
-    class DeviceController {
-        - currentPlay : CurrentPlay
-        - boardManager : BoardManager
-        + setVolume(level: int)
-        + updateDisplay(info: string)
-        + handleButtonPress(button: ButtonType)
-    }
-
-
-}
-
-ControllerManager &quot;1&quot; o-- &quot;1&quot; MediaScannerController : has &gt;
-ControllerManager &quot;1&quot; o-- &quot;1&quot; PlayerController : has &gt;
-ControllerManager &quot;1&quot; o-- &quot;1&quot; MediaPlaylistController : has &gt;
-ControllerManager &quot;1&quot; o-- &quot;1&quot; MediaFileController : has &gt;
-ControllerManager &quot;1&quot; o-- &quot;1&quot; MediaFileManagerController : has &gt;
-ControllerManager &quot;1&quot; o-- &quot;1&quot; DeviceController : has &gt;
-
-
 package Model {
 
     class ModelManager{
-        - metadataManager: MetadataManager
+        - mediaFileManager: MediaFileManager
         - playlistManager: PlaylistManager
-        - currentPlay: CurrentPlay
-        + getMetadataManager()
-        + getPlaylistManager()
-        + getCurrentPlay()
-    }
-
-    class CurrentPlay{
-        - currentPlay: queue&lt;shared_ptr&lt;MediaFile&gt;&gt;
-        - volume: int
-        - isPlaying: bool
-        - currentPosition: int
-        + getCurrentFile(): shared_ptr&lt;MediaFile&gt;
+        - FolderManager: folderManager
+        + getMediaFileManager() : MediaFileManager&amp;
+        + getPlaylistManager() : PlaylistManager&amp;
+        + getFolderManager() : FolderManager&amp;
+        + getPlaylist(std::string playlistName) : std::shared_ptr&lt;Playlist&gt;
+        + getMediaFile(std::string fileName) : std::shared_ptr&lt;MediaFile&gt;
     }
 
     abstract class MediaFile {
         - fileName : String
         - pathName : String
-        - size : double
+        - size : unsigned long long
+        - dateCreated : String
         - duration : String
         - fileType : String
-        + getPath(): String
-        + getSize() : double
-        + getName(): string
-        + getDuration(): int
-        + virtual getType : String
-        + virtual inputMediaFile() : void
-        + virtual addNewKey(const string&amp; key, const string&amp; value) : void 
-        + virtual editKey(const string&amp; key, const string&amp; value) : void
-        + virtual deleteKey(const string&amp; key) : void
-        + virtual getMetadata(const std::string&amp; key) const : String
-        + virtual getAllMetadata() const : unordered_map&lt;string, string&gt;
-        + virtual ~MediaFile();
+        # setType(type: String) : void
+        + MediaFile()
+        + MediaFile(fileName: String, pathName: String, size: unsigned long long, dateCreated: String, duration: String, fileType: String)
+        + ~MediaFile()
+        + getFileName() : String
+        + getPath() : String
+        + getSize() : unsigned long long
+        + getDuration() : String
+        + getDateCreated() : String
+        + virtual getType() : String
+        + virtual inputMediaFile(name: String, flag: bool) : void
+        + virtual addNewKey(key: String, value: String) : bool
+        + virtual editKey(key: String, value: String) : bool
+        + virtual deleteKey(key: String) : bool
+        + virtual getMetadata(key: String) const : String
+        + virtual getAllMetadata() const : map&lt;String, String&gt;
     }
     
     class AudioFile {
-        - metadataAudio : unordered_map&lt;string, string&gt; 
-        - allowedKeys : const static unordered_set&lt;string&gt;
-        + getMetadata(const string&amp; key) const : String
-        + getAllMetadata() const : unordered_map&lt;string, string&gt;
-        + getType() override : String
-        + inputMediaFile(string pathName) override : void
-        + addMetadata(const string&amp; key, const string&amp; value) override : void 
-        + editMetadata(const string&amp; key, const string&amp; value) override : void
-        + deleteMetadata(const string&amp; key) override : void
+        - metadataAudio : map&lt;String, String&gt;
+        + AudioFile()
+        + AudioFile(fileName: String, pathName: String, size: unsigned long long, dateCreated: String, duration: String, fileType: String)
+        + getMetadata(key: String) const : String
+        + getAllMetadata() const : map&lt;String, String&gt;
+        + inputMediaFile(pathName: String, isSame: bool) : void
+        + getType() : String
+        + addNewKey(key: String, value: String) : bool
+        + editKey(key: String, value: String) : bool
+        + deleteKey(key: String) : bool
     }
     
     class VideoFile {
-        - metadataVideo : unordered_map&lt;string, string&gt; 
-        - allowedKeys : const static unordered_set&lt;string&gt;
-        + getMetadata(const string&amp; key) const : String
-        + getAllMetadata() const : unordered_map&lt;string, string&gt;
-        + getType() override : String
-        + inputMediaFile(string pathName) override : void
-        + addMetadata(const string&amp; key, const string&amp; value) override : void 
-        + editMetadata(const string&amp; key, const string&amp; value) override : void
-        + deleteMetadata(const string&amp; key) override : void
+        - metadataVideo : map&lt;String, String&gt;
+        + VideoFile()
+        + VideoFile(fileName: String, pathName: String, size: unsigned long long, dateCreated: String, duration: String, fileType: String)
+        + getMetadata(key: String) const : String
+        + getAllMetadata() const : map&lt;String, String&gt;
+        + inputMediaFile(pathName: String, isSame: bool) : void
+        + getType() : String
+        + addNewKey(key: String, value: String) : bool
+        + editKey(key: String, value: String) : bool
+        + deleteKey(key: String) : bool
     }
     
     class Playlist {
-        - name: string
-        - mediaFiles: vector&lt;shared_ptr&lt;MediaFile&gt;&gt;
-        + addFile(file: shared_ptr&lt;MediaFile&gt;)
-        + removeFile(fileName: string)
-        + getFilesfileName: string()
-        + getName(): string
-        + setName(name: string)
+        - playlistName : String
+        - listMediaFiles : vector&lt;shared_ptr&lt;MediaFile&gt;&gt;
+        + Playlist(playlistName: String)
+        + getPlaylistName() const : String
+        + setPlaylistName(playlistName: String) : void
+        + checkMediaFile(file: String) : bool
+        + getListMediaFiles() : vector&lt;shared_ptr&lt;MediaFile&gt;&gt;
+        + getListPathMediaFiles() : vector&lt;String&gt;
+        + loadMediaFile(file: shared_ptr&lt;MediaFile&gt;) : void
+        + addMediaFile(file: shared_ptr&lt;MediaFile&gt;) : void
+        + deleteMediaFile(fileName: String) : void
+        + ~Playlist()
     }
 
-    class MetadataManager {
+    class MediaFileManager {
         - listMediaFiles : vector&lt;shared_ptr&lt;MediaFile&gt;&gt;
-        - listPaths : unordered_set&lt;std::string&gt;
-        + addMediaFile(string, string) : void
-        + deleteMediaFile(string) : void
+        - listMediaFilesSize : unordered_map&lt;String, unsigned long long&gt;
+        - listFileAdded : unordered_set&lt;String&gt;
+        + MediaFileManager()
+        + getMediaFile(fileName: String) : shared_ptr&lt;MediaFile&gt;
+        + getMediaFileByPath(pathName: String) : shared_ptr&lt;MediaFile&gt;
+        + checkFileExists(fileName: String) : bool
+        + addMediaFile(pathName: String, type: String) : bool
+        + loadMediaFile(pathName: String, type: String) : bool
+        + deleteMediaFile(fileName: String) : bool
+        + updateDatabase() : void
         + getAllMediaFile() : vector&lt;shared_ptr&lt;MediaFile&gt;&gt;
         + getAllAudioFiles() : vector&lt;shared_ptr&lt;MediaFile&gt;&gt;
         + getAllVideoFiles() : vector&lt;shared_ptr&lt;MediaFile&gt;&gt;
-        + getAllMediaFiles() : void
     }
-    
+
     class PlaylistManager {
-        - playlists: vector&lt;shared_ptr&lt;Playlist&gt;&gt;
-        + createPlaylist(name: string): shared_ptr&lt;Playlist&gt;
-        + editPlaylist(id: int, name: string)
-        + deletePlaylist(id: int)
-        + getPlaylist(id: int): shared_ptr&lt;Playlist&gt;
-        + getAllPlaylists(): playlists
+        - listPlaylist : vector&lt;shared_ptr&lt;Playlist&gt;&gt;
+        + PlaylistManager()
+        + checkPlaylist() : bool
+        + checkPlaylistName(playlistName: String) : bool
+        + getPlaylist(playlistName: String) : shared_ptr&lt;Playlist&gt;
+        + loadPlaylist(playlist: shared_ptr&lt;Playlist&gt;) : void
+        + addPlaylist(playlist: shared_ptr&lt;Playlist&gt;) : void
+        + deletePlaylist(name: String) : bool
+        + getAllPlaylist() : vector&lt;shared_ptr&lt;Playlist&gt;&gt;
+        + ~PlaylistManager()
     }
     
-}
+    class FolderManager {
+        - listFolderDirectory : unordered_map&lt;String, unordered_set&lt;String&gt;&gt;
+        - listFolderUSB : unordered_map&lt;String, unordered_set&lt;String&gt;&gt;
+        + FolderManager()
+        + getListFolderDirectory() : unordered_set&lt;String&gt;
+        + getListFolderUSB() : unordered_set&lt;String&gt;
+        + getListPathDirectory(nameFolder: String) : unordered_set&lt;String&gt;
+        + getListPathUSB(nameFolder: String) : unordered_set&lt;String&gt;
+        + getFolderDirectory(folderName: String) : String
+        + getFolderUSB(folderName: String) : String
+        + saveFolderDirectory(folderName: String) : void
+        + saveFolderUSB(folderName: String) : void
+        + updateFolderDirectory(folderName: String) : void
+        + updateFolderUSB(folderName: String) : void
+        + addDataFolderDirectory(folder: String, listFiles: unordered_set&lt;String&gt;) : void
+        + addDataFolderUSB(folder: String, listFiles: unordered_set&lt;String&gt;) : void
+    }
 
-
-enum MediaType {
+    enum MediaType {
     AUDIO
     VIDEO
+    }
+
+    enum Metadata{
+        TITLE
+        ARTIST
+        ALBUM
+        GENRE
+        COMMENT
+        YEAR
+        TRACK
+    }
+
+    ' Inheritance relationships
+    MediaFile &lt;|-- AudioFile : extends
+    MediaFile &lt;|-- VideoFile : extends
+
+    ' Composition relationships (strong ownership)
+    PlaylistManager &quot;1&quot; o-- &quot;0..*&quot; Playlist : manages &gt;
+    Playlist &quot;1&quot; o-- &quot;0..*&quot; MediaFile : contains &gt;
+    MediaFileManager &quot;1&quot; o-- &quot;0..*&quot; MediaFile : manages &gt;
+
+    ModelManager &quot;1&quot; o-- &quot;1&quot; MediaFileManager : has &gt;
+    ModelManager &quot;1&quot; o-- &quot;1&quot; PlaylistManager : has &gt;
+    ModelManager &quot;1&quot; o-- &quot;1&quot; FolderManager : has &gt;
+
+    ' Association relationships
+
+    MediaFile --&gt; &quot;1&quot; MediaType : has type &gt;
+    AudioFile --&gt; &quot;1&quot; Metadata : has &gt;
+    VideoFile --&gt; &quot;1&quot; Metadata : has &gt;
+    
 }
 
-enum Metadata{
-    TITLE
-    ARTIST
-    ALBUM
-    GENRE
-    COMMENT
-    YEAR
-    TRACK
+
+
+
+package View {
+    class ViewManager {
+        - views : unordered_map&lt;String, shared_ptr&lt;BaseView&gt;&gt;
+        - currentView : shared_ptr&lt;BaseView&gt;
+        + ViewManager()
+        + getView(viewName: String) : shared_ptr&lt;BaseView&gt;
+        + ~ViewManager()
+    }
+
+    abstract class BaseView {
+        + BaseView()
+        + virtual ~BaseView()
+        + virtual showMenu() : int
+        + virtual showNotificationMessage(title: String, message: String) : void
+        + virtual showConfirmMenu(message: String) : bool
+        + virtual showMenuWithPlayer(mediaManager: MediaFileManager, playerController: shared_ptr&lt;PlayerController&gt;&amp;, title: String, message: String&amp;) : int
+        + virtual displayAllMediaFile(mediaManager: MediaFileManager) : String
+        + virtual displayAllMediaFileOfAudio(mediaManager: MediaFileManager) : String
+        + virtual displayAllMediaFileOfVideo(mediaManager: MediaFileManager) : String
+        + virtual showMenuWithMediaList(mediaManager: MediaFileManager) : int
+        + virtual displayDetailMediaFile(mediaFile: shared_ptr&lt;MediaFile&gt;, title: String) : void
+        + virtual displayMenuAddMetadata(mediaFile: shared_ptr&lt;MediaFile&gt;, title: String) : pair&lt;String, String&gt;
+        + virtual displayMenuEditMetadata(mediaFile: shared_ptr&lt;MediaFile&gt;, title: String) : pair&lt;String, String&gt;
+        + virtual displayMenuDeleteMetadata(mediaFile: shared_ptr&lt;MediaFile&gt;) : String
+        + virtual displayAllMediaFileInPlaylist(playlist: shared_ptr&lt;Playlist&gt;) : String
+        + virtual showMenuWithMediaListInPlaylist(playlist: shared_ptr&lt;Playlist&gt;) : int
+        + virtual displayAllFolder(folderData: pair&lt;unordered_set&lt;String&gt;, unordered_set&lt;String&gt;&gt;) : pair&lt;String, String&gt;
+        + virtual displayAllPlaylist(playlistManager: PlaylistManager) : String
+        + virtual showMenuWithPlaylist(playlists: vector&lt;shared_ptr&lt;Playlist&gt;&gt;) : int
+        + virtual showMenuCreatePlaylist() : String
+        + virtual showListFolder(folders: vector&lt;String&gt;) : int
+        + virtual showListUSBName(usbNames: vector&lt;String&gt;) : int
+        + virtual setListPathNameIsAdded(paths: unordered_set&lt;String&gt;) : void
+        + virtual showFileAdded() : void
+        + virtual getPortAndBaudRate(ports: vector&lt;String&gt;, baudRates: vector&lt;String&gt;) : pair&lt;String, unsigned int&gt;
+    }
+
+    class MainMenuView {
+        + MainMenuView()
+        + showMenu() : int
+        + showMenuWithPlayer(mediaFileManager: MediaFileManager, playerController: shared_ptr&lt;PlayerController&gt;&amp;, typePlay: String, error: String&amp;) : int
+    }
+
+    class MediaFileHandlerView {
+        + MediaFileHandlerView()
+        + showMenu() : int
+        + showNotificationMessage(message: String, type: String) : void
+        + showConfirmMenu(message: String) : bool
+        + displayDetailMediaFile(mediaFile: shared_ptr&lt;MediaFile&gt;, message: String) : void
+        + displayMenuAddMetadata(mediaFile: shared_ptr&lt;MediaFile&gt;, exception: String) : pair&lt;String, String&gt;
+        + displayMenuEditMetadata(mediaFile: shared_ptr&lt;MediaFile&gt;, exception: String) : pair&lt;String, String&gt;
+        + displayMenuDeleteMetadata(mediaFile: shared_ptr&lt;MediaFile&gt;) : String
+    }
+    
+    class MediaFileManagerView {
+        + MediaFileManagerView()
+        + showMenu() : int
+        + showMenuWithMediaList(mediaFileManager: MediaFileManager) : int
+        + showNotificationMessage(message: String, type: String) : void
+        + showConfirmMenu(message: String) : bool
+        + displayAllMediaFile(mediaFileManager: MediaFileManager) : String
+        + displayAllMediaFileOfAudio(mediaFileManager: MediaFileManager) : String
+        + displayAllMediaFileOfVideo(mediaFileManager: MediaFileManager) : String
+    }
+
+    class PlaylistHandlerView {
+        + PlaylistHandlerView()
+        + showMenu() : int
+        + showConfirmMenu(message: String) : bool
+        + showNotificationMessage(message: String, type: String) : void
+        + showMenuCreatePlaylist() : String
+        + showMenuWithMediaListInPlaylist(playlist: shared_ptr&lt;Playlist&gt;) : int
+        + displayAllMediaFileInPlaylist(playlist: shared_ptr&lt;Playlist&gt;) : String
+        + displayAllFolder(listFolderDirectoryAndUSB: pair&lt;unordered_set&lt;String&gt;, unordered_set&lt;String&gt;&gt;) : pair&lt;String, String&gt;
+    }
+
+    class PlaylistManagerView {
+        + PlaylistManagerView()
+        + showMenu() : int
+        + showMenuWithPlaylist(listPlaylist: vector&lt;shared_ptr&lt;Playlist&gt;&gt;) : int
+        + showConfirmMenu(message: String) : bool
+        + showNotificationMessage(message: String, type: String) : void
+        + showMenuCreatePlaylist() : String
+        + displayAllPlaylist(playlistManager: PlaylistManager) : String
+    }
+
+    class ScanView {
+        - listPathNameIsAdded : unordered_set&lt;String&gt;
+        + ScanView()
+        + showMenu() : int
+        + showListFolder(listFolder: vector&lt;String&gt;) : int
+        + showListUSBName(usbDevices: vector&lt;String&gt;) : int
+        + setListPathNameIsAdded(listPathName: unordered_set&lt;String&gt;) : void
+        + showFileAdded() : void
+    }
+
+    class UartView {
+        + UartView()
+        + showMenu() : int
+        + getPortAndBaudRate(portList: vector&lt;String&gt;, baudRateOptions: vector&lt;String&gt;) : pair&lt;String, unsigned int&gt;
+    }
+
+
+    ViewManager o--&gt; BaseView : has &gt;
+
+    BaseView &lt;|-- MainMenuView
+    BaseView &lt;|-- MediaFileHandlerView
+    BaseView &lt;|-- MediaFileManagerView
+    BaseView &lt;|-- PlaylistHandlerView
+    BaseView &lt;|-- PlaylistManagerView
+    BaseView &lt;|-- ScanView
+    BaseView &lt;|-- UartView
 }
 
-enum ButtonType {
-    PLAY_PAUSE
-    NEXT
-    PREVIOUS
-    PAUSE
-    VOLUME_UP
-    VOLUME_DOWN
+
+package Controller {
+    class ControllerManager {
+        - model : ModelManager
+        - view : ViewManager
+        - uartManager : shared_ptr&lt;UARTManager&gt;
+        - scannerController : shared_ptr&lt;MediaScannerController&gt;
+        - mediaFileHandlerController : shared_ptr&lt;MediaFileController&gt;
+        - mediaPlaylistController : shared_ptr&lt;MediaPlaylistController&gt;
+        - playerController : shared_ptr&lt;PlayerController&gt;
+        - mediaFileManagerController : unique_ptr&lt;MediaFileManagerController&gt;
+        - mediaPlaylistManagerController : unique_ptr&lt;MediaPlaylistManagerController&gt;
+        + ControllerManager(model: ModelManager, view: ViewManager, uart: shared_ptr&lt;UARTManager&gt;)
+        + getView(viewName: String) : shared_ptr&lt;BaseView&gt;
+        + runApp() : void
+        + checkUart() : bool
+        + ScanData() : void
+        + mediaFileHandler() : String
+        + mediaFileManager() : void
+        + playlistHandler() : void
+        + playlistManager() : void
+        + playMusicHandler() : String
+        + playPlaylist() : vector&lt;String&gt;
+        + playVideoHandler() : String
+    }
+
+    class MediaFileController {
+        - mediaFile : shared_ptr&lt;MediaFile&gt;
+        - mediaFileHandlerView : shared_ptr&lt;BaseView&gt;
+        # isValidFormat(value: String, pattern: String) : bool
+        + MediaFileController(m: shared_ptr&lt;MediaFile&gt;, v: shared_ptr&lt;BaseView&gt;)
+        + handlerMediaFile() : void
+        + getDetailMediaFile(message: String) : void
+        + addMetadata() : String
+        + editMetadata() : String
+        + deleteMetadata() : String
+    }
+
+    class MediaFileManagerController {
+        - mediaManager : MediaFileManager&amp;
+        - mediaFileManagerView : shared_ptr&lt;BaseView&gt;
+        - mediaFileHandlerView : shared_ptr&lt;BaseView&gt;
+        - scannerController : shared_ptr&lt;MediaScannerController&gt;
+        - listMediaFileController : unordered_map&lt;String, shared_ptr&lt;MediaFileController&gt;&gt;
+        # isValidPath(path: String) : bool
+        # fileExists(path: String) : bool
+        + MediaFileManagerController(mediaManager: MediaFileManager&amp;, mediaManagerView: shared_ptr&lt;BaseView&gt;, mediaFileView: shared_ptr&lt;BaseView&gt;, c: shared_ptr&lt;MediaScannerController&gt;)
+        + handleMediaFileManager() : void
+        + addMediaFileController(fileName: String, mediaFileController: shared_ptr&lt;MediaFileController&gt;) : void
+        + getMediaFileController(fileName: String) : shared_ptr&lt;MediaFileController&gt;
+        + addDataFile(pathName: String) : int
+        + addDataFolder(listPathName: unordered_set&lt;String&gt;) : void
+        + deleteData(fileName: String) : bool
+        + showAllMediaFile() : String
+        + showAllMediaFileOfVideo() : String
+        + showAllMediaFileOfAudio() : String
+    }
+
+    class MediaPlaylistController {
+        - mediaFileManager : MediaFileManager&amp;
+        - folderManager : FolderManager&amp;
+        - playlist : shared_ptr&lt;Playlist&gt;
+        - mediaManagerView : shared_ptr&lt;BaseView&gt;
+        - playlistHandlerView : shared_ptr&lt;BaseView&gt;
+        + MediaPlaylistController(mediaFileManager: MediaFileManager&amp;, folderManager: FolderManager&amp;, playlistModel: shared_ptr&lt;Playlist&gt;, mediaManagerView: shared_ptr&lt;BaseView&gt;, playlistHandlerView: shared_ptr&lt;BaseView&gt;)
+        + handlerPlaylist() : void
+        + setNamePlaylist(name: String) : void
+        + getListPathMediaFiles() : vector&lt;String&gt;
+        + addMediaFileInPlaylist(fileName: String) : bool
+        + addMediaFileByFolder() : bool
+        + deleteMediaFileInPlaylist(fileName: String) : bool
+        + displayAllMediaFilesInPlaylist() : void
+        + showMenuWithMediaListInPlaylist() : int
+    }
+
+    class MediaPlaylistManagerController {
+        - playlistManager : PlaylistManager&amp;
+        - mediaFileManager : MediaFileManager&amp;
+        - folderManager : FolderManager&amp;
+        - mediaManagerView : shared_ptr&lt;BaseView&gt;
+        - playlistManagerView : shared_ptr&lt;BaseView&gt;
+        - playlistHandlerView : shared_ptr&lt;BaseView&gt;
+        - listMediaPlaylistController : unordered_map&lt;String, shared_ptr&lt;MediaPlaylistController&gt;&gt;
+        + MediaPlaylistManagerController(playlistModel: PlaylistManager&amp;, mediafileManager: MediaFileManager&amp;, folderManager: FolderManager&amp;, mediaManagerView: shared_ptr&lt;BaseView&gt;, playlistManagerView: shared_ptr&lt;BaseView&gt;, playlistHandlerView: shared_ptr&lt;BaseView&gt;)
+        + handlerPlaylistManager() : void
+        + addMediaPlaylistController(playlistName: String, mediaPlaylistController: shared_ptr&lt;MediaPlaylistController&gt;) : void
+        + getMediaPlaylistController(playlistName: String) : shared_ptr&lt;MediaPlaylistController&gt;
+        + createPlaylist(namePlaylist: String) : String
+        + deletePlaylist(playlistName: String) : bool
+        + displayAllPlaylist() : String
+    }
+
+    class MediaScannerController {
+        - mediaFileManager : MediaFileManager&amp;
+        - playlistManager : PlaylistManager&amp;
+        - folderManager : FolderManager&amp;
+        - scanView : shared_ptr&lt;BaseView&gt;
+        - listPaths : unordered_set&lt;String&gt;
+        - listPathsAdded : unordered_set&lt;String&gt;
+        + MediaScannerController(mediaFileManager: MediaFileManager&amp;, playlistManager: PlaylistManager&amp;, folderManager: FolderManager&amp;, scanView: shared_ptr&lt;BaseView&gt;)
+        + handleScan(isRunning: bool) : void
+        + addDataFileWithFolder(nameFolder: String, nameLocation: String) : void
+        + loadData() : void
+        + loadFolder() : void
+        + loadMediaPlaylist() : void
+        + getListPaths() : unordered_set&lt;String&gt;
+        + scanUSBDevices() : void
+        + scanHomeDirectory() : void
+        + checkFolderDirectory() : bool
+        + checkFolderUSB() : bool
+        + scanFolder(path: String) : unordered_set&lt;String&gt;
+    }
+
+    ControllerManager &quot;1&quot; o-- &quot;1&quot; MediaFileController : has &gt;
+    ControllerManager &quot;1&quot; o-- &quot;1&quot; MediaFileManagerController : has &gt;
+    ControllerManager &quot;1&quot; o-- &quot;1&quot; MediaPlaylistController : has &gt;
+    ControllerManager &quot;1&quot; o-- &quot;1&quot; MediaPlaylistManagerController : has &gt;
+    ControllerManager &quot;1&quot; o-- &quot;1&quot; MediaScannerController : has &gt;
+
+    ControllerManager &quot;1&quot; o-- &quot;1&quot; ModelManager : has &gt;
+    ControllerManager &quot;1&quot; o-- &quot;1&quot; ViewManager : has &gt;
+
 }
 
-' Inheritance relationships
-MediaFile &lt;|-- AudioFile : extends
-MediaFile &lt;|-- VideoFile : extends
+package Player{
+    class PlayerController {
+        - mediaFiles : vector&lt;String&gt;
+        - currentIndex : size_t
+        - playing : atomic&lt;bool&gt;
+        - paused : atomic&lt;bool&gt;
+        - playbackThread : thread
+        - stateMutex : recursive_mutex
+        - manualTransition : bool
+        - repeat : bool
+        - volume : atomic&lt;int&gt;
+        - observersIndex : vector&lt;function&lt;void(int)&gt;&gt;
+        - observersState : vector&lt;function&lt;void()&gt;&gt;
+        - observersVolume : vector&lt;function&lt;void()&gt;&gt;
+        - observersDuration : vector&lt;function&lt;void(int)&gt;&gt;
+        - currentDuration : atomic&lt;int&gt;
+        - durationRunning : atomic&lt;bool&gt;
+        - durationThread : thread
+        - static currentPlayingFile : String
+        # playbackWorker(file: String) : void
+        # stopPlaybackThread() : void
+        # playAudio(filePath: char*) : void
+        # playVideo(filePath: char*) : void
+        # startDuration() : void
+        # stopDuration() : void
+        # resetDuration() : void
+        + PlayerController(files: vector&lt;String&gt;)
+        + ~PlayerController()
+        + setNotificationsEnabled(enabled: bool) : void
+        + addObserverIndex(index: function&lt;void(int)&gt;) : void
+        + notifyObserversIndex() : void
+        + addObserverState(observer: function&lt;void()&gt;) : void
+        + notifyObserversState() : void
+        + addObserverVolume(observer: function&lt;void()&gt;) : void
+        + notifyObserversVolume() : void
+        + addObserverDuration(observer: function&lt;void(int)&gt;) : void
+        + notifyObserversDuration() : void
+        + getCurrentIndex() : size_t
+        + getMediaFiles() : vector&lt;String&gt;
+        + play() : void
+        + isPlaying() : bool
+        + pause() : void
+        + isPause() : bool
+        + resume() : void
+        + togglePlayback() : void
+        + toggleRepeat() : void
+        + isRepeat() : bool
+        + stop() : void
+        + playNext() : void
+        + playPrevious() : void
+        + setVolume(newVolume: int) : void
+        + increaseVolume(increment: int) : void
+        + decreaseVolume(decrement: int) : void
+        + getVolume() const : int
+        + getDuration() : int
+    }
 
-' Composition relationships (strong ownership)
-PlaylistManager &quot;1&quot; o-- &quot;0..*&quot; Playlist : manages &gt;
-Playlist &quot;1&quot; o-- &quot;0..*&quot; MediaFile : contains &gt;
-MetadataManager &quot;1&quot; o-- &quot;0..*&quot; MediaFile : manages &gt;
+    enum ButtonType {
+        PLAY_PAUSE
+        STOP
+        NEXT
+        PREVIOUS
+        VOLUME_UP
+        VOLUME_DOWN
+    }
 
-ModelManager &quot;1&quot; o-- &quot;1&quot; MetadataManager : has &gt;
-ModelManager &quot;1&quot; o-- &quot;1&quot; PlaylistManager : has &gt;
-ModelManager &quot;1&quot; o-- &quot;1&quot; CurrentPlay : has &gt;
+    PlayerController --&gt; &quot;1&quot; ButtonType
 
-' Association relationships
+}
 
-MediaFile --&gt; &quot;1&quot; MediaType : has type &gt;
-PlayerController --&gt; &quot;1&quot; ButtonType
-AudioFile --&gt; &quot;1&quot; Metadata : has &gt;
-VideoFile --&gt; &quot;1&quot; Metadata : has &gt;
+package ConfigLoader{
+    class UARTManager {
+        - io_context : asio::io_context
+        - serial_port : unique_ptr&lt;asio::serial_port&gt;
+        - uartThread : thread
+        # asyncHandleUart(serial: asio::serial_port&amp;, playerController: shared_ptr&lt;PlayerController&gt;) : void
+        + UARTManager()
+        + ~UARTManager()
+        + runMediaUart(playerController: shared_ptr&lt;PlayerController&gt;&amp;) : void
+        + stopUART() : void
+        + isConnectionActive() const : bool
+        + checkPortConnection(port: String, baud_rate: unsigned int) : bool
+        + getPortList() : vector&lt;String&gt;
+        + getBaudRateOptions() : vector&lt;String&gt;
+    }
 
-ControllerManager &quot;1&quot; o-- &quot;1&quot; ModelManager : has &gt;
-ControllerManager &quot;1&quot; o-- &quot;1&quot; CLIManager : has &gt;
-&#64;enduml"/>
+    enum MainMenu {
+        METADATA_FILE_HANDLER = 1
+        MEDIA_FILE_MANAGER = 2
+        PLAYLIST_HANDLER = 3
+        PLAYLIST_MANAGER = 4
+        PLAY_MUSIC = 5
+        PLAY_PLAYLIST = 6
+        PLAY_VIDEO = 7
+        EXIT_MAIN_MENU = 0
+    }
+
+    enum Player {
+        PLAY_PAUSE = -2
+        STOP = -3
+        REPEAT = -4
+        NEXT = -5
+        PREVIOUS = -6
+    }
+
+    enum ScanMenu {
+        SCAN_HOME_DIRECTORY = 1
+        SCAN_USB = 2
+        EXIT_MENU_SCAN = 0
+    }
+
+    enum MediaFileMenu {
+        ADD_METADATA = 1
+        EDIT_METADATA = 2
+        DELETE_METADATA = 3
+        EXIT_MENU_METADATA_EDIT = 0
+    }
+
+    enum MediaFileManagerMenu {
+        ADD_FILE_PATH = 1
+        ADD_FOLDER_PATH = 2
+        DELETE_FILE = 3
+        SHOW_ALL_MEDIAFILE = 4
+        SHOW_ALL_MEDIAFILE_AUDIO = 5
+        SHOW_ALL_MEDIAFILE_VIDEO = 6
+        EXIT_MENU_MEDIAFILE_MANAGER = 0
+    }
+
+    enum PlaylistMenu {
+        ADD_MEDIA_FILE_TO_PLAYLIST = 1
+        ADD_MEDIA_FILE_TO_PLAYLIST_BY_PATH = 2
+        DELETE_MEDIA_FILE_FROM_PLAYLIST = 3
+        RENAME_PLAYLIST = 4
+        EXIT_MENU_PLAYLIST_HANDLER = 0
+    }
+
+    enum PlaylistManagerMenu {
+        CREATE_PLAYLIST = 1
+        DELETE_PLAYLIST = 2
+        DISPLAY_ALL_PLAYLIST = 3
+        EXIT_MENU_PLAYLIST_MANAGER = 0
+    }
+}
+
+ControllerManager &quot;1&quot; o-- &quot;1&quot; Player : has &gt;
+
+ControllerManager &quot;1&quot; o-- &quot;1&quot; MainMenu : uses &gt;
+PlayerController &quot;1&quot; o-- &quot;1&quot; Player : uses &gt;
+MediaScannerController &quot;1&quot; o-- &quot;1&quot; ScanMenu : uses &gt;
+MediaFileController &quot;1&quot; o-- &quot;1&quot; MediaFileMenu : uses &gt;
+MediaFileManagerController &quot;1&quot; o-- &quot;1&quot; MediaFileManagerMenu : uses &gt;
+MediaPlaylistController &quot;1&quot; o-- &quot;1&quot; PlaylistMenu : uses &gt;
+MediaPlaylistManagerController &quot;1&quot; o-- &quot;1&quot; PlaylistManagerMenu : uses &gt;
+
+&#64;enduml
+"/>
 </p>
 </section>
 <section id="sequence-diagram">

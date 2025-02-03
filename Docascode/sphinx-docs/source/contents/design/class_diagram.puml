@@ -1,6 +1,7 @@
 @startuml Media Player Class Diagram
 
 ' Style configurations
+skinparam dpi 55
 left to right direction
 skinparam classAttributeIconSize 0
 skinparam class {
