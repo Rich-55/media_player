@@ -68,7 +68,8 @@ bool MediaPlaylistManagerController::deletePlaylist(std::string playlistName)
 
 std::string MediaPlaylistManagerController::displayAllPlaylist(){return playlistManagerView->displayAllPlaylist(playlistManager);}
 
-void MediaPlaylistManagerController::handlerPlaylistManager() {
+void MediaPlaylistManagerController::handlerPlaylistManager() 
+{
 
     int choice;
     std::string message;

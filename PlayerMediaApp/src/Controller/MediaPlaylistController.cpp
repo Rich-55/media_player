@@ -77,7 +77,8 @@ bool MediaPlaylistController::addMediaFileByFolder()
 } 
 
 
-bool MediaPlaylistController::deleteMediaFileInPlaylist(std::string fileName) {
+bool MediaPlaylistController::deleteMediaFileInPlaylist(std::string fileName) 
+{
     
     bool check = false;
     
