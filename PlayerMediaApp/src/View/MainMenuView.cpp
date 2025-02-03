@@ -86,7 +86,7 @@ int MainMenuView::showMenuWithPlayer(MediaFileManager mediaFileManager, std::sha
         "5. Play Music",
         "6. Play Playlist",
         "7. Play Video",
-        "0. Back to main menu"
+        "0. Exit"
     };
 
     auto menu = Menu(&menu_entries, &selected);

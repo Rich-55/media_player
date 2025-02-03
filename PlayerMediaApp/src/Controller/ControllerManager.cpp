@@ -30,10 +30,10 @@ bool ControllerManager::checkUart()
     portAndBaudRate = uartView->getPortAndBaudRate(portList, baudRateOptions);
     port = portAndBaudRate.first;
     baudRate = portAndBaudRate.second;
-    std::cout << "Port: " << port << ", Baud Rate: " << baudRate << std::endl;
     if (port == "exit") {
       return false;
     }
+        std::cout << "Port: " << port << ", Baud Rate: " << baudRate << std::endl;
     if (!uartManager->checkPortConnection(port, baudRate)) {
       std::cout << "Failed to connect to port " << port << ".\n";
       continue;
@@ -316,7 +316,7 @@ void ControllerManager::runApp()
     return;
   }
 
-  uartManager->runMediaUart(playerController);
+  //uartManager->runMediaUart(playerController);
 
   auto mainMenuView = getView("MainMenuView");
   std::string typePlay = "noplay";
@@ -354,15 +354,15 @@ void ControllerManager::runApp()
             mediaFileManager();
             break;
         }
-      case PLAYLIST_MANAGER:
+      case PLAYLIST_HANDLER:
         {
             if (playerController) {
             playerController->setNotificationsEnabled(false);
             }
-            playlistManager();
+            playlistHandler();
             break;
         }
-      case PLAYLIST_HANDLER:
+      case PLAYLIST_MANAGER:
         {
             if (playerController) {
             playerController->setNotificationsEnabled(false);

@@ -18,7 +18,7 @@ class ViewManager{
 
         ViewManager();
 
-        std::shared_ptr<BaseView> getView(std::string viewName);
+        virtual std::shared_ptr<BaseView> getView(std::string viewName);
 
         ~ViewManager();
     

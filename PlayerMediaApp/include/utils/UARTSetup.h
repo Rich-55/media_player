@@ -23,10 +23,10 @@ public:
     void runMediaUart(std::shared_ptr<PlayerController>& playerController);
     void stopUART();
     bool isConnectionActive() const; // New method to check connection status
-    bool checkPortConnection(const std::string& port, unsigned int baud_rate);
+    virtual bool checkPortConnection(const std::string& port, unsigned int baud_rate);
 
-    std::vector<std::string> getPortList();
-    std::vector<std::string> getBaudRateOptions();
+    virtual std::vector<std::string> getPortList();
+    virtual std::vector<std::string> getBaudRateOptions();
 };
 
 #endif 

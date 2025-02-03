@@ -83,8 +83,12 @@ std::string PlaylistHandlerView::showMenuCreatePlaylist() {
 int PlaylistHandlerView::showMenuWithMediaListInPlaylist(
     std::shared_ptr<Playlist> playlist) {
   std::vector<std::string> menu_entries = {
-      "1. Add MediaFile", "2. Add MediaFile By Folder", "3. Delete MediaFile",
-      "4. Rename Playlist", "0. Back to main menu"};
+      "1. Add MediaFile", 
+      "2. Add MediaFile By Folder", 
+      "3. Delete MediaFile",
+      "4. Rename Playlist",
+      "0. Back to main menu"
+  };
 
   std::vector<int> logic_mapping = {1, 2, 3, 4, 0};
   int selected = 0;
@@ -295,7 +299,7 @@ std::string PlaylistHandlerView::displayAllMediaFileInPlaylist(
           });
 
       screen.Loop(component);
-      return "";
+      return "exit";
     }
 
     const int rows_per_page = 25;
@@ -498,7 +502,7 @@ std::string PlaylistHandlerView::displayAllMediaFileInPlaylist(
       if (event.mouse().button == Mouse::Left) {
         if (is_exit_hovered) {
           hovered_index = -1;
-          result_filename = "";
+          result_filename = "exit";
           screen.ExitLoopClosure()();
           return true;
         }
@@ -514,7 +518,7 @@ std::string PlaylistHandlerView::displayAllMediaFileInPlaylist(
       if (event == Event::Return) {
         if (!input_buffer.empty()) {
           if (input_buffer == "0") {
-            result_filename = "";
+            result_filename = "exit";
             screen.ExitLoopClosure()();
             return true;
           }
@@ -561,7 +565,7 @@ std::string PlaylistHandlerView::displayAllMediaFileInPlaylist(
     return result_filename;
   } catch (const std::exception &e) {
     std::cerr << "An error occurred: " << e.what() << std::endl;
-    return "";
+    return "exit";
   }
 }
 
@@ -617,7 +621,7 @@ std::pair<std::string, std::string> PlaylistHandlerView::displayAllFolder(
 
   finalSelected = selectedIndex;
   if (finalSelected == 2) {
-    return {"", ""};
+    return {"exit", ""};
   }
 
   std::vector<std::string> *selectedList = nullptr;

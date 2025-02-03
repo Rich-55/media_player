@@ -29,7 +29,7 @@ std::string PlaylistManagerView::showMenuCreatePlaylist() {
     } else if (!isValidName(input)) {
       error_message = "Error: Playlist name contains invalid characters!";
     } else {
-      error_message = "";
+      error_message = "exit";
       screen.ExitLoopClosure()();
     }
   });
@@ -80,8 +80,11 @@ int PlaylistManagerView::showMenuWithPlaylist(
 {
 
   std::vector<std::string> menu_entries = {
-      "1. Create new playlist", "2. Delete playlist", "3. Show all playlists",
-      "0. Back to main menu"};
+      "1. Create new playlist", 
+      "2. Delete playlist", 
+      "3. Show all playlists",
+      "0. Back to main menu"
+  };
   std::vector<int> logic_mapping = {1, 2, 3, 0}; 
   int selected = 0;                   
   std::string error_message;            
@@ -265,7 +268,7 @@ PlaylistManagerView::displayAllPlaylist(PlaylistManager playlistManager)
           });
 
       screen.Loop(component);
-      return "";
+      return "exit";
     }
 
     const int rows_per_page = 25; 
@@ -523,6 +526,6 @@ PlaylistManagerView::displayAllPlaylist(PlaylistManager playlistManager)
     return result_filename;
   } catch (const std::exception &e) {
     std::cerr << "An error occurred: " << e.what() << std::endl;
-    return "";
+    return "exit";
   }
 }

@@ -29,7 +29,7 @@ class BaseView{
         //view for playlist handler
         virtual std::string displayAllMediaFileInPlaylist(std::shared_ptr<Playlist>);
         virtual int showMenuWithMediaListInPlaylist(std::shared_ptr<Playlist>);
-        virtual std::pair<std::string, std::string> displayAllFolder(std::pair<std::unordered_set<std::string> , std::unordered_set<std::string> >);
+        virtual std::pair<std::string, std::string> displayAllFolder(std::pair<std::unordered_set<std::string> , std::unordered_set<std::string>>);
         //view for playlist manager
         virtual std::string displayAllPlaylist(PlaylistManager);
         virtual int showMenuWithPlaylist(std::vector<std::shared_ptr<Playlist>>);

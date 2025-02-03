@@ -1,109 +1,129 @@
-# Project name and version
 cmake_minimum_required(VERSION 3.10)
 project(PlayerMediaApp VERSION 1.0 LANGUAGES CXX)
 
-# Configure C++ version
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Enable warnings and compilation options
 add_compile_options(-Wall -Wextra -Werror)
 
-# Add FTXUI library (FetchContent will automatically download it)
+# ===============================
+# FTXUI Setup
+# ===============================
+
 include(FetchContent)
 FetchContent_Declare(
   ftxui
   GIT_REPOSITORY https://github.com/ArthurSonzogni/FTXUI.git
-  GIT_TAG main # newest
+  GIT_TAG main
 )
 FetchContent_MakeAvailable(ftxui)
 
-# Include and source directories
+# Đảm bảo thư viện có sẵn
+if (NOT TARGET ftxui::screen OR NOT TARGET ftxui::dom OR NOT TARGET ftxui::component)
+    message(FATAL_ERROR "FTXUI library was not properly built or linked!")
+endif()
+
+set(CMAKE_INSTALL_RPATH "${CMAKE_BINARY_DIR}/_deps/ftxui-build")
+link_directories(${CMAKE_BINARY_DIR}/_deps/ftxui-build)
+
+# ===============================
+# Include & Source
+# ===============================
+
 set(INCLUDE_DIR ${CMAKE_SOURCE_DIR}/include)
 set(SRC_DIR ${CMAKE_SOURCE_DIR}/src)
 
-# Find all source files in the src directory
-file(GLOB_RECURSE SRC_FILES
-    ${SRC_DIR}/*.cpp
-)
-include_directories(
-    /usr/include
-    /usr/local/include
-)
-# Set the output directory for the executable file
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR})
+file(GLOB_RECURSE SRC_FILES ${SRC_DIR}/*.cpp)
 
-# Create the main target
 add_executable(${PROJECT_NAME} main.cpp ${SRC_FILES})
 
-# Add include directories
-target_include_directories(${PROJECT_NAME} PRIVATE ${INCLUDE_DIR})
+target_include_directories(${PROJECT_NAME} PRIVATE ${INCLUDE_DIR} /usr/include /usr/local/include)
 
+# ===============================
+# SDL2 Setup
+# ===============================
+
+set(CMAKE_PREFIX_PATH "/usr/local/lib/cmake")
 find_package(SDL2 REQUIRED)
-target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2 SDL2::SDL2main)
 
-find_package(PkgConfig REQUIRED)
-pkg_check_modules(AVFORMAT REQUIRED libavformat)
-pkg_check_modules(AVCODEC REQUIRED libavcodec)
-pkg_check_modules(AVUTIL REQUIRED libavutil)
-pkg_check_modules(SWSCALE REQUIRED libswscale)
-pkg_check_modules(SWRESAMPLE REQUIRED libswresample)
+# ===============================
+# FFmpeg Setup
+# ===============================
 
-# Find all lib of FFMPEG
-find_library(AVFORMAT_LIB avformat REQUIRED)
-find_library(AVCODEC_LIB avcodec REQUIRED)
-find_library(AVUTIL_LIB avutil REQUIRED)
-find_library(SWSCALE_LIB swscale REQUIRED)
-find_library(SWRESAMPLE_LIB swresample REQUIRED)
+find_library(AVFORMAT_LIB avformat PATHS /usr/lib/x86_64-linux-gnu/ REQUIRED)
+find_library(AVCODEC_LIB avcodec PATHS /usr/lib/x86_64-linux-gnu/ REQUIRED)
+find_library(AVUTIL_LIB avutil PATHS /usr/lib/x86_64-linux-gnu/ REQUIRED)
+find_library(SWSCALE_LIB swscale PATHS /usr/lib/x86_64-linux-gnu/ REQUIRED)
+find_library(SWRESAMPLE_LIB swresample PATHS /usr/lib/x86_64-linux-gnu/ REQUIRED)
 
-target_include_directories(${PROJECT_NAME} PRIVATE
-  ${AVFORMAT_INCLUDE_DIRS}
-  ${AVCODEC_INCLUDE_DIRS}
-  ${AVUTIL_INCLUDE_DIRS}
-  ${SWSCALE_INCLUDE_DIRS}
-  ${SWRESAMPLE_INCLUDE_DIRS}
-)
+# ===============================
+# Link Libraries
+# ===============================
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
-  ${AVFORMAT_LIBRARIES}
-  ${AVCODEC_LIBRARIES}
-  ${AVUTIL_LIBRARIES}
-  ${SWSCALE_LIBRARIES}
-  ${SWRESAMPLE_LIBRARIES}
-)
-
-message(STATUS "AVFormat libraries: ${AVFORMAT_LIBRARIES}")
-# Link necessary libraries
-target_link_libraries(${PROJECT_NAME}
-  PRIVATE
-    tag #Taglib
+    SDL2::SDL2
+    SDL2::SDL2main
+    ftxui::screen
+    ftxui::dom
+    ftxui::component
     avformat
     avcodec
     avutil
     swscale
     swresample
-    SDL2
+    tag
     SDL2_mixer
-    ftxui::screen # FTXUI
-    ftxui::dom
-    ftxui::component
 )
-# Gtest
+
+# ===============================
+# GTest & GMock Setup
+# ===============================
+
 enable_testing()
-find_package(GTest REQUIRED)
+include(FetchContent)
+
+# Fetch GoogleTest & GoogleMock
+FetchContent_Declare(
+  googletest
+  URL https://github.com/google/googletest/archive/refs/tags/release-1.12.1.zip
+)
+FetchContent_MakeAvailable(googletest)
+
+# Ensure GTest & GMock exist
+find_package(GTest CONFIG REQUIRED)
 include(GoogleTest)
 
 # Find all test files
 file(GLOB_RECURSE TEST_FILES ${CMAKE_SOURCE_DIR}/test/*.cpp)
 
-# Create a target for unit tests
-add_executable(tests ${TEST_FILES})
+# Create unit_tests target
+add_executable(unit_tests ${TEST_FILES} ${SRC_FILES})
 
-# Link Google Test libraries
-target_link_libraries(tests PRIVATE GTest::GTest GTest::Main)
+# Include directories for tests
+target_include_directories(unit_tests PRIVATE ${INCLUDE_DIR} ${SRC_DIR})
 
-# Add include directories for tests
-target_include_directories(tests PRIVATE ${INCLUDE_DIR})
+# Link GTest & GMock
+target_link_libraries(unit_tests PRIVATE
+    GTest::gtest
+    GTest::gtest_main
+    GTest::gmock
+    GTest::gmock_main
+    SDL2::SDL2
+    SDL2::SDL2main
+    ftxui::screen
+    ftxui::dom
+    ftxui::component
+    avformat
+    avcodec
+    avutil
+    swscale
+    swresample
+    tag
+    SDL2_mixer
+)
 
-# Register test cases
-gtest_discover_tests(tests)
+# Auto-discover tests
+gtest_discover_tests(unit_tests)
+
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR})
+
