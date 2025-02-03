@@ -6,6 +6,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_compile_options(-Wall -Wextra -Werror)
 
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR})
+
 # ===============================
 # FTXUI Setup
 # ===============================
@@ -125,4 +127,3 @@ target_link_libraries(unit_tests PRIVATE
 # Auto-discover tests
 gtest_discover_tests(unit_tests)
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/..)
