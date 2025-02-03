@@ -136,7 +136,7 @@ int PlaylistHandlerView::showMenuWithMediaListInPlaylist(
         rows.push_back(ftxui::hbox({
             ftxui::text(std::to_string(i + 1)) |
                 ftxui::size(ftxui::WIDTH, ftxui::EQUAL, 5) | ftxui::border,
-            ftxui::text(mediaFile->getName()) |
+            ftxui::text(mediaFile->getFileName()) |
                 ftxui::size(ftxui::WIDTH, ftxui::EQUAL, 25) | ftxui::border,
             ftxui::text(mediaFile->getType()) |
                 ftxui::size(ftxui::WIDTH, ftxui::EQUAL, 10) | ftxui::border,
@@ -155,7 +155,7 @@ int PlaylistHandlerView::showMenuWithMediaListInPlaylist(
     }
 
     return ftxui::vbox({
-        ftxui::text("----- Media Files in Playlist: " + playlist->getName() +
+        ftxui::text("----- Media Files in Playlist: " + playlist->getPlaylistName() +
                     " -----") |
             ftxui::bold | ftxui::center | ftxui::color(ftxui::Color::Blue),
         ftxui::text("Page " + std::to_string(current_page + 1) + " of " +
@@ -337,7 +337,7 @@ std::string PlaylistHandlerView::displayAllMediaFileInPlaylist(
         table_rows.push_back(
             hbox({
                 text(std::to_string(i + 1)) | size(WIDTH, EQUAL, 5) | border,
-                text(mediaFile->getName()) | size(WIDTH, EQUAL, 30) | border,
+                text(mediaFile->getFileName()) | size(WIDTH, EQUAL, 30) | border,
                 text(mediaFile->getMetadata("title")) | size(WIDTH, EQUAL, 30) |
                     border,
                 text(mediaFile->getMetadata("artist")) |
@@ -370,12 +370,12 @@ std::string PlaylistHandlerView::displayAllMediaFileInPlaylist(
           }) | center,
           text("Selected File: " +
                (selected_index >= 0 && selected_index < (int)media_files.size()
-                    ? media_files[selected_index]->getName()
+                    ? media_files[selected_index]->getFileName()
                     : "")) |
               bold | center,
           text(error_message) | color(Color::Red) | center,
           separator(),
-          text("----- All Media Files In Playlist: " + playlist->getName() +
+          text("----- All Media Files In Playlist: " + playlist->getPlaylistName() +
                "-----") |
               bold | center | color(Color::Blue),
           separator(),
@@ -505,7 +505,7 @@ std::string PlaylistHandlerView::displayAllMediaFileInPlaylist(
 
         if (hovered_index != -1) {
           selected_index = hovered_index;
-          result_filename = media_files[selected_index]->getName();
+          result_filename = media_files[selected_index]->getFileName();
           screen.ExitLoopClosure()();
           return true;
         }
@@ -520,19 +520,19 @@ std::string PlaylistHandlerView::displayAllMediaFileInPlaylist(
           }
           auto it = std::find_if(media_files.begin(), media_files.end(),
                                  [&](const auto &file) {
-                                   return file->getName() == input_buffer;
+                                   return file->getFileName() == input_buffer;
                                  });
           if (it != media_files.end()) {
             selected_index = std::distance(media_files.begin(), it);
             current_page = selected_index / rows_per_page;
             scroll_offset = selected_index % rows_per_page;
-            result_filename = media_files[selected_index]->getName();
+            result_filename = media_files[selected_index]->getFileName();
             screen.ExitLoopClosure()();
           } else {
             error_message = "File not found!";
           }
         } else if (selected_index != -1) {
-          result_filename = media_files[selected_index]->getName();
+          result_filename = media_files[selected_index]->getFileName();
           screen.ExitLoopClosure()();
         }
         return true;

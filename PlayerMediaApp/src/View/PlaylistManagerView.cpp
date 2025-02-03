@@ -118,7 +118,7 @@ int PlaylistManagerView::showMenuWithPlaylist(
         rows.push_back(ftxui::hbox({
             ftxui::text(std::to_string(i + 1)) |
                 ftxui::size(ftxui::WIDTH, ftxui::EQUAL, 5) | ftxui::border,
-            ftxui::text(playlist->getName()) |
+            ftxui::text(playlist->getPlaylistName()) |
                 ftxui::size(ftxui::WIDTH, ftxui::EQUAL, 20) | ftxui::border,
         }));
       }
@@ -303,7 +303,7 @@ PlaylistManagerView::displayAllPlaylist(PlaylistManager playlistManager)
         table_rows.push_back(
             hbox({
                 text(std::to_string(i + 1)) | size(WIDTH, EQUAL, 5) | border,
-                text(playlist->getName()) | size(WIDTH, EQUAL, 30) | border,
+                text(playlist->getPlaylistName()) | size(WIDTH, EQUAL, 30) | border,
             }) |
             (is_selected ? inverted : nothing) 
             | (is_hovered && !is_selected ? dim | color(Color::Yellow)
@@ -330,7 +330,7 @@ PlaylistManagerView::displayAllPlaylist(PlaylistManager playlistManager)
           text(
               "Selected File: " +
               (selected_index >= 0 && selected_index < (int)listPlaylists.size()
-                   ? listPlaylists[selected_index]->getName()
+                   ? listPlaylists[selected_index]->getPlaylistName()
                    : "")) |
               bold | center,
           text(error_message) | color(Color::Red) | center,
@@ -467,7 +467,7 @@ PlaylistManagerView::displayAllPlaylist(PlaylistManager playlistManager)
 
         if (hovered_index != -1) {
           selected_index = hovered_index;
-          result_filename = listPlaylists[selected_index]->getName();
+          result_filename = listPlaylists[selected_index]->getPlaylistName();
           screen.ExitLoopClosure()();
           return true;
         }
@@ -481,20 +481,20 @@ PlaylistManagerView::displayAllPlaylist(PlaylistManager playlistManager)
             return true;
           }
           auto it = std::find_if(listPlaylists.begin(), listPlaylists.end(),
-                                 [&](const auto &file) {
-                                   return file->getName() == input_buffer;
+                                 [&](const auto &playlist) {
+                                   return playlist->getPlaylistName() == input_buffer;
                                  });
           if (it != listPlaylists.end()) {
             selected_index = std::distance(listPlaylists.begin(), it);
             current_page = selected_index / rows_per_page;
             scroll_offset = selected_index % rows_per_page;
-            result_filename = listPlaylists[selected_index]->getName();
+            result_filename = listPlaylists[selected_index]->getPlaylistName();
             screen.ExitLoopClosure()();
           } else {
             error_message = "File not found!";
           }
         } else if (selected_index != -1) {
-          result_filename = listPlaylists[selected_index]->getName();
+          result_filename = listPlaylists[selected_index]->getPlaylistName();
           screen.ExitLoopClosure()();
         }
         return true;

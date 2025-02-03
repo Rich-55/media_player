@@ -86,7 +86,7 @@ void MediaFileHandlerView::displayDetailMediaFile(std::shared_ptr<MediaFile> med
     system("clear");
 
     auto general_info = vbox({
-        hbox({ text("File Name: ") | bold, text(mediaFile->getName()) }),
+        hbox({ text("File Name: ") | bold, text(mediaFile->getFileName()) }),
         hbox({ text("File Path: ") | bold, text(mediaFile->getPath()) }),
         hbox({ text("File Type: ") | bold, text(mediaFile->getType()) }),
         hbox({ text("File Size: ") | bold, text(std::to_string(mediaFile->getSize()) + " bytes") }),
@@ -154,7 +154,7 @@ std::pair<std::string, std::string> MediaFileHandlerView::displayMenuAddMetadata
     auto main_component = Renderer(menu, [&] {
         return vbox({
             text("Add new key to media file: ") | bold | center,
-            text(mediaFile->getName()) | bold | center | color(Color::Blue),
+            text(mediaFile->getFileName()) | bold | center | color(Color::Blue),
             separator(),
             text("List of keys available in taglib:") | dim | center,
             menu->Render() | border | center,
@@ -318,7 +318,7 @@ std::pair<std::string, std::string> MediaFileHandlerView::displayMenuEditMetadat
     auto main_component = Renderer(menu, [&] {
         return vbox({
             text("Edit metadata for: ") | bold | center,
-            text(mediaFile->getName()) | bold | center | color(Color::Blue),
+            text(mediaFile->getFileName()) | bold | center | color(Color::Blue),
             separator(),
             text("Select a key to edit:") | dim | center,
             menu->Render() | border | center,
@@ -475,7 +475,7 @@ std::string MediaFileHandlerView::displayMenuDeleteMetadata(std::shared_ptr<Medi
     auto main_component = Renderer(menu, [&] {
         return vbox({
             text("Delete metadata key for: ") | bold | center,
-            text(mediaFile->getName()) | bold | center | color(Color::Blue),
+            text(mediaFile->getFileName()) | bold | center | color(Color::Blue),
             separator(),
             text("Select a key to delete:") | dim | center,
             menu->Render() | border | center,

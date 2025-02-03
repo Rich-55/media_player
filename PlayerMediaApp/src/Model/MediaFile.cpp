@@ -6,7 +6,7 @@ MediaFile::MediaFile(const std::string& fileName, const std::string& pathName, u
 
 MediaFile::~MediaFile() {}
 
-std::string MediaFile::getName() const { return this->fileName;}
+std::string MediaFile::getFileName() const { return this->fileName;}
 std::string MediaFile::getPath() const { return this->pathName;}
 unsigned long MediaFile::getSize() const { return this->size;}
 std::string MediaFile::getDuration() const { return this->duration;}
