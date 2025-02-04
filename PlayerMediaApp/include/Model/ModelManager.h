@@ -14,15 +14,15 @@ class ModelManager{
     public:
         ModelManager();
     
-        MediaFileManager &getMediaFileManager();
+        virtual MediaFileManager &getMediaFileManager();
 
-        PlaylistManager &getPlaylistManager();
+        virtual PlaylistManager &getPlaylistManager();
 
-        FolderManager &getFolderManager();
+        virtual FolderManager &getFolderManager();
 
-        std::shared_ptr<Playlist> getPlaylist(std::string playlistName);
+        virtual std::shared_ptr<Playlist> getPlaylist(std::string playlistName);
 
-        std::shared_ptr<MediaFile> getMediaFile(std::string fileName);
+        virtual std::shared_ptr<MediaFile> getMediaFile(std::string fileName);
 
 };
 

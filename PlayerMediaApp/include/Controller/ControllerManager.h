@@ -38,11 +38,11 @@ class ControllerManager{
         
         std::shared_ptr<BaseView> getView(const std::string& viewName);
         
-        void runApp();
+        virtual void runApp();
 
-        bool checkUart();
+        virtual bool checkUart();
 
-        void ScanData();
+        virtual void ScanData();
 
         std::string mediaFileHandler();
 

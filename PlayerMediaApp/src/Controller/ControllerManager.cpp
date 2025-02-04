@@ -7,8 +7,7 @@ ControllerManager::ControllerManager(ModelManager model, ViewManager view,
       playerController(nullptr), mediaFileManagerController(nullptr),
       mediaPlaylistManagerController(nullptr) {}
 
-std::shared_ptr<BaseView>
-ControllerManager::getView(const std::string &viewName) 
+std::shared_ptr<BaseView> ControllerManager::getView(const std::string &viewName) 
 {
   auto viewPtr = view.getView(viewName);
   if (!viewPtr) {
@@ -316,7 +315,7 @@ void ControllerManager::runApp()
     return;
   }
 
-  //uartManager->runMediaUart(playerController);
+  uartManager->runMediaUart(playerController);
 
   auto mainMenuView = getView("MainMenuView");
   std::string typePlay = "noplay";

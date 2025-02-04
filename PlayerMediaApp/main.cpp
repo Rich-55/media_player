@@ -6,13 +6,13 @@
 int main() {
     ModelManager model;
     ViewManager view;
-    auto uartManager = std::make_shared<UARTManager>();
+    std::shared_ptr uartManager = std::make_shared<UARTManager>();
     
     ControllerManager controller(model, view, uartManager);
 
-    // if(!controller.checkUart()){
-    //     return 0;
-    // }
+    if(!controller.checkUart()){
+        return 0;
+    }
     controller.ScanData();
     controller.runApp();
 
