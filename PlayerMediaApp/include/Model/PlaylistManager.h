@@ -14,7 +14,7 @@ class PlaylistManager{
 
         std::shared_ptr<Playlist> getPlaylist(std::string playlistName);
 
-        void loadPlaylist(std::shared_ptr<Playlist> playlist);
+        virtual void loadPlaylist(std::shared_ptr<Playlist> playlist);
         void addPlaylist(std::shared_ptr<Playlist> playlist);
         bool deletePlaylist(std::string playlistName);
 

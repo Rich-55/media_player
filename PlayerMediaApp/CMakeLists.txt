@@ -97,6 +97,8 @@ include(GoogleTest)
 
 # Find all test files
 file(GLOB_RECURSE TEST_FILES ${CMAKE_SOURCE_DIR}/test/*.cpp)
+# Ensure mainTest.cpp is explicitly included
+set(TEST_FILES ${TEST_FILES} ${CMAKE_SOURCE_DIR}/test/mainTest.cpp)
 
 # Create unit_tests target
 add_executable(unit_tests ${TEST_FILES} ${SRC_FILES})
@@ -126,4 +128,24 @@ target_link_libraries(unit_tests PRIVATE
 
 # Auto-discover tests
 gtest_discover_tests(unit_tests)
+if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+    # Enable coverage flags for the test and main project.
+    target_compile_options(unit_tests PRIVATE --coverage -O0 -g -fprofile-arcs -ftest-coverage)
+    target_link_libraries(unit_tests PRIVATE --coverage)
 
+    target_compile_options(${PROJECT_NAME} PRIVATE --coverage -O0 -g -fprofile-arcs -ftest-coverage)
+    target_link_libraries(${PROJECT_NAME} PRIVATE --coverage)
+endif()
+
+# Add the coverage target to capture, filter, and generate the coverage report
+add_custom_target(coverage
+    COMMAND lcov --capture --directory . --output-file coverage.info
+    # Remove unnecessary directories like system libraries and test files
+    COMMAND lcov --remove coverage.info '/usr/*' '*/test/*' --output-file coverage_filtered.info
+    # Generate the HTML report from filtered coverage data
+    COMMAND genhtml coverage_filtered.info --output-directory coverage_report
+    # Print a message with the location of the generated coverage report
+    COMMAND ${CMAKE_COMMAND} -E echo "Coverage report generated at: ${CMAKE_BINARY_DIR}/coverage_report/index.html"
+    # Display detailed coverage information
+    COMMAND lcov --list coverage_filtered.info
+)

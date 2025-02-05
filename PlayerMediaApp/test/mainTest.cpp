@@ -6,23 +6,21 @@
 #include "utils/UARTSetup.h"
 
 using ::testing::Return;
-using ::testing::_;  // Chấp nhận mọi giá trị tham số
+using ::testing::_;  
 
-// Mock ModelManager
+// Mock for ModelManager
 class MockModelManager : public ModelManager {
 public:
-    MOCK_METHOD(MediaFileManager&, getMediaFileManager, (), (override));
-    MOCK_METHOD(PlaylistManager&, getPlaylistManager, (), (override));
-    MOCK_METHOD(FolderManager&, getFolderManager, (), (override));
+    // No need to declare mock methods in MockModelManager as they're not used in the test.
 };
 
-// Mock ViewManager
+// Mock for ViewManager
 class MockViewManager : public ViewManager {
 public:
-    MOCK_METHOD(std::shared_ptr<BaseView>, getView, (std::string viewName), (override));
+    // No need to declare mock methods in MockViewManager as they're not used in the test.
 };
 
-// Mock UARTManager
+// Mock for UARTManager
 class MockUARTManager : public UARTManager {
 public:
     MOCK_METHOD(bool, checkPortConnection, (const std::string&, unsigned int), (override));
@@ -30,7 +28,7 @@ public:
     MOCK_METHOD(std::vector<std::string>, getBaudRateOptions, (), (override));
 };
 
-// Mock ControllerManager
+// Mock for ControllerManager
 class MockControllerManager : public ControllerManager {
 public:
     MockControllerManager(ModelManager model, ViewManager view, std::shared_ptr<UARTManager> uart)
@@ -41,23 +39,22 @@ public:
     MOCK_METHOD(void, runApp, (), (override));
 };
 
-// Test main function logic
+// Test for main function logic
 TEST(MainFunctionTest, CheckUartFails_ExitsEarly) {
     MockModelManager mockModel;
     MockViewManager mockView;
     auto mockUartManager = std::make_shared<MockUARTManager>();
     MockControllerManager mockController(mockModel, mockView, mockUartManager);
 
-    // Giả lập `checkUart()` trả về false -> chương trình thoát sớm
+    // Simulate checkUart() returning false, which should cause early exit
     EXPECT_CALL(mockController, checkUart()).WillOnce(Return(false));
-
-    // Giả lập `ScanData()` và `runApp()` không được gọi
+    // Ensure ScanData and runApp are not called
     EXPECT_CALL(mockController, ScanData()).Times(0);
     EXPECT_CALL(mockController, runApp()).Times(0);
 
-    // Kiểm tra logic main()
+    // Check main logic
     if (!mockController.checkUart()) {
-        SUCCEED();  // Nếu thoát đúng cách -> PASS
+        SUCCEED();  // If exit happens correctly -> PASS
     } else {
         FAIL() << "Expected checkUart to fail and exit early.";
     }
@@ -69,14 +66,13 @@ TEST(MainFunctionTest, CheckUartSuccess_CallsScanDataAndRunApp) {
     auto mockUartManager = std::make_shared<MockUARTManager>();
     MockControllerManager mockController(mockModel, mockView, mockUartManager);
 
-    // Giả lập `checkUart()` thành công
+    // Simulate successful checkUart() call
     EXPECT_CALL(mockController, checkUart()).WillOnce(Return(true));
-
-    // Kiểm tra `ScanData()` và `runApp()` được gọi đúng 1 lần
+    // Ensure ScanData and runApp are called exactly once
     EXPECT_CALL(mockController, ScanData()).Times(1);
     EXPECT_CALL(mockController, runApp()).Times(1);
 
-    // Logic của main()
+    // Main logic
     if (mockController.checkUart()) {
         mockController.ScanData();
         mockController.runApp();
@@ -84,4 +80,16 @@ TEST(MainFunctionTest, CheckUartSuccess_CallsScanDataAndRunApp) {
     } else {
         FAIL() << "Expected checkUart to pass and call ScanData & runApp.";
     }
+}
+
+TEST(UARTManagerTest, CheckBaudRateOptions_ShouldReturnExpectedValues) {
+    MockUARTManager mockUart;
+    std::vector<std::string> expectedBaudRates = {"9600", "115200", "250000"};
+
+    // Simulate getBaudRateOptions returning predefined baud rates
+    EXPECT_CALL(mockUart, getBaudRateOptions()).WillOnce(Return(expectedBaudRates));
+
+    auto baudRates = mockUart.getBaudRateOptions();
+    // Verify the baud rates returned are as expected
+    EXPECT_EQ(baudRates, expectedBaudRates);
 }

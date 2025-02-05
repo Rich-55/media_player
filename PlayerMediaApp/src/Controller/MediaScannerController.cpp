@@ -4,7 +4,7 @@ MediaScannerController::MediaScannerController(MediaFileManager& m, PlaylistMana
      : mediaFileManager(m), playlistManager(p) ,folderManager(f), scanView(v)
 {}
 
-bool has_extension(const std::string &filename, const std::string &extension) 
+bool MediaScannerController::has_extension(const std::string &filename, const std::string &extension) 
 {
     if (filename.size() >= extension.size()) {
         return (filename.compare(filename.size() - extension.size(), extension.size(), extension) == 0);
@@ -12,7 +12,7 @@ bool has_extension(const std::string &filename, const std::string &extension)
     return false;
 }
 
-std::vector<std::string> list_folders(const std::string &path) 
+std::vector<std::string> MediaScannerController::list_folders(const std::string &path) 
 {
     std::vector<std::string> folders;
     DIR *dir = opendir(path.c_str());
@@ -34,7 +34,7 @@ std::vector<std::string> list_folders(const std::string &path)
     return folders;
 }
 
-std::vector<std::string> list_media_files(const std::string &path) 
+std::vector<std::string> MediaScannerController::list_media_files(const std::string &path) 
 {
     std::vector<std::string> media_files;
     DIR *dir = opendir(path.c_str());
@@ -59,7 +59,7 @@ std::vector<std::string> list_media_files(const std::string &path)
     return media_files;
 }
 
-std::vector<std::string> scan_all_folders(const std::string &path) 
+std::vector<std::string> MediaScannerController::scan_all_folders(const std::string &path) 
 {
     std::vector<std::string> all_media_files;
     std::vector<std::string> folders = list_folders(path);
@@ -69,6 +69,8 @@ std::vector<std::string> scan_all_folders(const std::string &path)
     }
     return all_media_files;
 }
+
+bool MediaScannerController::fileExists(const std::string& path) {return access(path.c_str(), F_OK) == 0; }
 
 void MediaScannerController::addDataFileWithFolder(std::string nameFolder, std::string nameLocation) 
 {
@@ -80,7 +82,7 @@ void MediaScannerController::addDataFileWithFolder(std::string nameFolder, std::
         listPath = folderManager.getListPathUSB(nameFolder);
     }
     
-    for (const auto &path : folderManager.getListPathDirectory(nameFolder)) {
+    for (const auto &path : listPath) {
 
         size_t lastSlashPos = path.find_last_of("/");
         std::string fileName = (lastSlashPos != std::string::npos) ? path.substr(lastSlashPos + 1) : "";
@@ -101,8 +103,6 @@ void MediaScannerController::addDataFileWithFolder(std::string nameFolder, std::
         }
     }
 }
-
-bool fileExists(const std::string& path) {return access(path.c_str(), F_OK) == 0; }
 
 void MediaScannerController::loadData() 
 {
@@ -241,6 +241,7 @@ void MediaScannerController::scanHomeDirectory()
         std::vector<std::string> folders;
 
         const char *home = std::getenv("HOME");
+
         if (!home) {
             throw HomeDirectoryException(); 
         }
@@ -278,6 +279,8 @@ void MediaScannerController::scanHomeDirectory()
         }
     }catch (const ScanException &e) {
         std::cerr << e.what() << '\n';
+    }catch (const std::exception &e) {
+        std::cerr << "Error in scanHomeDirectory: " << e.what() << '\n';
     }
 }
 
@@ -291,7 +294,9 @@ void MediaScannerController::scanUSBDevices() {
         std::cout << "Scanning USB devices at: " << usb_base_path << std::endl;
 
         std::vector<std::string> usb_devices = list_folders(usb_base_path);
-
+        for(auto &usb : usb_devices){
+            std::cout << usb << std::endl;
+        }
         if (usb_devices.empty()) {
             throw NoUSBDevicesFoundException();
         }
@@ -345,6 +350,7 @@ std::unordered_set<std::string> MediaScannerController::scanFolder(const std::st
 {
     std::unordered_set<std::string> mediaFiles;
     std::vector<std::string> files = list_media_files(path);
+    
     for (const auto &file : files) {
         mediaFiles.insert(file);
     }
@@ -358,7 +364,7 @@ void MediaScannerController::handleScan(bool isRunning)
         if ((folderManager.getListFolderDirectory().empty() && folderManager.getListFolderUSB().empty()) || isRunning) {
             while (true) { 
                 try {
-                    system("clear");
+                   // system("clear");
                     scanView->setListPathNameIsAdded(listPathsAdded);
                     listPathsAdded.clear();
                     choice = scanView->showMenu();

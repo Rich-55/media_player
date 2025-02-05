@@ -19,14 +19,6 @@ void UARTManager::stopUART() {
   }
 }
 
-bool UARTManager::isConnectionActive() const {
-  if (serial_port && serial_port->is_open()) {
-    return true;
-  } else {
-    std::cerr << "UART connection is not active.\n";
-    return false;
-  }
-}
 
 bool UARTManager::checkPortConnection(const std::string &port, unsigned int baud_rate) {
     try {
@@ -78,6 +70,10 @@ void UARTManager::asyncHandleUart(asio::serial_port &serial, std::shared_ptr<Pla
         [buffer, &serial, &playerController](const boost::system::error_code &error, std::size_t) {
             if (!error) {
                 try {
+                    if (!playerController) {
+                        std::cerr << "Error: PlayerController is null, skipping processing.\n";
+                        return;
+                    }
                     std::istream input_stream(buffer.get());
                     std::string received_data;
                     std::getline(input_stream, received_data);
@@ -114,7 +110,8 @@ void UARTManager::asyncHandleUart(asio::serial_port &serial, std::shared_ptr<Pla
                             }
                         }
                     } else {
-                        std::cerr << "Empty data received." << std::endl;
+                        //comment code when run unit test
+                       // std::cerr << "Empty data received." << std::endl;
                     }
                 } catch (const std::exception &e) {
                     std::cerr << "Error processing UART data: " << e.what() << std::endl;

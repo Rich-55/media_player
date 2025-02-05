@@ -20,7 +20,7 @@ class MediaScannerController{
     public:
         
         MediaScannerController(MediaFileManager& mediaFileManager, PlaylistManager& playlistManager, FolderManager& folderManager,std::shared_ptr<BaseView> scanView);
-
+        virtual ~MediaScannerController() = default;
         void handleScan(bool isRunning);
 
         void addDataFileWithFolder(std::string nameFolder, std::string nameLocation);
@@ -37,7 +37,14 @@ class MediaScannerController{
         bool checkFolderDirectory();
         bool checkFolderUSB();
 
-        std::unordered_set<std::string> scanFolder(const std::string &path);
+        virtual std::unordered_set<std::string> scanFolder(const std::string &path);
+
+        virtual bool has_extension(const std::string &filename, const std::string &extension);
+        virtual std::vector<std::string> list_folders(const std::string &path);
+        virtual std::vector<std::string> list_media_files(const std::string &path);
+        virtual std::vector<std::string> scan_all_folders(const std::string &path);
+
+        virtual bool fileExists(const std::string& path);
 
 };
 

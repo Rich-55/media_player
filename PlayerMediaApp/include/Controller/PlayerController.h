@@ -77,15 +77,15 @@ class PlayerController {
         bool isPause();
 
         void resume();
-        void togglePlayback();
+        virtual void togglePlayback();
 
         void toggleRepeat();
         bool isRepeat();
 
-        void stop();
-        void playNext();
-        void playPrevious();
-        void setVolume(int newVolume);
+        virtual void stop();
+        virtual void playNext();
+        virtual void playPrevious();
+        virtual void setVolume(int newVolume);
         void increaseVolume(int increment);
         void decreaseVolume(int decrement);
 

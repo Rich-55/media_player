@@ -12,12 +12,12 @@ std::unordered_set<std::string> FolderManager::getListFolderDirectory()
 
     std::string folder;
     while (std::getline(inFile, folder)) {
-        listFolderDirectory[folder];  
+        listPathFolderDirectory[folder];  
     }
     inFile.close();
 
     std::unordered_set<std::string> folderKeys;
-    for (const auto& entry : listFolderDirectory) {
+    for (const auto& entry : listPathFolderDirectory) {
         folderKeys.insert(entry.first);  
     }
 
@@ -34,12 +34,12 @@ std::unordered_set<std::string> FolderManager::getListFolderUSB()
 
     std::string folder;
     while (std::getline(inFile, folder)) {
-        listFolderUSB[folder];  
+        listPathFolderUSB[folder];  
     }
     inFile.close();
 
     std::unordered_set<std::string> folderKeys;
-    for (const auto& entry : listFolderUSB) {
+    for (const auto& entry : listPathFolderUSB) {
         folderKeys.insert(entry.first);  
     }
 
@@ -48,8 +48,8 @@ std::unordered_set<std::string> FolderManager::getListFolderUSB()
 
 std::unordered_set<std::string> FolderManager::getListPathDirectory(std::string nameFolder)
 {
-    auto it = listFolderDirectory.find(nameFolder);
-    if (it != listFolderDirectory.end()) {
+    auto it = listPathFolderDirectory.find(nameFolder);
+    if (it != listPathFolderDirectory.end()) {
         return it->second;
     }else{
         return {};
@@ -58,8 +58,8 @@ std::unordered_set<std::string> FolderManager::getListPathDirectory(std::string 
 
 std::unordered_set<std::string> FolderManager::getListPathUSB(std::string nameFolder)
 {
-    auto it = listFolderUSB.find(nameFolder);
-    if (it != listFolderUSB.end()) {
+    auto it = listPathFolderUSB.find(nameFolder);
+    if (it != listPathFolderUSB.end()) {
         return it->second;
     }else{
         return {};
@@ -69,8 +69,8 @@ std::unordered_set<std::string> FolderManager::getListPathUSB(std::string nameFo
 
 std::string FolderManager::getFolderDirectory(std::string folderName)
 {
-    auto it = listFolderDirectory.find(folderName);
-    if (it != listFolderDirectory.end()) {
+    auto it = listPathFolderDirectory.find(folderName);
+    if (it != listPathFolderDirectory.end()) {
         return it->first;
     } else {
         return "Folder not found.";
@@ -78,8 +78,8 @@ std::string FolderManager::getFolderDirectory(std::string folderName)
 }
 std::string FolderManager::getFolderUSB(std::string folderName)
 {
-    auto it = listFolderUSB.find(folderName);
-    if (it != listFolderUSB.end()) {
+    auto it = listPathFolderUSB.find(folderName);
+    if (it != listPathFolderUSB.end()) {
         return it->first;
     } else {
         return "Folder not found.";
@@ -88,7 +88,7 @@ std::string FolderManager::getFolderUSB(std::string folderName)
 
 void FolderManager::addDataFolderDirectory(const std::string &folder, std::unordered_set<std::string> listFiles)
 {
-    listFolderDirectory[folder] = listFiles;
+    listPathFolderDirectory[folder] = listFiles;
 }
 
 void FolderManager::saveFolderDirectory(std::string folderName)
@@ -108,7 +108,7 @@ void FolderManager::saveFolderDirectory(std::string folderName)
 
 void FolderManager::addDataFolderUSB(const std::string &folder, std::unordered_set<std::string> listFiles) 
 {
-    listFolderDirectory[folder] = listFiles;  
+    listPathFolderUSB[folder] = listFiles;  
 }
 
 void FolderManager::saveFolderUSB(std::string folderName)
@@ -127,9 +127,9 @@ void FolderManager::saveFolderUSB(std::string folderName)
 
 void FolderManager::updateFolderDirectory(std::string folderName)
 {
-    auto it = listFolderDirectory.find(folderName);
+    auto it = listPathFolderDirectory.find(folderName);
 
-    if (it != listFolderDirectory.end()) {
+    if (it != listPathFolderDirectory.end()) {
         it->second.clear();
     } else {
         std::cout << "Folder not found: " << folderName << std::endl;
@@ -138,9 +138,9 @@ void FolderManager::updateFolderDirectory(std::string folderName)
 
 void FolderManager::updateFolderUSB(std::string folderName)
 {
-    auto it = listFolderUSB.find(folderName);
+    auto it = listPathFolderUSB.find(folderName);
 
-    if (it != listFolderUSB.end()) {
+    if (it != listPathFolderUSB.end()) {
         it->second.clear();
     } else {
         std::cout << "Folder not found: " << folderName << std::endl;
