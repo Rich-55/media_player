@@ -3,3 +3,4 @@ build/
 MediaPlayer
 .vscode/
 PlayerMediaApp/.vscode/
+coverage_report/

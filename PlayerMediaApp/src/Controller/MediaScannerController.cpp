@@ -150,7 +150,6 @@ void MediaScannerController::loadData()
 void MediaScannerController::loadFolder()
 {
     try {
-        // Load folders from database/listFolderDirectory.data
         std::ifstream dirFile("database/listFolderDirectory.data");
         if (!dirFile.is_open()) {
             throw std::runtime_error("Could not open listFolderDirectory.data");
@@ -291,12 +290,9 @@ void MediaScannerController::scanUSBDevices() {
         int choiceFolder;
 
         std::string usb_base_path = "/media/" + std::string(std::getenv("USER"));
-        std::cout << "Scanning USB devices at: " << usb_base_path << std::endl;
 
         std::vector<std::string> usb_devices = list_folders(usb_base_path);
-        for(auto &usb : usb_devices){
-            std::cout << usb << std::endl;
-        }
+
         if (usb_devices.empty()) {
             throw NoUSBDevicesFoundException();
         }

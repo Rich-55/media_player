@@ -268,24 +268,49 @@ TEST_F(MediaScannerControllerTest, LoadData_Success) {
 TEST_F(MediaScannerControllerTest, LoadFolder_Success) {
     MockMediaScannerController mockScanner(mockMediaFileManager, mockPlaylistManager, mockFolderManager, mockView);
 
-    std::vector<std::string> mockFolders = {"/home/bluebird/video_audio", "/home/bluebird/Music"};
-    std::unordered_set<std::string> mockMediaFilesVideo = {"/home/bluebird/video_audio/drum.mp3", "/home/bluebird/video_audio/yorushika.mp4"};
-    std::unordered_set<std::string> mockMediaFilesMusic = {"/home/bluebird/Music/song1.mp3", "/home/bluebird/Music/song2.mp3"};
+    std::string directoryPath = "/home/bluebird/video_audio";
+    std::string usbPath = "/media/bluebird/SD_4GB/file";
 
-    EXPECT_CALL(mockScanner, scanFolder("/home/bluebird/video_audio"))
+    std::unordered_set<std::string> mockMediaFilesVideo = {"/home/bluebird/video_audio/take.mp4", "/home/bluebird/video_audio/yorushika.mp4"};
+    std::unordered_set<std::string> mockMediaFilesUSB = {"/media/bluebird/SD_4GB/file/creepy.mp3", "/media/bluebird/SD_4GB/file/yorushika.mp4"};
+
+    EXPECT_CALL(mockScanner, scanFolder(directoryPath))
         .WillOnce(Return(mockMediaFilesVideo));
 
-    EXPECT_CALL(mockScanner, scanFolder("/home/bluebird/Music"))
-        .WillOnce(Return(mockMediaFilesMusic));
+    EXPECT_CALL(mockScanner, scanFolder(usbPath))
+        .WillOnce(Return(mockMediaFilesUSB));
 
-    EXPECT_CALL(mockFolderManager, addDataFolderDirectory("/home/bluebird/video_audio", mockMediaFilesVideo))
+    EXPECT_CALL(mockFolderManager, addDataFolderDirectory(directoryPath, mockMediaFilesVideo))
         .Times(1);
 
-    EXPECT_CALL(mockFolderManager, addDataFolderDirectory("/home/bluebird/Music", mockMediaFilesMusic))
+    EXPECT_CALL(mockFolderManager, addDataFolderUSB(usbPath, mockMediaFilesUSB))
         .Times(1);
-
-    EXPECT_CALL(mockFolderManager, addDataFolderUSB(_, _)).Times(0);
 
     mockScanner.loadFolder();
 }
+
+TEST_F(MediaScannerControllerTest, LoadMediaPlaylist_Success) {
+    MockMediaScannerController mockScanner(mockMediaFileManager, mockPlaylistManager, mockFolderManager, mockView);
+
+    std::string playlistDir = "database/playlist";
+    std::vector<std::string> mockPlaylists = {
+        "database/playlist/play1.playlist",
+        "database/playlist/playlist1.playlist",
+        "database/playlist/test 1000.playlist",
+        "database/playlist/test.playlist"
+    };
+
+    std::shared_ptr<MediaFile> mediaFile1 = std::make_shared<MediaFile>("creepy.mp3", "/home/bluebird/video_audio/drum.mp3", 5120, "02/02/2021", "00m11s", "Audio");
+    std::shared_ptr<MediaFile> mediaFile2 = std::make_shared<MediaFile>("take.mp4", "/home/bluebird/video_audio/take.mp4", 10240, "02/02/2021", "00m11s", "Video");
+    std::vector<std::shared_ptr<MediaFile>> mockMediaFiles = { mediaFile1, mediaFile2 };
+
+    EXPECT_CALL(mockMediaFileManager, getAllMediaFile())
+        .WillOnce(Return(mockMediaFiles));
+
+    EXPECT_CALL(mockPlaylistManager, loadPlaylist(::testing::_))
+        .Times(mockPlaylists.size());
+
+    mockScanner.loadMediaPlaylist();
+}
+
 

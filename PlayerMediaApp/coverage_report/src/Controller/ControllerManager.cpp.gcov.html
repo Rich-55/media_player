@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2025-02-05 10:10:23</td>
+            <td class="headerValue">2025-02-05 11:13:56</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">1</td>
@@ -62,12 +62,12 @@
 <pre class="source">
 <a name="1"><span class="lineNum">       1 </span>            : #include &quot;../../include/Controller/ControllerManager.h&quot;</a>
 <a name="2"><span class="lineNum">       2 </span>            : </a>
-<a name="3"><span class="lineNum">       3 </span><span class="lineCov">         16 : ControllerManager::ControllerManager(ModelManager model, ViewManager view,</span></a>
-<a name="4"><span class="lineNum">       4 </span><span class="lineCov">         16 :                                      std::shared_ptr&lt;UARTManager&gt; uart)</span></a>
-<a name="5"><span class="lineNum">       5 </span><span class="lineCov">         16 :     : model(model), view(view), uartManager(uart), scannerController(nullptr),</span></a>
-<a name="6"><span class="lineNum">       6 </span><span class="lineCov">         16 :       mediaFileHandlerController(nullptr), mediaPlaylistController(nullptr),</span></a>
-<a name="7"><span class="lineNum">       7 </span><span class="lineCov">         16 :       playerController(nullptr), mediaFileManagerController(nullptr),</span></a>
-<a name="8"><span class="lineNum">       8 </span><span class="lineCov">         32 :       mediaPlaylistManagerController(nullptr) {}</span></a>
+<a name="3"><span class="lineNum">       3 </span><span class="lineCov">         48 : ControllerManager::ControllerManager(ModelManager model, ViewManager view,</span></a>
+<a name="4"><span class="lineNum">       4 </span><span class="lineCov">         48 :                                      std::shared_ptr&lt;UARTManager&gt; uart)</span></a>
+<a name="5"><span class="lineNum">       5 </span><span class="lineCov">         48 :     : model(model), view(view), uartManager(uart), scannerController(nullptr),</span></a>
+<a name="6"><span class="lineNum">       6 </span><span class="lineCov">         48 :       mediaFileHandlerController(nullptr), mediaPlaylistController(nullptr),</span></a>
+<a name="7"><span class="lineNum">       7 </span><span class="lineCov">         48 :       playerController(nullptr), mediaFileManagerController(nullptr),</span></a>
+<a name="8"><span class="lineNum">       8 </span><span class="lineCov">         96 :       mediaPlaylistManagerController(nullptr) {}</span></a>
 <a name="9"><span class="lineNum">       9 </span>            : </a>
 <a name="10"><span class="lineNum">      10 </span><span class="lineNoCov">          0 : std::shared_ptr&lt;BaseView&gt; ControllerManager::getView(const std::string &amp;viewName) </span></a>
 <a name="11"><span class="lineNum">      11 </span>            : {</a>
