@@ -140,8 +140,6 @@ void MediaFileController::handlerMediaFile()
             default:
                 throw InvalidChoiceException();
             }
-        }catch(const MetadataEditException& e){
-            std::cerr << "Error: " << e.what() << std::endl;
         }catch (const InvalidChoiceException& e) {
             std::cerr << "Error: " << e.what() << std::endl;
         }

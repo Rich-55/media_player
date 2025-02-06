@@ -129,7 +129,6 @@ target_link_libraries(unit_tests PRIVATE
 # Auto-discover tests
 gtest_discover_tests(unit_tests)
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-    # Enable coverage flags for the test and main project.
     target_compile_options(unit_tests PRIVATE --coverage -O0 -g -fprofile-arcs -ftest-coverage)
     target_link_libraries(unit_tests PRIVATE --coverage)
 
