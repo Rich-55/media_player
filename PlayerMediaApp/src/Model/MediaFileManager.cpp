@@ -119,7 +119,8 @@ bool MediaFileManager::addMediaFile(std::string pathName, std::string type)
 }
 
 std::vector<std::shared_ptr<MediaFile>> MediaFileManager::getAllMediaFile()
-{
+{   
+    
     return this->listMediaFiles;
 }
 

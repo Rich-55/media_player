@@ -1,6 +1,6 @@
 build/
+coverage_report/
 *.o
 MediaPlayer
 .vscode/
 PlayerMediaApp/.vscode/
-coverage_report/
