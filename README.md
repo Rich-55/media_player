@@ -1,7 +1,7 @@
 MCU module’s mock project - Media Player App
 
 Visit docascode for this project: https://media-player-git-docascode-rich-55s-projects.vercel.app/
-
+Please connect board KL46Z when start application, (baud 115200)
 To build the app on Linux in first time:
 + cd to build directory: PlayerMediaApp
 + mkdir build
@@ -32,3 +32,5 @@ Build lcov:
 + --output-file coverage_filtered.info
 + genhtml --rc lcov_branch_coverage=1 coverage_filtered.info --branch-coverage --output-directory coverage_report
 + firefox coverage_report/index.html
+To run unit test, you must connect board KL46Z and fix path of USB in MediaScannerControllerTest and MediaPlaylistControllerTest
+
