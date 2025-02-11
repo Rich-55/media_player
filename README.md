@@ -1,7 +1,7 @@
 MCU module’s mock project - Media Player App
 
 Visit docascode for this project: https://media-player-git-docascode-rich-55s-projects.vercel.app/
-
+Please connect board KL46Z when start application, (baud 115200)
 To build the app on Linux in first time:
 + cd to build directory: PlayerMediaApp
 + mkdir build
