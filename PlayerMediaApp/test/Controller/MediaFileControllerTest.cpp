@@ -1,8 +1,6 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
-#include "../include/Model/MediaFile.h"
-#include "../include/View/BaseView.h"
 #include "../include/Controller/MediaFileController.h"
 
 using ::testing::Return;

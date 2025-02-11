@@ -28,37 +28,37 @@ MediaFileManagerController::getMediaFileController(
   return currentMediaFileController->second;
 }
 
-void MediaFileManagerController::addDataFolder(
-    const std::unordered_set<std::string> &listPathName) 
-{
-  for (const auto &path : listPathName) {
+// void MediaFileManagerController::addDataFolder(
+//     const std::unordered_set<std::string> &listPathName) 
+// {
+//   for (const auto &path : listPathName) {
 
-    size_t lastSlashPos = path.find_last_of("/");
-    std::string fileName = (lastSlashPos != std::string::npos)
-                               ? path.substr(lastSlashPos + 1)
-                               : path;
+//     size_t lastSlashPos = path.find_last_of("/");
+//     std::string fileName = (lastSlashPos != std::string::npos)
+//                                ? path.substr(lastSlashPos + 1)
+//                                : path;
 
-    size_t lastDotPos = path.find_last_of(".");
-    std::string extension =
-        (lastDotPos != std::string::npos) ? path.substr(lastDotPos + 1) : "";
+//     size_t lastDotPos = path.find_last_of(".");
+//     std::string extension =
+//         (lastDotPos != std::string::npos) ? path.substr(lastDotPos + 1) : "";
 
-    try {
-      if (extension == "mp4") {
-        if (!mediaManager.addMediaFile(path, "Video")) {
-          throw FileAlreadyExistsException(fileName);
-        }
-      } else if (extension == "mp3") {
-        if (!mediaManager.addMediaFile(path, "Audio")) {
-          throw FileAlreadyExistsException(fileName);
-        }
-      } else {
-        throw UnsupportedFileTypeException(fileName);
-      }
-    } catch (const MediaFileManagerException &e) {
-      std::cerr << e.what() << '\n';
-    }
-  }
-}
+//     try {
+//       if (extension == "mp4") {
+//         if (!mediaManager.addMediaFile(path, "Video")) {
+//           throw FileAlreadyExistsException(fileName);
+//         }
+//       } else if (extension == "mp3") {
+//         if (!mediaManager.addMediaFile(path, "Audio")) {
+//           throw FileAlreadyExistsException(fileName);
+//         }
+//       } else {
+//         throw UnsupportedFileTypeException(fileName);
+//       }
+//     } catch (const MediaFileManagerException &e) {
+//       std::cerr << e.what() << '\n';
+//     }
+//   }
+// }
 
 int MediaFileManagerController::addDataFile(std::string pathName) 
 {
@@ -102,8 +102,9 @@ void MediaFileManagerController::handlerMediaFileManager()
   std::string error;
 
   while (true) {
-    system("clear");
-    if (!message.empty()) {
+    // system("clear");
+    if (!message.empty())
+    {
       mediaFileManagerView->showNotificationMessage(message, "success");
       message = "";
     }
@@ -129,15 +130,11 @@ void MediaFileManagerController::handlerMediaFileManager()
             std::cout << "Returning to the menu.\n";
             break;
           }
-
-          if (pathFile.empty() || pathFile[0] != '/') {
+          std::cout << "pathFile: " << pathFile << '\n';
+          if (pathFile.empty() || pathFile[0] != '/' ||!isValidPath(pathFile)) {
             throw InvalidFilePathException(pathFile);
           }
-
-          if (!isValidPath(pathFile)) {
-            throw InvalidFilePathException(pathFile);
-          }
-          if (!fileExists(pathFile)) {
+          if (!fileNotFound(pathFile)) {
             throw FileNotFoundException(pathFile);
           }
 
@@ -152,6 +149,7 @@ void MediaFileManagerController::handlerMediaFileManager()
           }
           break;
         } catch (const MediaFileManagerException &e) {
+          std::cout << e.what() << '\n';
           error = e.what();
         }
         break;
@@ -168,6 +166,11 @@ void MediaFileManagerController::handlerMediaFileManager()
           fileName = showAllMediaFile();
           if (fileName == "exit") {
             break;
+          }
+          auto mediaFile = mediaManager.getMediaFile(fileName);
+          if (mediaFile == nullptr) {
+              error = "File not found.";
+              break;
           }
           if (mediaManager.getMediaFile(fileName)->getPath() ==
               PlayerController::currentPlayingFile) {
@@ -239,8 +242,6 @@ void MediaFileManagerController::handlerMediaFileManager()
       default:
         throw InvalidChoiceException();
       }
-    } catch (const MediaFileManagerException &e) {
-      std::cerr << "Error: " << e.what() << '\n';
     } catch (const InvalidChoiceException &e) {
       std::cerr << "Error: " << e.what() << '\n';
     }

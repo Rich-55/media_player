@@ -9,7 +9,6 @@ class FolderManager{
         std::unordered_map<std::string, std::unordered_set<std::string>> listPathFolderUSB;
     public:
         FolderManager();
-
         virtual std::unordered_set<std::string> getListFolderDirectory();
         virtual std::unordered_set<std::string> getListFolderUSB();
         

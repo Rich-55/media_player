@@ -16,10 +16,11 @@ protected:
 public:
     // Constructor
     MediaFile();
+    virtual ~MediaFile();
     MediaFile(const std::string& fileName, const std::string& pathName, unsigned long long size, 
                 const std::string& dateCreated, const std::string& duration, const std::string& fileType);
     // Virtual Destructor
-    virtual ~MediaFile();
+    
 
     // Getters
     std::string getFileName() const;

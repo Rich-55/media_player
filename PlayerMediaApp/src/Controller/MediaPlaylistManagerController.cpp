@@ -1,7 +1,12 @@
 #include "../../include/Controller/MediaPlaylistManagerController.h"
 MediaPlaylistManagerController::MediaPlaylistManagerController(PlaylistManager& playlistModel, MediaFileManager& mediafileManager, FolderManager& folderManager, std::shared_ptr<BaseView> mediaManagerView, std::shared_ptr<BaseView> playlistManagerView, std::shared_ptr<BaseView> playlistHandlerView) 
     : playlistManager(playlistModel), mediaFileManager(mediafileManager), folderManager(folderManager), mediaManagerView(mediaManagerView), playlistManagerView(playlistManagerView), playlistHandlerView(playlistHandlerView)
-{}
+{
+    if (!mediaManagerView || !playlistManagerView || !playlistHandlerView) {
+        throw std::runtime_error("Error: One or more BaseView shared_ptr is null!");
+    }
+    
+}
 
 void MediaPlaylistManagerController::addMediaPlaylistController(std::string playlistName, std::shared_ptr<MediaPlaylistController> mediaPlaylistController) 
 {
@@ -76,7 +81,7 @@ void MediaPlaylistManagerController::handlerPlaylistManager()
     std::string error;
     
     while (true) {
-        system("clear");
+        // system("clear");
         try {
 
             if(!message.empty()){
@@ -89,8 +94,10 @@ void MediaPlaylistManagerController::handlerPlaylistManager()
                 error = "";
             }
 
+            std::cerr << "DEBUG: Calling showMenuWithPlaylist()\n";
             choice = playlistManagerView->showMenuWithPlaylist(playlistManager.getAllPlaylist());
-
+            std::cerr << "DEBUG: User selected choice = " << choice << "\n";
+            choice = 0;
             switch (choice) {
             case CREATE_PLAYLIST:
             {   

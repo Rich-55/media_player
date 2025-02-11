@@ -13,7 +13,8 @@ class ModelManager{
         FolderManager folderManager;
     public:
         ModelManager();
-    
+        virtual ~ModelManager();
+
         virtual MediaFileManager &getMediaFileManager();
 
         virtual PlaylistManager &getPlaylistManager();
@@ -23,6 +24,8 @@ class ModelManager{
         virtual std::shared_ptr<Playlist> getPlaylist(std::string playlistName);
 
         virtual std::shared_ptr<MediaFile> getMediaFile(std::string fileName);
+
+        virtual std::shared_ptr<MediaFile> getMediaFileByPath(std::string pathName);
 
 };
 

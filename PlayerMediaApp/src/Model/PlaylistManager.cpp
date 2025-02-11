@@ -1,6 +1,7 @@
 #include "../../include/Model/PlaylistManager.h"
 
 PlaylistManager::PlaylistManager(){}
+PlaylistManager::~PlaylistManager(){}
 
 bool PlaylistManager::checkPlaylist()
 {
@@ -101,4 +102,3 @@ bool PlaylistManager::deletePlaylist(std::string playlistName)
 
 std::vector<std::shared_ptr<Playlist> > PlaylistManager::getAllPlaylist(){return listPlaylist;}
 
-PlaylistManager::~PlaylistManager(){ listPlaylist.clear();}

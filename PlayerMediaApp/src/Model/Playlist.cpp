@@ -1,7 +1,7 @@
 #include "../../include/Model/Playlist.h"
 
 Playlist::Playlist(std::string playlistName) : playlistName(playlistName) {}
-
+Playlist::~Playlist() {}
 std::string Playlist::getPlaylistName() const{ return this->playlistName;}
 
 void Playlist::setPlaylistName(std::string playlistName){ this->playlistName = playlistName;}
@@ -127,4 +127,3 @@ void Playlist::deleteMediaFile(std::string fileName)
     }
 }
 
-Playlist::~Playlist() {}

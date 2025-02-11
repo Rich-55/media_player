@@ -784,10 +784,10 @@
 // TEST_F(MediaScannerControllerTest, HandleScan_FolderAndUSBExist) {
 //     MockMediaScannerController mockScanner(mockMediaFileManager, mockPlaylistManager, mockFolderManager, mockView);
 
-//     EXPECT_CALL(mockFolderManager, getListFolderDirectory()) // ✅ Mock trả về rỗng
+//     EXPECT_CALL(mockFolderManager, getListFolderDirectory()) 
 //         .WillOnce(Return(std::unordered_set<std::string>{}));
 
-//     EXPECT_CALL(mockFolderManager, getListFolderUSB())  // ✅ Giờ sẽ được gọi
+//     EXPECT_CALL(mockFolderManager, getListFolderUSB())  
 //         .WillOnce(Return(std::unordered_set<std::string>{"/media/bluebird/SD_4GB/file"}));
 
 //     EXPECT_CALL(mockScanner, loadData()).Times(1);

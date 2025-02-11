@@ -315,7 +315,7 @@ void ControllerManager::runApp()
     return;
   }
 
-  uartManager->runMediaUart(playerController);
+  //uartManager->runMediaUart(playerController);
 
   auto mainMenuView = getView("MainMenuView");
   std::string typePlay = "noplay";
@@ -329,7 +329,7 @@ void ControllerManager::runApp()
       }
       choice = mainMenuView->showMenuWithPlayer(
           model.getMediaFileManager(), playerController, typePlay, error);
-
+      std::cout << "Choice: " << choice << std::endl;
       switch (choice) {
       case METADATA_FILE_HANDLER: 
         {

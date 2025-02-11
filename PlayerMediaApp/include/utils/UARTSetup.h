@@ -22,7 +22,7 @@ public:
     UARTManager();
     ~UARTManager();
 
-    void runMediaUart(std::shared_ptr<PlayerController>& playerController);
+    virtual void runMediaUart(std::shared_ptr<PlayerController>& playerController);
     void stopUART();
     virtual bool checkPortConnection(const std::string& port, unsigned int baud_rate);
 

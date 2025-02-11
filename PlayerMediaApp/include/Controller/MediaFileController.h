@@ -24,7 +24,7 @@ protected:
 public:
     MediaFileController(std::shared_ptr<MediaFile> m, std::shared_ptr<BaseView> v);
 
-    void handlerMediaFile();
+    virtual void handlerMediaFile();
 
     void getDetailMediaFile(std::string message);
 

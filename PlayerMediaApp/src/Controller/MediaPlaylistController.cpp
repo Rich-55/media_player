@@ -9,7 +9,7 @@ std::vector<std::string> MediaPlaylistController::getListPathMediaFiles() { retu
 void MediaPlaylistController::setNamePlaylist(std::string playlistName) { playlist->setPlaylistName(playlistName);}
 
 bool MediaPlaylistController::addMediaFileInPlaylist(std::string fileName) 
-{
+{                
     std::shared_ptr<MediaFile> mediaFile = mediaFileManager.getMediaFile(fileName);
     if (playlist->checkMediaFile(mediaFile->getFileName())) {
         return false;
@@ -30,21 +30,19 @@ bool MediaPlaylistController::addMediaFileByFolder()
     listFolder.second = listFolderOfUSB;
 
     std::pair<std::string, std::string> choice = playlistHandlerView->displayAllFolder(listFolder);
-
     if (choice.first.empty() || choice.second.empty()) {
         return false;
     }
 
     if (choice.first == "Directory") {
         std::unordered_set<std::string> listPathDirectory = folderManager.getListPathDirectory(choice.second);
-
         for (const auto &list : listPathDirectory) {
             std::shared_ptr<MediaFile> mediaFile = mediaFileManager.getMediaFileByPath(list);
-
             if (!mediaFile) {
-                std::cerr << "Warning: Media file not found for path: " << list << std::endl;
+                std::cerr << "[ERROR] getMediaFileByPath failed! Path: " << list << std::endl;
                 continue;
             }
+
 
             if (playlist->checkMediaFile(mediaFile->getFileName())) {
                 continue;
@@ -107,7 +105,7 @@ void MediaPlaylistController::handlerPlaylist()
     std::string error;
 
     while (true) {
-        system("clear");
+        // system("clear");
         try {
             
             if(!message.empty()){
@@ -119,20 +117,17 @@ void MediaPlaylistController::handlerPlaylist()
                 playlistHandlerView->showNotificationMessage(error, "error");
                 error = "";
             }
-            
             choice = showMenuWithMediaListInPlaylist();
-           
-            switch (choice) {
+            switch (choice)
+            {
             case ADD_MEDIA_FILE_TO_PLAYLIST:
             {
                 std::string fileName;
 
                 fileName = mediaManagerView->displayAllMediaFile(mediaFileManager);
-
                 if(fileName == "exit"){
                     break;
                 }
-
                 if(addMediaFileInPlaylist(fileName))
                 {
                     message = "File " + fileName + " has been added to the playlist.";
@@ -160,7 +155,7 @@ void MediaPlaylistController::handlerPlaylist()
                     if(deleteMediaFileInPlaylist(fileName)){
                         message = "File " + fileName + " has been deleted from the playlist.";
                     }else{
-                        continue;
+                        error = "File " + fileName + " not found in the playlist.";
                     }
                     break;
                 }
@@ -181,9 +176,7 @@ void MediaPlaylistController::handlerPlaylist()
             default:
                 throw InvalidChoiceException();
             }
-        } catch (const PlaylistHandlerException& e) {
-            std::cerr << "Error: " << e.what() << std::endl;
-        }catch (const InvalidChoiceException &e) {
+        } catch (const InvalidChoiceException &e) {
             std::cerr << "Error: " << e.what() << '\n'; 
         }
     }

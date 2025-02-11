@@ -8,19 +8,20 @@ class PlaylistManager{
         std::vector<std::shared_ptr<Playlist>> listPlaylist;
     public:
         PlaylistManager();
+        virtual ~PlaylistManager();
+        
+        virtual bool checkPlaylist();
+        virtual bool checkPlaylistName(std::string playlistName);
 
-        bool checkPlaylist();
-        bool checkPlaylistName(std::string playlistName);
-
-        std::shared_ptr<Playlist> getPlaylist(std::string playlistName);
+        virtual std::shared_ptr<Playlist> getPlaylist(std::string playlistName);
 
         virtual void loadPlaylist(std::shared_ptr<Playlist> playlist);
-        void addPlaylist(std::shared_ptr<Playlist> playlist);
-        bool deletePlaylist(std::string playlistName);
+        virtual void addPlaylist(std::shared_ptr<Playlist> playlist);
+        virtual bool deletePlaylist(std::string playlistName);
 
-        std::vector<std::shared_ptr<Playlist> > getAllPlaylist();
+        virtual std::vector<std::shared_ptr<Playlist> > getAllPlaylist();
 
-        ~PlaylistManager();
+        
 
 };
 

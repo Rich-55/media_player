@@ -1,5 +1,6 @@
 #include "../../include/Model/MediaFileManager.h"
 MediaFileManager::MediaFileManager(){}
+MediaFileManager::~MediaFileManager(){}
 
 std::shared_ptr<MediaFile> MediaFileManager::getMediaFile(std::string fileName)
 {

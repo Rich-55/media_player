@@ -12,6 +12,7 @@ class MediaFileManager{
         std::unordered_set<std::string> listFileAdded;
     public:
         MediaFileManager();
+        virtual ~MediaFileManager();
 
         virtual std::shared_ptr<MediaFile> getMediaFile(std::string fileName);
         virtual std::shared_ptr<MediaFile> getMediaFileByPath(std::string pathName);
@@ -22,7 +23,7 @@ class MediaFileManager{
 
         virtual bool loadMediaFile(std::string pathName, std::string type);
 
-        bool deleteMediaFile(std::string fileName);
+        virtual bool deleteMediaFile(std::string fileName);
 
         void updateDatabase();
 

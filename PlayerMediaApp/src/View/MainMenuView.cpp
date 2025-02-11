@@ -41,7 +41,7 @@ int MainMenuView::showMenuWithPlayer(MediaFileManager mediaFileManager, std::sha
         
 
     if (clear_required) {
-       system("clear");
+       //system("clear");
         clear_required = false;
     }
 
@@ -286,7 +286,7 @@ int MainMenuView::showMenuWithPlayer(MediaFileManager mediaFileManager, std::sha
         });
     });
 
-    system("clear");
+    //system("clear");
     auto screen = ScreenInteractive::TerminalOutput();
 
     auto final_component = CatchEvent(main_component, [&](Event event) {

@@ -21,7 +21,8 @@ class MediaScannerController{
         
         MediaScannerController(MediaFileManager& mediaFileManager, PlaylistManager& playlistManager, FolderManager& folderManager,std::shared_ptr<BaseView> scanView);
         virtual ~MediaScannerController() = default;
-        void handleScan(bool isRunning);
+
+        virtual void handleScan(bool isRunning);
 
         virtual void addDataFileWithFolder(std::string nameFolder, std::string nameLocation);
 

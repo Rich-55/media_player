@@ -32,7 +32,7 @@ protected:
     return true;
   }
 
-  bool fileExists(const std::string &path) {
+  bool fileNotFound(const std::string &path) {
     return access(path.c_str(), F_OK) == 0;
   }
 
@@ -40,9 +40,9 @@ public:
   MediaFileManagerController(MediaFileManager &mediaManager,
                              std::shared_ptr<BaseView> mediaManagerView,
                              std::shared_ptr<BaseView> mediaFileView,
-                             std::shared_ptr<MediaScannerController> c);
+                             std::shared_ptr<MediaScannerController> mediaScannerController);
 
-  void handlerMediaFileManager();
+  virtual void handlerMediaFileManager();
 
   void addMediaFileController(
       std::string fileName,
@@ -52,7 +52,7 @@ public:
   getMediaFileController(const std::string &fileName);
 
   int addDataFile(std::string pathName);
-  void addDataFolder(const std::unordered_set<std::string> &listPathName);
+  //void addDataFolder(const std::unordered_set<std::string> &listPathName);
 
   bool deleteData(std::string fileName);
 
