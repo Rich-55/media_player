@@ -134,7 +134,7 @@ void PlayerController::play()
 {
     
     if (this->mediaFiles.empty()) {
-        std::cerr << "No media files to play.\n";
+        // std::cerr << "No media files to play.\n";
         return;
     }
 
@@ -157,7 +157,7 @@ void PlayerController::pause()
 {
     std::unique_lock<std::recursive_mutex> lock(stateMutex);
     if (!this->playing || this->paused) {
-        std::cerr << "Cannot pause. No media is playing or already paused.\n";
+        // std::cerr << "Cannot pause. No media is playing or already paused.\n";
         return;
     }
     this->paused = true;
@@ -175,7 +175,7 @@ bool PlayerController::isPause()
 void PlayerController::resume() {
     std::unique_lock<std::recursive_mutex> lock(stateMutex);
     if (!this->playing || !this->paused) {
-        std::cerr << "Cannot resume. No media is paused.\n";
+        // std::cerr << "Cannot resume. No media is paused.\n";
         return;
     }
     this->paused = false;
@@ -253,6 +253,7 @@ void PlayerController::stopPlaybackThread()
         {
             std::unique_lock<std::recursive_mutex> lock(stateMutex);
             this->playing = false;
+            std::cout << "thsi" << std::endl;
         }
         this->playbackThread.join();
     }
@@ -284,7 +285,7 @@ void PlayerController::playbackWorker(const std::string& file)
         resetDuration(); 
         startDuration(); 
     } catch (const std::exception& e) {
-        std::cerr << "Error in playbackWorker: " << e.what() << "\n";
+        // std::cerr << "Error in playbackWorker: " << e.what() << "\n";
     }
 
     std::unique_lock<std::recursive_mutex> lock(stateMutex);
@@ -514,7 +515,7 @@ void PlayerController::playVideo(const char* filePath) {
     AVFormatContext* formatContext = nullptr;
 
     if (avformat_open_input(&formatContext, filePath, nullptr, nullptr) != 0) {
-        std::cerr << "Failed to open video file: " << filePath << "\n";
+        // std::cerr << "Failed to open video file: " << filePath << "\n";
         return;
     }
 

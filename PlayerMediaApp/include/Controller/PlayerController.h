@@ -16,22 +16,6 @@ extern AVSampleFormat audio_out_sample_fmt;
 
 class PlayerController {
     private:
-        std::vector<std::string> mediaFiles;
-        size_t currentIndex;
-        std::atomic<bool> playing;
-        std::atomic<bool> paused;
-        std::thread playbackThread;
-        std::recursive_mutex stateMutex;
-
-        void playbackWorker(const std::string& file);
-        void stopPlaybackThread();
-        void playAudio(const char* filePath);
-        void playVideo(const char* filePath);
-
-        bool manualTransition;
-        bool repeat;
-
-        std::atomic<int> volume{100};
 
         //Mix_Music* currentMusic;
         //observers
@@ -41,21 +25,39 @@ class PlayerController {
         std::vector<std::function<void(int)>> observersDuration;
         static void musicFinishedCallback();
         
-        std::atomic<int> currentDuration; 
-        std::atomic<bool> durationRunning;
         std::thread durationThread;
+    
+    protected:
+        std::vector<std::string> mediaFiles;
+        size_t currentIndex;
+        std::atomic<int> volume{100};
+        std::thread playbackThread;
 
-        void startDuration();
-        void stopDuration(); 
-        void resetDuration();
+        std::recursive_mutex stateMutex;
 
     public:
-        
+    
         PlayerController(const std::vector<std::string>& files);
-        ~PlayerController();
+        virtual ~PlayerController();
+
+        void playAudio(const char* filePath);
+        void playVideo(const char* filePath);
+
+        std::atomic<bool> playing;
+        std::atomic<bool> paused;
+        bool manualTransition;
+        bool repeat;
+        std::atomic<int> currentDuration;
+        std::atomic<bool> durationRunning;
+
+        virtual void startDuration();
+        virtual void stopDuration(); 
+        virtual void resetDuration();
+        virtual void stopPlaybackThread();
+        virtual void playbackWorker(const std::string& file);
         void setNotificationsEnabled(bool enabled);
         void addObserverIndex(std::function<void(int)> index);
-        void notifyObserversIndex();
+        virtual void notifyObserversIndex();
 
         void addObserverState(std::function<void()> observer);
         void notifyObserversState(); 
@@ -70,28 +72,30 @@ class PlayerController {
         std::vector<std::string> getMediaFiles();
         static std::string currentPlayingFile;
 
-        void play();
-        bool isPlaying();
+        virtual void play();
+        virtual bool isPlaying();
 
-        void pause();
-        bool isPause();
+        virtual void pause();
+        virtual bool isPause();
 
-        void resume();
+        virtual void resume();
         void togglePlayback();
 
         void toggleRepeat();
         bool isRepeat();
 
-        void stop();
-        void playNext();
-        void playPrevious();
-        void setVolume(int newVolume);
-        void increaseVolume(int increment);
-        void decreaseVolume(int decrement);
+        virtual void stop();
+        virtual void playNext();
+        virtual void playPrevious();
+        virtual void setVolume(int newVolume);
+        virtual void increaseVolume(int increment);
+        virtual void decreaseVolume(int decrement);
 
-        int getVolume() const;
+        virtual int getVolume() const;
 
         int getDuration();
+
+        std::thread& getPlaybackThread() { return playbackThread; }
 };
 
 #endif
