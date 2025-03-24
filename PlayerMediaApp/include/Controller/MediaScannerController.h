@@ -43,6 +43,7 @@ class MediaScannerController{
         virtual std::vector<std::string> list_folders(const std::string &path);
         virtual std::vector<std::string> list_media_files(const std::string &path);
         virtual bool fileExists(const std::string& path);
+        
 
 };
 

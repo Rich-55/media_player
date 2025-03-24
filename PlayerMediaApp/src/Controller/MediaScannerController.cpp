@@ -16,6 +16,7 @@ bool MediaScannerController::has_extension(const std::string &filename, const st
     return false;
 }
 
+
 std::vector<std::string> MediaScannerController::list_folders(const std::string &path) 
 {
     std::vector<std::string> folders;
@@ -373,7 +374,7 @@ void MediaScannerController::handleScan(bool isRunning)
         if ((folderManager.getListFolderDirectory().empty() && folderManager.getListFolderUSB().empty()) || isRunning) {
             while (true) { 
                 try {
-                   // system("clear");
+                   system("clear");
                     scanView->setListPathNameIsAdded(listPathsAdded);
                     listPathsAdded.clear();
                     choice = scanView->showMenu();

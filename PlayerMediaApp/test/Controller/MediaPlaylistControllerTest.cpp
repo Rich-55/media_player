@@ -302,131 +302,131 @@ TEST_F(MediaPlaylistControllerTest, HandleMediaPlaylist_AddFileToPlaylistByPath_
     std::cin.rdbuf(orig);
 }
 
-// TEST_F(MediaPlaylistControllerTest, HandleMediaPlaylist_AddFileToPlaylistByPath_USB) {
-//     EXPECT_CALL(*mockView, showMenuWithMediaListInPlaylist(_))
-//         .WillOnce(Return(ADD_MEDIA_FILE_TO_PLAYLIST_BY_PATH)) 
-//         .WillOnce(Return(EXIT_MENU_PLAYLIST_HANDLER));
+TEST_F(MediaPlaylistControllerTest, HandleMediaPlaylist_AddFileToPlaylistByPath_USB) {
+    EXPECT_CALL(*mockView, showMenuWithMediaListInPlaylist(_))
+        .WillOnce(Return(ADD_MEDIA_FILE_TO_PLAYLIST_BY_PATH)) 
+        .WillOnce(Return(EXIT_MENU_PLAYLIST_HANDLER));
 
-//     EXPECT_CALL(*mockView, displayAllFolder(_))
-//         .WillOnce(Return(std::make_pair("USB", "/media/bluebird/SD_4GB/file")));  
+    EXPECT_CALL(*mockView, displayAllFolder(_))
+        .WillOnce(Return(std::make_pair("USB", "/media/bluebird/SD_4GB/file")));  
 
-//     std::unordered_set<std::string> mediaPaths = {
-//         "/media/bluebird/SD_4GB/file/creepy.mp3",
-//         "/media/bluebird/SD_4GB/file/drum.mp3"
-//     };
+    std::unordered_set<std::string> mediaPaths = {
+        "/media/bluebird/SD_4GB/file/creepy.mp3",
+        "/media/bluebird/SD_4GB/file/drum.mp3"
+    };
 
-//     EXPECT_CALL(mockFolderManager, getListPathDirectory(_))
-//         .WillOnce(Return(std::unordered_set<std::string>{
-//             "/media/bluebird/SD_4GB/file/drum.mp3",
-//             "/media/bluebird/SD_4GB/file/creepy.mp3"
-//         }));
+    EXPECT_CALL(mockFolderManager, getListPathUSB(_))
+        .WillOnce(Return(std::unordered_set<std::string>{
+            "/media/bluebird/SD_4GB/file/drum.mp3",
+            "/media/bluebird/SD_4GB/file/creepy.mp3"
+        }));
 
-//     std::shared_ptr<MediaFile> drumFile = std::make_shared<MediaFile>("drum.mp3", "/media/bluebird/SD_4GB/file/drum.mp3", 1024, "2024-01-01", "03:45", "Audio");
-//     std::shared_ptr<MediaFile> creepyFile = std::make_shared<MediaFile>("creepy.mp3", "/media/bluebird/SD_4GB/file/creepy.mp3", 2048, "2024-01-01", "04:00", "Audio");
+    std::shared_ptr<MediaFile> drumFile = std::make_shared<MediaFile>("drum.mp3", "/media/bluebird/SD_4GB/file/drum.mp3", 1024, "2024-01-01", "03:45", "Audio");
+    std::shared_ptr<MediaFile> creepyFile = std::make_shared<MediaFile>("creepy.mp3", "/media/bluebird/SD_4GB/file/creepy.mp3", 2048, "2024-01-01", "04:00", "Audio");
     
-//     EXPECT_CALL(mockMediaFileManager, getMediaFileByPath(_))
-//         .Times(AtLeast(1))  
-//         .WillRepeatedly([drumFile, creepyFile](const std::string& path) -> std::shared_ptr<MediaFile> {
-//             if (path == "/media/bluebird/SD_4GB/file/drum.mp3") {
-//                 return drumFile;
-//             }
-//             if (path == "/media/bluebird/SD_4GB/file/creepy.mp3") {
-//                 return creepyFile;
-//             }
-//             return nullptr;
-//         });
+    EXPECT_CALL(mockMediaFileManager, getMediaFileByPath(_))
+        .Times(AtLeast(1))  
+        .WillRepeatedly([drumFile, creepyFile](const std::string& path) -> std::shared_ptr<MediaFile> {
+            if (path == "/media/bluebird/SD_4GB/file/drum.mp3") {
+                return drumFile;
+            }
+            if (path == "/media/bluebird/SD_4GB/file/creepy.mp3") {
+                return creepyFile;
+            }
+            return nullptr;
+        });
 
-//     EXPECT_CALL(*mockPlaylist, checkMediaFile("creepy.mp3"))
-//         .WillOnce(Return(false));  
+    EXPECT_CALL(*mockPlaylist, checkMediaFile("creepy.mp3"))
+        .WillOnce(Return(false));  
 
-//     EXPECT_CALL(*mockPlaylist, addMediaFile(creepyFile)).Times(1);
+    EXPECT_CALL(*mockPlaylist, addMediaFile(creepyFile)).Times(1);
 
-//     EXPECT_CALL(*mockPlaylist, checkMediaFile("drum.mp3"))
-//         .WillOnce(Return(false));  
+    EXPECT_CALL(*mockPlaylist, checkMediaFile("drum.mp3"))
+        .WillOnce(Return(false));  
 
-//     EXPECT_CALL(*mockPlaylist, addMediaFile(drumFile)).Times(1);
-
-
-//     EXPECT_CALL(*mockView, showNotificationMessage("All files in the folder have been added to the playlist.", "success"));
-
-//     std::streambuf* orig = std::cin.rdbuf();
-//     std::istringstream input("0\n");
-//     std::cin.rdbuf(input.rdbuf());
-
-//     controller->handlerPlaylist();
-//     std::cin.rdbuf(orig);
-// }
+    EXPECT_CALL(*mockPlaylist, addMediaFile(drumFile)).Times(1);
 
 
-// TEST_F(MediaPlaylistControllerTest, HandleMediaPlaylist_AddFileToPlaylistByPath_USB_MediaFileNull)
-// {
-//     EXPECT_CALL(*mockView, showMenuWithMediaListInPlaylist(_))
-//         .WillOnce(Return(ADD_MEDIA_FILE_TO_PLAYLIST_BY_PATH)) 
-//         .WillOnce(Return(EXIT_MENU_PLAYLIST_HANDLER));
+    EXPECT_CALL(*mockView, showNotificationMessage("All files in the folder have been added to the playlist.", "success"));
 
-//     EXPECT_CALL(*mockView, displayAllFolder(_))
-//         .WillOnce(Return(std::make_pair("USB", "/media/bluebird/SD_4GB/file")));  
+    std::streambuf* orig = std::cin.rdbuf();
+    std::istringstream input("0\n");
+    std::cin.rdbuf(input.rdbuf());
 
-//     std::unordered_set<std::string> mediaPaths = {
-//         "/media/bluebird/SD_4GB/file/drum.mp3",
-//     };
+    controller->handlerPlaylist();
+    std::cin.rdbuf(orig);
+}
 
-//     EXPECT_CALL(mockFolderManager, getListPathDirectory(_))
-//         .WillOnce(Return(std::unordered_set<std::string>{
-//             "/media/bluebird/SD_4GB/file/drum.mp3",
-//         }));
 
-//     EXPECT_CALL(mockMediaFileManager, getMediaFileByPath(_))
-//         .WillOnce(Return(nullptr));
+TEST_F(MediaPlaylistControllerTest, HandleMediaPlaylist_AddFileToPlaylistByPath_USB_MediaFileNull)
+{
+    EXPECT_CALL(*mockView, showMenuWithMediaListInPlaylist(_))
+        .WillOnce(Return(ADD_MEDIA_FILE_TO_PLAYLIST_BY_PATH)) 
+        .WillOnce(Return(EXIT_MENU_PLAYLIST_HANDLER));
 
-//     std::streambuf* orig = std::cin.rdbuf();
-//     std::istringstream input("0\n");
-//     std::cin.rdbuf(input.rdbuf());
+    EXPECT_CALL(*mockView, displayAllFolder(_))
+        .WillOnce(Return(std::make_pair("USB", "/media/bluebird/SD_4GB/file")));  
 
-//     controller->handlerPlaylist();
-//     std::cin.rdbuf(orig);
-// }
+    std::unordered_set<std::string> mediaPaths = {
+        "/media/bluebird/SD_4GB/file/drum.mp3",
+    };
 
-// TEST_F(MediaPlaylistControllerTest, HandleMediaPlaylist_AddFileToPlaylistByPath_USB_MediaFileIsAlready)
-// {
-//     EXPECT_CALL(*mockView, showMenuWithMediaListInPlaylist(_))
-//         .WillOnce(Return(ADD_MEDIA_FILE_TO_PLAYLIST_BY_PATH)) 
-//         .WillOnce(Return(EXIT_MENU_PLAYLIST_HANDLER));
+    EXPECT_CALL(mockFolderManager, getListPathUSB(_))
+        .WillOnce(Return(std::unordered_set<std::string>{
+            "/media/bluebird/SD_4GB/file/drum.mp3",
+        }));
 
-//     EXPECT_CALL(*mockView, displayAllFolder(_))
-//         .WillOnce(Return(std::make_pair("USB", "/media/bluebird/SD_4GB/file")));  
+    EXPECT_CALL(mockMediaFileManager, getMediaFileByPath(_))
+        .WillOnce(Return(nullptr));
 
-//     std::unordered_set<std::string> mediaPaths = {
-//         "/media/bluebird/SD_4GB/file/drum.mp3",
-//     };
+    std::streambuf* orig = std::cin.rdbuf();
+    std::istringstream input("0\n");
+    std::cin.rdbuf(input.rdbuf());
 
-//     EXPECT_CALL(mockFolderManager, getListPathDirectory(_))
-//         .WillOnce(Return(std::unordered_set<std::string>{
-//             "/media/bluebird/SD_4GB/file/drum.mp3",
-//         }));
+    controller->handlerPlaylist();
+    std::cin.rdbuf(orig);
+}
+
+TEST_F(MediaPlaylistControllerTest, HandleMediaPlaylist_AddFileToPlaylistByPath_USB_MediaFileIsAlready)
+{
+    EXPECT_CALL(*mockView, showMenuWithMediaListInPlaylist(_))
+        .WillOnce(Return(ADD_MEDIA_FILE_TO_PLAYLIST_BY_PATH)) 
+        .WillOnce(Return(EXIT_MENU_PLAYLIST_HANDLER));
+
+    EXPECT_CALL(*mockView, displayAllFolder(_))
+        .WillOnce(Return(std::make_pair("USB", "/media/bluebird/SD_4GB/file")));  
+
+    std::unordered_set<std::string> mediaPaths = {
+        "/media/bluebird/SD_4GB/file/drum.mp3",
+    };
+
+    EXPECT_CALL(mockFolderManager, getListPathUSB(_))
+        .WillOnce(Return(std::unordered_set<std::string>{
+            "/media/bluebird/SD_4GB/file/drum.mp3",
+        }));
 
     
-//     std::shared_ptr<MediaFile> drumFile = std::make_shared<MediaFile>("drum.mp3", "/media/bluebird/SD_4GB/file/drum.mp3", 1024, "2024-01-01", "03:45", "Audio");
+    std::shared_ptr<MediaFile> drumFile = std::make_shared<MediaFile>("drum.mp3", "/media/bluebird/SD_4GB/file/drum.mp3", 1024, "2024-01-01", "03:45", "Audio");
     
-//     EXPECT_CALL(mockMediaFileManager, getMediaFileByPath(_))
-//         .Times(AtLeast(1))  
-//         .WillRepeatedly([drumFile](const std::string& path) -> std::shared_ptr<MediaFile> {
-//             if (path == "/media/bluebird/SD_4GB/file/drum.mp3") {
-//                 return drumFile;
-//             }
-//             return nullptr;
-//         });
+    EXPECT_CALL(mockMediaFileManager, getMediaFileByPath(_))
+        .Times(AtLeast(1))  
+        .WillRepeatedly([drumFile](const std::string& path) -> std::shared_ptr<MediaFile> {
+            if (path == "/media/bluebird/SD_4GB/file/drum.mp3") {
+                return drumFile;
+            }
+            return nullptr;
+        });
 
-//     EXPECT_CALL(*mockPlaylist, checkMediaFile("drum.mp3"))
-//         .WillOnce(Return(true));
+    EXPECT_CALL(*mockPlaylist, checkMediaFile("drum.mp3"))
+        .WillOnce(Return(true));
 
-//     std::streambuf* orig = std::cin.rdbuf();
-//     std::istringstream input("0\n");
-//     std::cin.rdbuf(input.rdbuf());
+    std::streambuf* orig = std::cin.rdbuf();
+    std::istringstream input("0\n");
+    std::cin.rdbuf(input.rdbuf());
 
-//     controller->handlerPlaylist();
-//     std::cin.rdbuf(orig);
-// }
+    controller->handlerPlaylist();
+    std::cin.rdbuf(orig);
+}
 
 TEST_F(MediaPlaylistControllerTest, HandleMediaPlaylist_DeleteFileFromPlaylist) {
     EXPECT_CALL(*mockView, showMenuWithMediaListInPlaylist(_))

@@ -105,7 +105,7 @@ void MediaPlaylistController::handlerPlaylist()
     std::string error;
 
     while (true) {
-        // system("clear");
+        system("clear");
         try {
             
             if(!message.empty()){

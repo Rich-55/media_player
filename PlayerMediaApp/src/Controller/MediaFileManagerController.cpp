@@ -102,7 +102,7 @@ void MediaFileManagerController::handlerMediaFileManager()
   std::string error;
 
   while (true) {
-    // system("clear");
+    system("clear");
     if (!message.empty())
     {
       mediaFileManagerView->showNotificationMessage(message, "success");
